@@ -1,0 +1,2 @@
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile.UWP\BMCGMobile.UWP.csproj;x86
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile\BMCGMobile.csproj;neutral
