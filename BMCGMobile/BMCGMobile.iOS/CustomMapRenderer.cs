@@ -1,26 +1,26 @@
-﻿using CoreLocation;
-using MapKit;
-using BMCGMobile;
+﻿using BMCGMobile;
 using BMCGMobile.iOS;
+using CoreGraphics;
+using CoreLocation;
+using MapKit;
 using ObjCRuntime;
+using System.Collections.Generic;
+using System.Linq;
 using UIKit;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.iOS;
 using Xamarin.Forms.Platform.iOS;
-using System.Collections.Generic;
-using Xamarin.Forms.Maps;
-using System.Linq;
-using CoreGraphics;
-using System;
 
 [assembly: ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer))]
+
 namespace BMCGMobile.iOS
 {
     public class CustomMapRenderer : MapRenderer
     {
-        MKPolylineRenderer polylineRenderer;
-        UIView customPinView;
-        List<CustomPin> customPins;
+        private MKPolylineRenderer polylineRenderer;
+        private UIView customPinView;
+        private List<CustomPin> customPins;
 
         protected override void OnElementChanged(ElementChangedEventArgs<View> e)
         {
@@ -36,7 +36,6 @@ namespace BMCGMobile.iOS
                     nativeMap.OverlayRenderer = null;
                     polylineRenderer = null;
 
-
                     //Pin Annotation
                     nativeMap.RemoveAnnotations(nativeMap.Annotations);
                     nativeMap.GetViewForAnnotation = null;
@@ -50,7 +49,6 @@ namespace BMCGMobile.iOS
             {
                 var formsMap = (CustomMap)e.NewElement;
                 var nativeMap = Control as MKMapView;
-
 
                 // Overlay
                 nativeMap.OverlayRenderer = GetOverlayRenderer;
@@ -67,7 +65,6 @@ namespace BMCGMobile.iOS
                 var routeOverlay = MKPolyline.FromCoordinates(coords);
                 nativeMap.AddOverlay(routeOverlay);
 
-
                 // Pin Annotation
                 customPins = formsMap.CustomPins;
 
@@ -78,7 +75,7 @@ namespace BMCGMobile.iOS
             }
         }
 
-        MKOverlayRenderer GetOverlayRenderer(MKMapView mapView, IMKOverlay overlayWrapper)
+        private MKOverlayRenderer GetOverlayRenderer(MKMapView mapView, IMKOverlay overlayWrapper)
         {
             if (polylineRenderer == null && !Equals(overlayWrapper, null))
             {
@@ -94,11 +91,9 @@ namespace BMCGMobile.iOS
             return polylineRenderer;
         }
 
+        #region Pin Annotation
 
-#region Pin Annotation
-
-
-        MKAnnotationView GetViewForAnnotation(MKMapView mapView, IMKAnnotation annotation)
+        private MKAnnotationView GetViewForAnnotation(MKMapView mapView, IMKAnnotation annotation)
         {
             MKAnnotationView annotationView = null;
 
@@ -118,12 +113,12 @@ namespace BMCGMobile.iOS
             {
                 annotationView = new CustomMKAnnotationView(annotation, customPin.Id)
                 {
-                    Image = UIImage.FromFile("pin.png"),
+                    Image = UIImage.FromFile(customPin.PinImageName),
                     CalloutOffset = new CGPoint(0, 0),
-                    LeftCalloutAccessoryView = new UIImageView(UIImage.FromFile("map.png")),
-                    RightCalloutAccessoryView = UIButton.FromType(UIButtonType.DetailDisclosure)
-                    
+                    LeftCalloutAccessoryView = new UIImageView(UIImage.FromFile(customPin.PinImageName)),
+                    RightCalloutAccessoryView = UIButton.FromType(UIButtonType.DetailDisclosure),
                 };
+
                 ((CustomMKAnnotationView)annotationView).Id = customPin.Id;
                 ((CustomMKAnnotationView)annotationView).Url = customPin.Url;
             }
@@ -131,7 +126,7 @@ namespace BMCGMobile.iOS
             return annotationView;
         }
 
-        void OnCalloutAccessoryControlTapped(object sender, MKMapViewAccessoryTappedEventArgs e)
+        private void OnCalloutAccessoryControlTapped(object sender, MKMapViewAccessoryTappedEventArgs e)
         {
             var customView = e.View as CustomMKAnnotationView;
             if (!string.IsNullOrWhiteSpace(customView.Url))
@@ -140,23 +135,23 @@ namespace BMCGMobile.iOS
             }
         }
 
-        void OnDidSelectAnnotationView(object sender, MKAnnotationViewEventArgs e)
+        private void OnDidSelectAnnotationView(object sender, MKAnnotationViewEventArgs e)
         {
             var customView = e.View as CustomMKAnnotationView;
             customPinView = new UIView();
 
-            if (customView.Id == "Xamarin")
-            {
-                customPinView.Frame = new CGRect(0, 0, 200, 84);
-                var image = new UIImageView(new CGRect(0, 0, 200, 84));
-                image.Image = UIImage.FromFile("xamarin.png");
-                customPinView.AddSubview(image);
-                customPinView.Center = new CGPoint(0, -(e.View.Frame.Height + 75));
-                e.View.AddSubview(customPinView);
-            }
+            //if (customView.Id == "Morris Canal Park")
+            //{
+            //    customPinView.Frame = new CGRect(0, 0, 200, 84);
+            //    var image = new UIImageView(new CGRect(0, 0, 200, 84));
+            //    image.Image = UIImage.FromFile("schedule.png");
+            //    customPinView.AddSubview(image);
+            //    customPinView.Center = new CGPoint(0, -(e.View.Frame.Height + 75));
+            //    e.View.AddSubview(customPinView);
+            //}
         }
 
-        void OnDidDeselectAnnotationView(object sender, MKAnnotationViewEventArgs e)
+        private void OnDidDeselectAnnotationView(object sender, MKAnnotationViewEventArgs e)
         {
             if (!e.View.Selected)
             {
@@ -166,7 +161,7 @@ namespace BMCGMobile.iOS
             }
         }
 
-        CustomPin GetCustomPin(MKPointAnnotation annotation)
+        private CustomPin GetCustomPin(MKPointAnnotation annotation)
         {
             if (annotation != null)
             {
@@ -175,8 +170,8 @@ namespace BMCGMobile.iOS
             }
 
             return null;
-           
         }
-#endregion
+
+        #endregion Pin Annotation
     }
 }

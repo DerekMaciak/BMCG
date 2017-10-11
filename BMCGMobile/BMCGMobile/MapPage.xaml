@@ -4,6 +4,23 @@
              xmlns:local="clr-namespace:BMCGMobile"
              x:Class="BMCGMobile.MapPage" Icon="map.png" Title="Map">
     <ContentPage.Content>
-        <local:CustomMap x:Name="customMap" MapType="Street"  IsShowingUser="True" WidthRequest="{x:Static local:App.ScreenWidth}" HeightRequest="{x:Static local:App.ScreenHeight}" VerticalOptions = "FillAndExpand" />
+        <StackLayout WidthRequest="{x:Static local:App.ScreenWidth}" HeightRequest="{x:Static local:App.ScreenHeight}" VerticalOptions = "FillAndExpand">
+            <local:CustomMap x:Name="customMap" MapType="Street"  IsShowingUser="True" VerticalOptions = "FillAndExpand" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackLayout Grid.Column="0" HorizontalOptions="Start" Spacing="20" Orientation="Horizontal" Margin="10,0,5,0">
+                    <Button Text="Street" Clicked="MapViewButton_Clicked"></Button>
+                    <Button Text="Hybrid" Clicked="MapViewButton_Clicked"></Button>
+                    <Button Text="Satellite" Clicked="MapViewButton_Clicked"></Button>
+                </StackLayout>
+                <StackLayout Grid.Column="0"  HorizontalOptions="End" Spacing="20" Orientation="Horizontal" Margin="5,0,10,0">
+                    <Button Image="zoom-to-see-pins.png" Clicked="ZoomPinsButton_Clicked"></Button>
+                    <Button Image="zoom-to-see-all.png" Clicked="ZoomAllButton_Clicked"></Button>
+                </StackLayout>
+            </Grid>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

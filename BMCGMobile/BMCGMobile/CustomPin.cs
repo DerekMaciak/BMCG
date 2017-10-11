@@ -14,5 +14,15 @@ namespace BMCGMobile
         public string Id { get; set; }
 
         public string Url { get; set; }
+
+        public PinTypes PinType { get; set; }
+
+        public string PinImageName { get { return PinType == PinTypes.Kiosk ? "pin-kiosk.png" : "pin.png"; } }
+
+        public enum PinTypes
+        {
+            Kiosk,
+            Sign
+        }
     }
 }

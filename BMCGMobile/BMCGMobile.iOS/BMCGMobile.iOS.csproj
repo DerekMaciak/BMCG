@@ -201,6 +201,33 @@
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\pin-kiosk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\BLM.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\map-pin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\map-pin%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\about.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\about%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\zoom-into-view.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\zoom-to-see-all.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\zoom-to-see-pins.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -5,6 +5,11 @@
              x:Class="BMCGMobile.MainPage">
 
     <local:MapPage />
+    <NavigationPage Title="Signs/Kiosks" Icon="map-pin.png">
+        <x:Arguments>
+            <local:SignsKiosksPage />
+        </x:Arguments>
+    </NavigationPage>
     <NavigationPage Title="Fitness" Icon="fitness.png">
         <x:Arguments>
             <local:FitnessPage />
@@ -15,6 +20,6 @@
             <local:SettingsPage />
         </x:Arguments>
     </NavigationPage>
-   
+    <local:AboutPage />
 
 </TabbedPage>

@@ -96,3 +96,13 @@ C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\schedule.png
 C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\schedule@2x.png
 C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\settings.png
 C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\settings@2x.png
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\bin\iPhone\Debug\BMCGMobile.dll.mdb
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\pin-kiosk.png
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\BLM.png
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\map-pin.png
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\map-pin@2x.png
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\about.png
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\about@2x.png
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\zoom-into-view.png
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\zoom-to-see-all.png
+C:\GitHub\BMCG\BMCGMobile\BMCGMobile.iOS\obj\iPhone\Debug\optimized\zoom-to-see-pins.png
