@@ -5,7 +5,7 @@
              x:Class="BMCGMobile.MainPage">
 
     <local:MapPage />
-    <NavigationPage Title="Signs/Kiosks" Icon="map-pin.png">
+    <NavigationPage Title="Signs/Kiosks" Icon="mappin.png">
         <x:Arguments>
             <local:SignsKiosksPage />
         </x:Arguments>

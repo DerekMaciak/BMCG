@@ -1,10 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="X5k-f2-b5h">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="X5k-f2-b5h">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -16,63 +13,52 @@
                         <viewControllerLayoutGuide type="top" id="Y8P-hJ-Z43"/>
                         <viewControllerLayoutGuide type="bottom" id="9ZL-r4-8FZ"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="yd7-JS-zBw">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="5072" key="view" image="BMCGsplash.png">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Bloomfield_Rec_Dept_Logo.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="yzN-6s-hKk">
-                                <rect key="frame" x="36" y="520" width="343" height="176"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Copyright 2017" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p2Y-x9-mi2">
-                                <rect key="frame" x="36" y="704" width="343" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="450" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="49" y="44" width="316" height="176"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <variation key="heightClass=regular-widthClass=compact" image="greenwaylogo.gif"/>
-                            </imageView>
-                        </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <variation key="default">
-                            <mask key="subviews">
-                                <exclude reference="450"/>
-                            </mask>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <variation key="heightClass=regular-widthClass=compact" image="BMCGsplash.png">
+                            <color key="backgroundColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
                         </variation>
-                        <variation key="heightClass=regular-widthClass=compact">
-                            <mask key="subviews">
-                                <include reference="450"/>
-                            </mask>
+                        <variation key="heightClass=compact-widthClass=compact" image="BMCGsplash.png">
+                            <color key="backgroundColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
                         </variation>
-                    </view>
+                        <variation key="heightClass=regular-widthClass=regular" image="BMCGsplash.png">
+                            <color key="backgroundColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
+                        </variation>
+                        <color key="backgroundColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
+                    </imageView>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XAI-xm-WK6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="348" y="338.6807"/>
+            <point key="canvasLocation" x="300" y="295.6807"/>
         </scene>
     </scenes>
     <resources>
-        <image name="Default.png" width="320" height="480"/>
-        <image name="Default-568h.png" width="320" height="568"/>
-        <image name="Default-Portrait.png" width="768" height="1004"/>
+        <image name="BloomfieldRecDeptLogo2.png" width="800" height="431"/>
+        <image name="greenwaylogo2.png" width="370" height="182"/>
+        <image name="about.png" width="24" height="24"/>
+        <image name="activetime.png" width="48" height="48"/>
+        <image name="BLM.png" width="104" height="106"/>
+        <image name="BloomfieldRecDeptLogo.png" width="800" height="431"/>
+        <image name="caloriesburned.png" width="48" height="48"/>
+        <image name="distance.png" width="48" height="48"/>
+        <image name="fitnesshistory.png" width="22" height="24"/>
         <image name="fitness.png" width="24" height="24"/>
-        <image name="Icon-60.png" width="60" height="60"/>
-        <image name="Icon-76.png" width="76" height="76"/>
-        <image name="Icon-Small.png" width="29" height="29"/>
-        <image name="Icon-Small-40.png" width="40" height="40"/>
+        <image name="greenwaylogo.png" width="370" height="182"/>
+        <image name="mappin.png" width="24" height="24"/>
         <image name="map.png" width="24" height="24"/>
+        <image name="pinkiosk.png" width="24" height="24"/>
         <image name="pin.png" width="24" height="24"/>
         <image name="schedule.png" width="24" height="24"/>
         <image name="settings.png" width="24" height="24"/>
-        <image name="Bloomfield_Rec_Dept_Logo.jpg" width="800" height="431"/>
-        <image name="greenwaylogo.gif" width="370" height="182"/>
+        <image name="steps.png" width="48" height="48"/>
+        <image name="zoomintoview.png" width="20" height="20"/>
+        <image name="zoomtoseeall.png" width="24" height="23"/>
+        <image name="zoomtoseepins.png" width="24" height="23"/>
+        <image name="BMCGsplash.png" width="498" height="813"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedScreenMetrics key="destination" type="retina55"/>
+        <simulatedOrientationMetrics key="orientation"/>
     </simulatedMetricsContainer>
 </document>

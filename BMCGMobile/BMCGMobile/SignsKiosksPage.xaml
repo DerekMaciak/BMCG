@@ -19,7 +19,7 @@
                                     <Image Grid.Column="0" Source="{Binding PinImageName}" Margin="5,0,0,0" ></Image>
                                     <StackLayout  Grid.Column="1" Margin="5">
                                         <Label Text="{Binding Pin.Label}" FontAttributes="Bold"></Label>
-                                        <Label Text="{Binding Pin.Address}"></Label>
+                                        <Label Text="{Binding Pin.Address}" FontSize="Small"></Label>
                                     </StackLayout>
                                     <Button Grid.Column="2" Text="Directions" Margin="0,0,10,0" CommandParameter="{Binding .}" Clicked="Button_Clicked"></Button>
                                    

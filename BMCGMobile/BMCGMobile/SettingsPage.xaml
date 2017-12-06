@@ -3,8 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BMCGMobile.SettingsPage" Icon="settings.png" Title="Settings">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin Forms!" />
-        </StackLayout>
+        <ScrollView>
+            <StackLayout>
+                <StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="Height" FontAttributes="Bold"></Label>
+                    <Entry Keyboard="Numeric" Text="3" />
+                </StackLayout>
+                <StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="Weight" FontAttributes="Bold"></Label>
+                    <Entry Keyboard="Numeric" Text="180" />
+                </StackLayout>
+                <StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="Cadence" FontAttributes="Bold"></Label>
+                    <Entry Keyboard="Numeric" Text="3" />
+                </StackLayout>
+                <StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="Auto track steps while on trail" FontAttributes="Bold"></Label>
+                    <Switch IsToggled="True"></Switch>
+                </StackLayout>
+                <StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="Unit of Measure" FontAttributes="Bold"></Label>
+                    <Picker SelectedIndex="0">
+                        <Picker.Items>
+                            <x:String>Miles</x:String>
+                            <x:String>Kilometers</x:String>
+                        </Picker.Items>
+                    </Picker>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

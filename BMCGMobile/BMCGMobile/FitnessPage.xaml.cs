@@ -16,5 +16,10 @@ namespace BMCGMobile
 		{
 			InitializeComponent ();
 		}
-	}
+
+        async void OnFitnessHistoryButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new FitnessHistoryPage());
+        }
+    }
 }

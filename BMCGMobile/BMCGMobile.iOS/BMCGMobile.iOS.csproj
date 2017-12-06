@@ -108,6 +108,10 @@
     <Compile Include="CustomMKAnnotationView.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <None Include="app.config" />
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -171,28 +175,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\Bloomfield_Rec_Dept_Logo.jpg" />
-    <BundleResource Include="Resources\Default%402x.png" />
-    <BundleResource Include="Resources\Default-568h%402x.png" />
-    <BundleResource Include="Resources\Default-Portrait%402x.png" />
-    <BundleResource Include="Resources\Default-Portrait.png" />
-    <BundleResource Include="Resources\Default.png" />
+    <BundleResource Include="Resources\BloomfieldRecDeptLogo.png" />
     <BundleResource Include="Resources\fitness%402x.png" />
     <BundleResource Include="Resources\fitness.png" />
-    <BundleResource Include="Resources\greenwaylogo.gif" />
-    <BundleResource Include="Resources\Icon-60%402x.png" />
-    <BundleResource Include="Resources\Icon-60%403x.png" />
-    <BundleResource Include="Resources\Icon-76%402x.png" />
-    <BundleResource Include="Resources\Icon-76.png" />
-    <BundleResource Include="Resources\Icon-Small%402x.png" />
-    <BundleResource Include="Resources\Icon-Small%403x.png" />
-    <BundleResource Include="Resources\Icon-Small-40%402x.png" />
-    <BundleResource Include="Resources\Icon-Small-40%403x.png" />
-    <BundleResource Include="Resources\Icon-Small-40.png" />
-    <BundleResource Include="Resources\Icon-Small.png" />
     <BundleResource Include="Resources\map%402x.png" />
     <BundleResource Include="Resources\map.png" />
-    <BundleResource Include="Resources\pin.png" />
     <BundleResource Include="Resources\schedule%402x.png" />
     <BundleResource Include="Resources\schedule.png" />
     <BundleResource Include="Resources\settings%402x.png" />
@@ -202,16 +189,10 @@
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\pin-kiosk.png" />
+    <BundleResource Include="Resources\mappin.png" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\BLM.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\map-pin.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BundleResource Include="Resources\map-pin%402x.png" />
+    <BundleResource Include="Resources\mappin%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\about.png" />
@@ -220,13 +201,112 @@
     <BundleResource Include="Resources\about%402x.png" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\zoom-into-view.png" />
+    <BundleResource Include="Resources\zoomintoview.png" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\zoom-to-see-all.png" />
+    <BundleResource Include="Resources\zoomtoseeall.png" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\zoom-to-see-pins.png" />
+    <BundleResource Include="Resources\zoomtoseepins.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-1024.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-29.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-29%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-29%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-40.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-40%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-40%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-60%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-60%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-76.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-76%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\b102-83.5%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\activetime.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\caloriesburned.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\distance.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\fitnesshistory.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\steps.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\fitnesshistory%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\BloomfieldRecDeptLogo2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\BMCGsplash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker26black.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker26blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker26green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker26red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker26yelow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

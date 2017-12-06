@@ -17,8 +17,8 @@
                     <Button Text="Satellite" Clicked="MapViewButton_Clicked"></Button>
                 </StackLayout>
                 <StackLayout Grid.Column="0"  HorizontalOptions="End" Spacing="20" Orientation="Horizontal" Margin="5,0,10,0">
-                    <Button Image="zoom-to-see-pins.png" Clicked="ZoomPinsButton_Clicked"></Button>
-                    <Button Image="zoom-to-see-all.png" Clicked="ZoomAllButton_Clicked"></Button>
+                    <Button Image="zoomtoseeall.png" Clicked="ZoomAllButton_Clicked"></Button>
+                    <Button Image="zoomtoseepins.png" Clicked="ZoomPinsButton_Clicked"></Button>
                 </StackLayout>
             </Grid>
         </StackLayout>

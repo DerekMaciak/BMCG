@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xamarin.Forms.Maps;
+﻿using Xamarin.Forms.Maps;
 
 namespace BMCGMobile
 {
@@ -17,12 +12,34 @@ namespace BMCGMobile
 
         public PinTypes PinType { get; set; }
 
-        public string PinImageName { get { return PinType == PinTypes.Kiosk ? "pin-kiosk.png" : "pin.png"; } }
+        public string PinImageName
+        {
+            get
+            {
+                switch (PinType)
+                {
+                    case PinTypes.Kiosk:
+                        return "marker26green.png";
+
+                    case PinTypes.Wayfinding:
+                        return "marker26red.png";
+
+                    case PinTypes.POI:
+                        return "marker26black.png";
+
+                    default:
+                        break;
+                }
+
+                return "marker26red.png";
+            }
+        }
 
         public enum PinTypes
         {
             Kiosk,
-            Sign
+            Wayfinding,
+            POI
         }
     }
 }

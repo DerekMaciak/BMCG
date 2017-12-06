@@ -82,9 +82,9 @@ namespace BMCGMobile.iOS
                 var overlay = Runtime.GetNSObject(overlayWrapper.Handle) as IMKOverlay;
                 polylineRenderer = new MKPolylineRenderer(overlay as MKPolyline)
                 {
-                    FillColor = UIColor.Green,
-                    StrokeColor = UIColor.Green,
-                    LineWidth = 4,
+                    FillColor = UIColor.Red,
+                    StrokeColor = UIColor.Red,
+                    LineWidth = 6,
                     Alpha = 0.4f
                 };
             }
