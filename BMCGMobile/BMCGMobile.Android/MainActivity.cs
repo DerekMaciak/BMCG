@@ -6,6 +6,9 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
+
 
 namespace BMCGMobile.Droid
 {
@@ -20,14 +23,21 @@ namespace BMCGMobile.Droid
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
+            Xamarin.FormsMaps.Init(this, bundle);
             LoadApplication(new App());
         }
 
         protected override void OnResume()
         {
             base.OnResume();
-            CrashManager.Register(this, "4d7260837e894ed2bc5ae5851c1b325");
+            //CrashManager.Register(this, "4d7260837e894ed2bc5ae5851c1b325");
         }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
+        {
+            PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+      
     }
 }
 
