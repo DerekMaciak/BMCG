@@ -12,6 +12,19 @@ namespace BMCGMobile
 		public MainPage()
 		{
 			InitializeComponent();
-		}
+
+            if (Device.RuntimePlatform == Device.Android)
+            {
+                // Hide Title for Android only to conserve space
+                foreach (var item in this.Children)
+                {
+                    if (item is NavigationPage)
+                    {
+                        item.Title = string.Empty;
+                    }
+                }
+               
+            }
+        }
 	}
 }

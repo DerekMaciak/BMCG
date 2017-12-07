@@ -4,8 +4,12 @@
              xmlns:local="clr-namespace:BMCGMobile"
              x:Class="BMCGMobile.MainPage">
 
-    <local:MapPage />
-    <NavigationPage Title="Signs/Kiosks" Icon="mappin.png">
+    <NavigationPage Title="Map" Icon="map.png">
+        <x:Arguments>
+            <local:MapPage />
+        </x:Arguments>
+    </NavigationPage>
+    <NavigationPage Title="List" Icon="mappin.png">
         <x:Arguments>
             <local:SignsKiosksPage />
         </x:Arguments>
@@ -20,6 +24,13 @@
             <local:SettingsPage />
         </x:Arguments>
     </NavigationPage>
-    <local:AboutPage />
+    <NavigationPage Title="About" Icon="about.png">
+        <x:Arguments>
+
+            <local:AboutPage />
+        </x:Arguments>
+    </NavigationPage>
+
+
 
 </TabbedPage>

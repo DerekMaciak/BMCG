@@ -1468,44 +1468,44 @@ namespace BMCGMobile.Droid
 		public partial class Color
 		{
 			
-			// aapt resource value: 0x7f090066
-			public const int abc_background_cache_hint_selector_material_dark = 2131296358;
-			
-			// aapt resource value: 0x7f090067
-			public const int abc_background_cache_hint_selector_material_light = 2131296359;
-			
-			// aapt resource value: 0x7f090068
-			public const int abc_btn_colored_borderless_text_material = 2131296360;
-			
-			// aapt resource value: 0x7f090069
-			public const int abc_btn_colored_text_material = 2131296361;
-			
-			// aapt resource value: 0x7f09006a
-			public const int abc_color_highlight_material = 2131296362;
-			
 			// aapt resource value: 0x7f09006b
-			public const int abc_hint_foreground_material_dark = 2131296363;
+			public const int abc_background_cache_hint_selector_material_dark = 2131296363;
 			
 			// aapt resource value: 0x7f09006c
-			public const int abc_hint_foreground_material_light = 2131296364;
+			public const int abc_background_cache_hint_selector_material_light = 2131296364;
+			
+			// aapt resource value: 0x7f09006d
+			public const int abc_btn_colored_borderless_text_material = 2131296365;
+			
+			// aapt resource value: 0x7f09006e
+			public const int abc_btn_colored_text_material = 2131296366;
+			
+			// aapt resource value: 0x7f09006f
+			public const int abc_color_highlight_material = 2131296367;
+			
+			// aapt resource value: 0x7f090070
+			public const int abc_hint_foreground_material_dark = 2131296368;
+			
+			// aapt resource value: 0x7f090071
+			public const int abc_hint_foreground_material_light = 2131296369;
 			
 			// aapt resource value: 0x7f090015
 			public const int abc_input_method_navigation_guard = 2131296277;
 			
-			// aapt resource value: 0x7f09006d
-			public const int abc_primary_text_disable_only_material_dark = 2131296365;
+			// aapt resource value: 0x7f090072
+			public const int abc_primary_text_disable_only_material_dark = 2131296370;
 			
-			// aapt resource value: 0x7f09006e
-			public const int abc_primary_text_disable_only_material_light = 2131296366;
+			// aapt resource value: 0x7f090073
+			public const int abc_primary_text_disable_only_material_light = 2131296371;
 			
-			// aapt resource value: 0x7f09006f
-			public const int abc_primary_text_material_dark = 2131296367;
+			// aapt resource value: 0x7f090074
+			public const int abc_primary_text_material_dark = 2131296372;
 			
-			// aapt resource value: 0x7f090070
-			public const int abc_primary_text_material_light = 2131296368;
+			// aapt resource value: 0x7f090075
+			public const int abc_primary_text_material_light = 2131296373;
 			
-			// aapt resource value: 0x7f090071
-			public const int abc_search_url_text = 2131296369;
+			// aapt resource value: 0x7f090076
+			public const int abc_search_url_text = 2131296374;
 			
 			// aapt resource value: 0x7f090016
 			public const int abc_search_url_text_normal = 2131296278;
@@ -1516,29 +1516,32 @@ namespace BMCGMobile.Droid
 			// aapt resource value: 0x7f090018
 			public const int abc_search_url_text_selected = 2131296280;
 			
-			// aapt resource value: 0x7f090072
-			public const int abc_secondary_text_material_dark = 2131296370;
-			
-			// aapt resource value: 0x7f090073
-			public const int abc_secondary_text_material_light = 2131296371;
-			
-			// aapt resource value: 0x7f090074
-			public const int abc_tint_btn_checkable = 2131296372;
-			
-			// aapt resource value: 0x7f090075
-			public const int abc_tint_default = 2131296373;
-			
-			// aapt resource value: 0x7f090076
-			public const int abc_tint_edittext = 2131296374;
-			
 			// aapt resource value: 0x7f090077
-			public const int abc_tint_seek_thumb = 2131296375;
+			public const int abc_secondary_text_material_dark = 2131296375;
 			
 			// aapt resource value: 0x7f090078
-			public const int abc_tint_spinner = 2131296376;
+			public const int abc_secondary_text_material_light = 2131296376;
 			
 			// aapt resource value: 0x7f090079
-			public const int abc_tint_switch_track = 2131296377;
+			public const int abc_tint_btn_checkable = 2131296377;
+			
+			// aapt resource value: 0x7f09007a
+			public const int abc_tint_default = 2131296378;
+			
+			// aapt resource value: 0x7f09007b
+			public const int abc_tint_edittext = 2131296379;
+			
+			// aapt resource value: 0x7f09007c
+			public const int abc_tint_seek_thumb = 2131296380;
+			
+			// aapt resource value: 0x7f09007d
+			public const int abc_tint_spinner = 2131296381;
+			
+			// aapt resource value: 0x7f09007e
+			public const int abc_tint_switch_track = 2131296382;
+			
+			// aapt resource value: 0x7f090068
+			public const int accent = 2131296360;
 			
 			// aapt resource value: 0x7f090019
 			public const int accent_material_dark = 2131296281;
@@ -1597,8 +1600,8 @@ namespace BMCGMobile.Droid
 			// aapt resource value: 0x7f090008
 			public const int common_action_bar_splitter = 2131296264;
 			
-			// aapt resource value: 0x7f09007a
-			public const int common_google_signin_btn_text_dark = 2131296378;
+			// aapt resource value: 0x7f09007f
+			public const int common_google_signin_btn_text_dark = 2131296383;
 			
 			// aapt resource value: 0x7f090009
 			public const int common_google_signin_btn_text_dark_default = 2131296265;
@@ -1612,8 +1615,8 @@ namespace BMCGMobile.Droid
 			// aapt resource value: 0x7f09000a
 			public const int common_google_signin_btn_text_dark_pressed = 2131296266;
 			
-			// aapt resource value: 0x7f09007b
-			public const int common_google_signin_btn_text_light = 2131296379;
+			// aapt resource value: 0x7f090080
+			public const int common_google_signin_btn_text_light = 2131296384;
 			
 			// aapt resource value: 0x7f09000d
 			public const int common_google_signin_btn_text_light_default = 2131296269;
@@ -1627,8 +1630,8 @@ namespace BMCGMobile.Droid
 			// aapt resource value: 0x7f09000e
 			public const int common_google_signin_btn_text_light_pressed = 2131296270;
 			
-			// aapt resource value: 0x7f09007c
-			public const int common_plus_signin_btn_text_dark = 2131296380;
+			// aapt resource value: 0x7f090081
+			public const int common_plus_signin_btn_text_dark = 2131296385;
 			
 			// aapt resource value: 0x7f090000
 			public const int common_plus_signin_btn_text_dark_default = 2131296256;
@@ -1642,8 +1645,8 @@ namespace BMCGMobile.Droid
 			// aapt resource value: 0x7f090001
 			public const int common_plus_signin_btn_text_dark_pressed = 2131296257;
 			
-			// aapt resource value: 0x7f09007d
-			public const int common_plus_signin_btn_text_light = 2131296381;
+			// aapt resource value: 0x7f090082
+			public const int common_plus_signin_btn_text_light = 2131296386;
 			
 			// aapt resource value: 0x7f090004
 			public const int common_plus_signin_btn_text_light_default = 2131296260;
@@ -1660,8 +1663,8 @@ namespace BMCGMobile.Droid
 			// aapt resource value: 0x7f090051
 			public const int design_bottom_navigation_shadow_color = 2131296337;
 			
-			// aapt resource value: 0x7f09007e
-			public const int design_error = 2131296382;
+			// aapt resource value: 0x7f090083
+			public const int design_error = 2131296387;
 			
 			// aapt resource value: 0x7f090052
 			public const int design_fab_shadow_end_color = 2131296338;
@@ -1687,8 +1690,8 @@ namespace BMCGMobile.Droid
 			// aapt resource value: 0x7f090059
 			public const int design_snackbar_background_color = 2131296345;
 			
-			// aapt resource value: 0x7f09007f
-			public const int design_tint_password_toggle = 2131296383;
+			// aapt resource value: 0x7f090084
+			public const int design_tint_password_toggle = 2131296388;
 			
 			// aapt resource value: 0x7f090027
 			public const int dim_foreground_disabled_material_dark = 2131296295;
@@ -1792,6 +1795,12 @@ namespace BMCGMobile.Droid
 			// aapt resource value: 0x7f090050
 			public const int notification_material_background_media_default_color = 2131296336;
 			
+			// aapt resource value: 0x7f090066
+			public const int primary = 2131296358;
+			
+			// aapt resource value: 0x7f090067
+			public const int primaryDark = 2131296359;
+			
 			// aapt resource value: 0x7f09003c
 			public const int primary_dark_material_dark = 2131296316;
 			
@@ -1834,17 +1843,20 @@ namespace BMCGMobile.Droid
 			// aapt resource value: 0x7f090049
 			public const int secondary_text_disabled_material_light = 2131296329;
 			
+			// aapt resource value: 0x7f09006a
+			public const int splash_background = 2131296362;
+			
 			// aapt resource value: 0x7f09004a
 			public const int switch_thumb_disabled_material_dark = 2131296330;
 			
 			// aapt resource value: 0x7f09004b
 			public const int switch_thumb_disabled_material_light = 2131296331;
 			
-			// aapt resource value: 0x7f090080
-			public const int switch_thumb_material_dark = 2131296384;
+			// aapt resource value: 0x7f090085
+			public const int switch_thumb_material_dark = 2131296389;
 			
-			// aapt resource value: 0x7f090081
-			public const int switch_thumb_material_light = 2131296385;
+			// aapt resource value: 0x7f090086
+			public const int switch_thumb_material_light = 2131296390;
 			
 			// aapt resource value: 0x7f09004c
 			public const int switch_thumb_normal_material_dark = 2131296332;
@@ -1857,6 +1869,9 @@ namespace BMCGMobile.Droid
 			
 			// aapt resource value: 0x7f09004f
 			public const int tooltip_background_light = 2131296335;
+			
+			// aapt resource value: 0x7f090069
+			public const int window_background = 2131296361;
 			
 			static Color()
 			{
@@ -2634,26 +2649,26 @@ namespace BMCGMobile.Droid
 			// aapt resource value: 0x7f020055
 			public const int avd_hide_password = 2130837589;
 			
-			// aapt resource value: 0x7f020171
-			public const int avd_hide_password_1 = 2130837873;
-			
 			// aapt resource value: 0x7f020172
-			public const int avd_hide_password_2 = 2130837874;
+			public const int avd_hide_password_1 = 2130837874;
 			
 			// aapt resource value: 0x7f020173
-			public const int avd_hide_password_3 = 2130837875;
+			public const int avd_hide_password_2 = 2130837875;
+			
+			// aapt resource value: 0x7f020174
+			public const int avd_hide_password_3 = 2130837876;
 			
 			// aapt resource value: 0x7f020056
 			public const int avd_show_password = 2130837590;
 			
-			// aapt resource value: 0x7f020174
-			public const int avd_show_password_1 = 2130837876;
-			
 			// aapt resource value: 0x7f020175
-			public const int avd_show_password_2 = 2130837877;
+			public const int avd_show_password_1 = 2130837877;
 			
 			// aapt resource value: 0x7f020176
-			public const int avd_show_password_3 = 2130837878;
+			public const int avd_show_password_2 = 2130837878;
+			
+			// aapt resource value: 0x7f020177
+			public const int avd_show_password_3 = 2130837879;
 			
 			// aapt resource value: 0x7f020057
 			public const int BloomfieldRecDeptLogo = 2130837591;
@@ -3465,11 +3480,11 @@ namespace BMCGMobile.Droid
 			// aapt resource value: 0x7f020164
 			public const int notification_icon_background = 2130837860;
 			
-			// aapt resource value: 0x7f02016f
-			public const int notification_template_icon_bg = 2130837871;
-			
 			// aapt resource value: 0x7f020170
-			public const int notification_template_icon_low_bg = 2130837872;
+			public const int notification_template_icon_bg = 2130837872;
+			
+			// aapt resource value: 0x7f020171
+			public const int notification_template_icon_low_bg = 2130837873;
 			
 			// aapt resource value: 0x7f020165
 			public const int notification_tile_bg = 2130837861;
@@ -3484,22 +3499,25 @@ namespace BMCGMobile.Droid
 			public const int settings = 2130837864;
 			
 			// aapt resource value: 0x7f020169
-			public const int steps = 2130837865;
+			public const int splash_screen = 2130837865;
 			
 			// aapt resource value: 0x7f02016a
-			public const int tooltip_frame_dark = 2130837866;
+			public const int steps = 2130837866;
 			
 			// aapt resource value: 0x7f02016b
-			public const int tooltip_frame_light = 2130837867;
+			public const int tooltip_frame_dark = 2130837867;
 			
 			// aapt resource value: 0x7f02016c
-			public const int zoomintoview = 2130837868;
+			public const int tooltip_frame_light = 2130837868;
 			
 			// aapt resource value: 0x7f02016d
-			public const int zoomtoseeall = 2130837869;
+			public const int zoomintoview = 2130837869;
 			
 			// aapt resource value: 0x7f02016e
-			public const int zoomtoseepins = 2130837870;
+			public const int zoomtoseeall = 2130837870;
+			
+			// aapt resource value: 0x7f02016f
+			public const int zoomtoseepins = 2130837871;
 			
 			static Drawable()
 			{
@@ -4555,6 +4573,12 @@ namespace BMCGMobile.Droid
 		
 		public partial class String
 		{
+			
+			// aapt resource value: 0x7f0700b7
+			public const int ApplicationName = 2131165367;
+			
+			// aapt resource value: 0x7f0700b6
+			public const int Hello = 2131165366;
 			
 			// aapt resource value: 0x7f070034
 			public const int abc_action_bar_home_description = 2131165236;
@@ -5651,6 +5675,15 @@ namespace BMCGMobile.Droid
 			
 			// aapt resource value: 0x7f0c019d
 			public const int MainTheme_Base = 2131493277;
+			
+			// aapt resource value: 0x7f0c01a0
+			public const int MyTheme = 2131493280;
+			
+			// aapt resource value: 0x7f0c019f
+			public const int MyTheme_Base = 2131493279;
+			
+			// aapt resource value: 0x7f0c01a1
+			public const int MyTheme_Splash = 2131493281;
 			
 			// aapt resource value: 0x7f0c002d
 			public const int Platform_AppCompat = 2131492909;

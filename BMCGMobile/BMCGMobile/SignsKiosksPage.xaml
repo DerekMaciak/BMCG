@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BMCGMobile.SignsKiosksPage" Title="Signs/Kiosks" Icon="map-pin.png">
+             x:Class="BMCGMobile.SignsKiosksPage" Title="Pin List View " Icon="map-pin.png">
     <ContentPage.Content>
         <ScrollView>
             <ListView x:Name="listViewPins" HasUnevenRows="True" ItemSelected="listViewPins_ItemSelected">
@@ -21,7 +21,7 @@
                                         <Label Text="{Binding Pin.Label}" FontAttributes="Bold"></Label>
                                         <Label Text="{Binding Pin.Address}" FontSize="Small"></Label>
                                     </StackLayout>
-                                    <Button Grid.Column="2" Text="Directions" Margin="0,0,10,0" CommandParameter="{Binding .}" Clicked="Button_Clicked"></Button>
+                                    <Button Grid.Column="2" Text="Directions" Margin="0,2,10,2" CommandParameter="{Binding .}" Clicked="Button_Clicked"></Button>
                                    
                                     <!--<Label Grid.Column="1" Text="{Binding id}"></Label>
                                     <Label Grid.Column="2" Text="{Binding title}"></Label>

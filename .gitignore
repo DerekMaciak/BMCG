@@ -57,3 +57,4 @@ _ReSharper*/
 #GhostDoc
 *.sln.GhostDoc.xml
 /Gapps
+/.vs

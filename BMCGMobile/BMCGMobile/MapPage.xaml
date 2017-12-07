@@ -2,25 +2,35 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:BMCGMobile"
-             x:Class="BMCGMobile.MapPage" Icon="map.png" Title="Map">
+             x:Class="BMCGMobile.MapPage" Icon="map.png" Title="Map View">
     <ContentPage.Content>
         <StackLayout WidthRequest="{x:Static local:App.ScreenWidth}" HeightRequest="{x:Static local:App.ScreenHeight}" VerticalOptions = "FillAndExpand">
-            <local:CustomMap x:Name="customMap" MapType="Street"  IsShowingUser="True" VerticalOptions = "FillAndExpand" />
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackLayout Grid.Column="0" HorizontalOptions="Start" Spacing="20" Orientation="Horizontal" Margin="10,0,5,0">
-                    <Button Text="Street" Clicked="MapViewButton_Clicked"></Button>
-                    <Button Text="Hybrid" Clicked="MapViewButton_Clicked"></Button>
-                    <Button Text="Satellite" Clicked="MapViewButton_Clicked"></Button>
+            <local:CustomMap x:Name="customMap" MapType="Street"  IsShowingUser="True" VerticalOptions = "FillAndExpand" Margin="0,0,0,-170"/>
+
+            <AbsoluteLayout x:Name="ZoomControls" AbsoluteLayout.LayoutBounds="1,1,1,.50" AbsoluteLayout.LayoutFlags="All" BackgroundColor="Transparent" Margin="0">
+                <StackLayout Orientation="Vertical" HorizontalOptions="Start" Margin="5,0,0,0" BackgroundColor="Transparent" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1,1,1,1">
+
+                    <Button Image="zoomtoseeall.png" Clicked="ZoomAllButton_Clicked" BackgroundColor="#99e6e6e6"  HeightRequest="50" WidthRequest="50" BorderRadius="4" BorderColor="DarkGray" BorderWidth="2" TextColor="White" HorizontalOptions="Start"  />
+                    <Button Image="zoomtoseepins.png" Clicked="ZoomPinsButton_Clicked" BackgroundColor="#99e6e6e6" HeightRequest="50" WidthRequest="50" BorderRadius="4" BorderColor="DarkGray" BorderWidth="2" TextColor="White" HorizontalOptions="Start"/>
                 </StackLayout>
-                <StackLayout Grid.Column="0"  HorizontalOptions="End" Spacing="20" Orientation="Horizontal" Margin="5,0,10,0">
-                    <Button Image="zoomtoseeall.png" Clicked="ZoomAllButton_Clicked"></Button>
-                    <Button Image="zoomtoseepins.png" Clicked="ZoomPinsButton_Clicked"></Button>
-                </StackLayout>
-            </Grid>
+
+            </AbsoluteLayout>
+
+            <AbsoluteLayout x:Name="ViewControls" AbsoluteLayout.LayoutBounds="1,1,1,.50" AbsoluteLayout.LayoutFlags="All" BackgroundColor="Transparent" Margin="0">
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Margin="0,0,0,5" BackgroundColor="Transparent" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1,1,1,1">
+
+                    <Button Text="Street" Clicked="MapViewButton_Clicked" BackgroundColor="#77000000" FontSize="Micro" BorderRadius="4" WidthRequest="90" BorderColor="DarkGray" BorderWidth="2" TextColor="White" HorizontalOptions="Start"  />
+                    <Button Text="Hybrid" Clicked="MapViewButton_Clicked" BackgroundColor="#77000000" FontSize="Micro" BorderRadius="4" WidthRequest="90" BorderColor="DarkGray" BorderWidth="2" TextColor="White" HorizontalOptions="Start"/>
+                    <Button Text="Satellite" Clicked="MapViewButton_Clicked" BackgroundColor="#77000000" FontSize="Micro" BorderRadius="4" WidthRequest="90" BorderColor="DarkGray" BorderWidth="2" TextColor="White" HorizontalOptions="Start" />
+                    </StackLayout>
+
+            </AbsoluteLayout>
+
+           
+
+
+         
+            
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
