@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27130.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMCGMobile.Android", "BMCGMobile\BMCGMobile.Android\BMCGMobile.Android.csproj", "{E53DB6A7-0D87-43E7-9D68-0F7FEAA11828}"
 EndProject

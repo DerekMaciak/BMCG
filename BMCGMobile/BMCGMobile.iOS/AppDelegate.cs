@@ -30,7 +30,7 @@ namespace BMCGMobile.iOS
 
 
             global::Xamarin.Forms.Forms.Init();
-            Xamarin.FormsMaps.Init();
+            Xamarin.FormsGoogleMaps.Init(Variables.GOOGLE_MAPS_IOS_API_KEY);
 
             App.ScreenWidth = UIScreen.MainScreen.Bounds.Width;
             App.ScreenHeight = UIScreen.MainScreen.Bounds.Height;

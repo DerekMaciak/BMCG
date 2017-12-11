@@ -10,7 +10,7 @@
             </Grid.RowDefinitions>
 
             <Image Grid.Row="0" Source="BMCGsplash.png" Margin="0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"></Image>
-            <Label Grid.Row="1" HorizontalOptions="CenterAndExpand" Margin="5,5,5,20" FontSize="Small" VerticalOptions="CenterAndExpand">Version 1.0.0.0 Copyright 2018</Label>
+            <Label Grid.Row="1" HorizontalOptions="CenterAndExpand" Margin="5,5,5,20" FontSize="Small" VerticalOptions="CenterAndExpand">Version 1.0.0.2 Copyright 2018</Label>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

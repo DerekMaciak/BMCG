@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms.Maps;
+﻿using Xamarin.Forms;
+using Xamarin.Forms.GoogleMaps;
 
 namespace BMCGMobile
 {
@@ -16,22 +17,7 @@ namespace BMCGMobile
         {
             get
             {
-                switch (PinType)
-                {
-                    case PinTypes.Kiosk:
-                        return "marker26green.png";
-
-                    case PinTypes.Wayfinding:
-                        return "marker26red.png";
-
-                    case PinTypes.POI:
-                        return "marker26black.png";
-
-                    default:
-                        break;
-                }
-
-                return "marker26red.png";
+                return GetPinImageName(PinType);
             }
         }
 
@@ -40,6 +26,49 @@ namespace BMCGMobile
             Kiosk,
             Wayfinding,
             POI
+        }
+
+        public static string GetPinImageName(PinTypes pinType)
+        {
+
+            switch (pinType)
+            {
+                case PinTypes.Kiosk:
+                    return "marker26green.png";
+
+                case PinTypes.Wayfinding:
+                    return "marker26red.png";
+
+                case PinTypes.POI:
+                    return "marker26black.png";
+
+                default:
+                    break;
+            }
+
+            return "marker26red.png";
+
+        }
+
+        public static Color GetPinImageColor(PinTypes pinType)
+        {
+            switch (pinType)
+            {
+                case PinTypes.Kiosk:
+                    return Color.Red;
+
+                case PinTypes.Wayfinding:
+                    return Color.Green;
+
+                case PinTypes.POI:
+                    return Color.Black;
+
+                default:
+                    break;
+            }
+
+            return Color.Red;
+
         }
     }
 }
