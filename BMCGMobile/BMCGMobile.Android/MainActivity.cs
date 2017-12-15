@@ -9,7 +9,6 @@ using Android.OS;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 
-
 namespace BMCGMobile.Droid
 {
     [Activity(Label = "Bloomfield Greenway", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
@@ -25,6 +24,7 @@ namespace BMCGMobile.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             Xamarin.FormsGoogleMaps.Init(this, bundle); // initialize for Xamarin.Forms.GoogleMaps
             LoadApplication(new App());
+            
         }
 
         protected override void OnResume()

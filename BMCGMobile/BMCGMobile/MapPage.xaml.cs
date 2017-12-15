@@ -1,4 +1,5 @@
-﻿using Plugin.Geolocator;
+﻿using Plugin.Compass;
+using Plugin.Geolocator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +24,9 @@ namespace BMCGMobile
 
         private MapZooms _CurrentMapZoom = MapZooms.All;
 
-        private double _DefaultStreetZoom = 18d;
+        private double _DefaultStreetZoom = 19d;
         private double _DefaultStreetTilt = 70d;
+        private Double _LastCompassHeading = 0;
 
         private Plugin.Geolocator.Abstractions.Position _LastKnownPosition;
 
@@ -98,19 +100,39 @@ namespace BMCGMobile
         {
             var geolocator = CrossGeolocator.Current;
             geolocator.DesiredAccuracy = 1;
-            //geolocator.SupportsHeading = true;
 
             if (!geolocator.IsListening)
             {
+                if (Device.RuntimePlatform == Device.Android)
+                {
+                    CrossCompass.Current.CompassChanged += async (s, e) =>
+                    {
+                        if (_CurrentMapZoom == MapZooms.Street && (Device.RuntimePlatform == Device.Android || !geolocator.SupportsHeading))
+                        {
+                            if (_LastKnownPosition != null)
+                            {
+                                if (Math.Abs(_LastCompassHeading - Math.Truncate(e.Heading)) > 2)
+                                {
+                                    _LastKnownPosition.Heading = e.Heading;
+                                    await _StreetViewAsync(_LastKnownPosition, _DefaultStreetZoom, _DefaultStreetTilt);
+
+                                    _LastCompassHeading = Math.Truncate(e.Heading);
+                                }
+                            }
+                        }
+                    };
+
+                    CrossCompass.Current.Start();
+                }
+
                 // MoveToCamera with Position and Zoom
                 geolocator.PositionChanged += async (sender, e) =>
                 {
                     _LastKnownPosition = e.Position;
 
-                    if (_CurrentMapZoom == MapZooms.Street)
+                    if (_CurrentMapZoom == MapZooms.Street && e.Position.Heading != 0)
                     {
                         await _StreetViewAsync(e.Position, _DefaultStreetZoom, _DefaultStreetTilt);
-                        // _StreetView(e.Position, customMap.CameraPosition.Zoom, customMap.CameraPosition.Tilt);
                     }
                 };
 
@@ -399,3 +421,11 @@ namespace BMCGMobile
         }
     }
 };
+
+//Example how to call device specific code
+//if (Device.RuntimePlatform == Device.Android)
+//{
+//    // Access compass directly if not available through google maps
+//    var heading = DependencyService.Get<ICompass>().GetHeading();
+//    e.Position.Heading = heading;
+//}

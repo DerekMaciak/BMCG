@@ -69,6 +69,12 @@
     </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
+    <Reference Include="Plugin.Compass, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Plugin.Compass.3.0.1\lib\MonoAndroid10\Plugin.Compass.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Compass.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Plugin.Compass.3.0.1\lib\MonoAndroid10\Plugin.Compass.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="Plugin.CurrentActivity">
       <HintPath>..\..\packages\Plugin.CurrentActivity.1.0.1\lib\MonoAndroid10\Plugin.CurrentActivity.dll</HintPath>
       <Private>True</Private>
