@@ -98,6 +98,7 @@ namespace BMCGMobile
         {
             var geolocator = CrossGeolocator.Current;
             geolocator.DesiredAccuracy = 1;
+            //geolocator.SupportsHeading = true;
 
             if (!geolocator.IsListening)
             {

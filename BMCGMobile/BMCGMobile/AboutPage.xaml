@@ -3,14 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BMCGMobile.AboutPage" Title="About" Icon="about.png">
     <ContentPage.Content>
-        <Grid  Margin="0, 30, 0, 0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="40"></RowDefinition>
-            </Grid.RowDefinitions>
 
-            <Image Grid.Row="0" Source="BMCGsplash.png" Margin="0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"></Image>
-            <Label Grid.Row="1" HorizontalOptions="CenterAndExpand" Margin="5,5,5,20" FontSize="Small" VerticalOptions="CenterAndExpand">Version 1.0.0.2 Copyright 2018</Label>
-        </Grid>
+        <AbsoluteLayout BackgroundColor="#032743">
+
+            <Image Grid.Row="0" Source="BMCGsplash.png" Margin="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Aspect="AspectFit" AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All"></Image>
+
+            <Label  Margin="0" TextColor="White" FontSize="Small" HorizontalOptions="CenterAndExpand" AbsoluteLayout.LayoutBounds=".5,.80,235,50" AbsoluteLayout.LayoutFlags="PositionProportional"  >Version 1.0.0.3 Copyright 2018</Label>
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

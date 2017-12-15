@@ -180,7 +180,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\BloomfieldRecDeptLogo.png" />
     <BundleResource Include="Resources\fitness%402x.png" />
     <BundleResource Include="Resources\fitness.png" />
     <BundleResource Include="Resources\map%402x.png" />
@@ -293,9 +292,6 @@
     <BundleResource Include="Resources\fitnesshistory%402x.png" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\BloomfieldRecDeptLogo2.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BundleResource Include="Resources\BMCGsplash.png" />
   </ItemGroup>
   <ItemGroup>
@@ -311,13 +307,13 @@
     <BundleResource Include="Resources\marker26red.png" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\marker26yelow.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BundleResource Include="Resources\streetview.png" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\zoomtouser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker26yellow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

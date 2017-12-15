@@ -40,7 +40,7 @@ namespace BMCGMobile
                     return "marker26red.png";
 
                 case PinTypes.POI:
-                    return "marker26black.png";
+                    return "marker26yellow.png";
 
                 default:
                     break;
@@ -55,13 +55,13 @@ namespace BMCGMobile
             switch (pinType)
             {
                 case PinTypes.Kiosk:
-                    return Color.Red;
-
-                case PinTypes.Wayfinding:
                     return Color.Green;
 
+                case PinTypes.Wayfinding:
+                    return Color.FromHex("#A24437"); //Red
+
                 case PinTypes.POI:
-                    return Color.Black;
+                    return Color.Yellow;
 
                 default:
                     break;

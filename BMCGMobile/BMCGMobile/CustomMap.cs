@@ -96,7 +96,7 @@ namespace BMCGMobile
             }
 
             polyline.IsClickable = false;
-            polyline.StrokeColor = Color.Green;
+            polyline.StrokeColor = Color.FromHex("#A24437"); //Red
             polyline.StrokeWidth = 5f;
             polyline.Tag = "POLYLINE"; // Can set any object
 

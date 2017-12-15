@@ -1,7 +1,10 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="X5k-f2-b5h">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="X5k-f2-b5h">
+    <device id="retina5_9" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -10,22 +13,23 @@
             <objects>
                 <viewController id="X5k-f2-b5h" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="Y8P-hJ-Z43"/>
-                        <viewControllerLayoutGuide type="bottom" id="9ZL-r4-8FZ"/>
+                        <viewControllerLayoutGuide type="top" id="5293"/>
+                        <viewControllerLayoutGuide type="bottom" id="5294"/>
                     </layoutGuides>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="5072" key="view" image="BMCGsplash.png">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                    <imageView key="view" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="BMCGsplash.png" id="5072">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <variation key="heightClass=regular-widthClass=compact" image="BMCGsplash.png">
-                            <color key="backgroundColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
-                        </variation>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <variation key="heightClass=compact-widthClass=compact" image="BMCGsplash.png">
-                            <color key="backgroundColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact" image="BMCGsplash.png">
+                            <color key="backgroundColor" colorSpace="calibratedRGB" red="0" green="0.20784313725490197" blue="0.33333333333333331" alpha="1"/>
+                            <color key="tintColor" colorSpace="calibratedRGB" red="0" green="0" blue="0" alpha="1"/>
                         </variation>
                         <variation key="heightClass=regular-widthClass=regular" image="BMCGsplash.png">
-                            <color key="backgroundColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
+                            <color key="backgroundColor" colorSpace="calibratedRGB" red="0" green="0.20784313725490197" blue="0.33333333333333331" alpha="1"/>
                         </variation>
-                        <color key="backgroundColor" colorSpace="calibratedWhite" white="1" alpha="1"/>
                     </imageView>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XAI-xm-WK6" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -34,31 +38,28 @@
         </scene>
     </scenes>
     <resources>
-        <image name="BloomfieldRecDeptLogo2.png" width="800" height="431"/>
-        <image name="greenwaylogo2.png" width="370" height="182"/>
+        <image name="BMCGsplash.png" width="475" height="803"/>
         <image name="about.png" width="24" height="24"/>
         <image name="activetime.png" width="48" height="48"/>
-        <image name="BLM.png" width="104" height="106"/>
-        <image name="BloomfieldRecDeptLogo.png" width="800" height="431"/>
         <image name="caloriesburned.png" width="48" height="48"/>
         <image name="distance.png" width="48" height="48"/>
-        <image name="fitnesshistory.png" width="22" height="24"/>
         <image name="fitness.png" width="24" height="24"/>
-        <image name="greenwaylogo.png" width="370" height="182"/>
-        <image name="mappin.png" width="24" height="24"/>
+        <image name="fitnesshistory.png" width="22" height="24"/>
         <image name="map.png" width="24" height="24"/>
-        <image name="pinkiosk.png" width="24" height="24"/>
-        <image name="pin.png" width="24" height="24"/>
+        <image name="mappin.png" width="24" height="24"/>
+        <image name="marker26black.png" width="26" height="26"/>
+        <image name="marker26blue.png" width="26" height="26"/>
+        <image name="marker26green.png" width="26" height="26"/>
+        <image name="marker26red.png" width="26" height="26"/>
+        <image name="marker26yellow.png" width="26" height="26"/>
         <image name="schedule.png" width="24" height="24"/>
         <image name="settings.png" width="24" height="24"/>
         <image name="steps.png" width="48" height="48"/>
+        <image name="streetview.png" width="24" height="24"/>
         <image name="zoomintoview.png" width="20" height="20"/>
-        <image name="zoomtoseeall.png" width="24" height="23"/>
-        <image name="zoomtoseepins.png" width="24" height="23"/>
-        <image name="BMCGsplash.png" width="498" height="813"/>
+        <image name="zoomtoseeall.png" width="24" height="24"/>
+        <image name="zoomtoseepins.png" width="24" height="24"/>
+        <image name="zoomtouser.png" width="24" height="24"/>
     </resources>
-    <simulatedMetricsContainer key="defaultSimulatedMetrics">
-        <simulatedScreenMetrics key="destination" type="retina55"/>
-        <simulatedOrientationMetrics key="orientation"/>
-    </simulatedMetricsContainer>
+    <color key="tintColor" colorSpace="calibratedWhite" white="0" alpha="0"/>
 </document>
