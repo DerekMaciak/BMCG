@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BMCGMobile.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,8 @@ namespace BMCGMobile
         public AboutPage()
         {
             InitializeComponent();
+
+            this.BindingContext = new AboutEntity();
         }
     }
 }

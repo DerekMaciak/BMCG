@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using static BMCGMobile.CustomPin;
+using static BMCGMobile.Entities.CustomPinEntity;
 
 namespace BMCGMobile
 {

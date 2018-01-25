@@ -17,7 +17,8 @@ namespace BMCGMobile
         // https://msdn.microsoft.com/windows/uwp/maps-and-location/authentication-key
         public const string BING_MAPS_UWP_API_KEY = "your_bing_maps_apikey";
 
-        public const string GPX_URL = @"http://services.surroundtech.com/BMCGWebsite/downloads/BMCGCoordinates.txt";
+        //public const string GPX_URL = @"http://services.surroundtech.com/BMCGWebsite/downloads/BMCGCoordinates.txt";
+        public const string GPX_URL = @"http://services.surroundtech.com/BMCGWebsite/downloads/DerekHomeTest.txt";
 
         public const string CMS_WEBSITE_URL = @"http://services.surroundtech.com/BMCGWebsite/Home/";
     }

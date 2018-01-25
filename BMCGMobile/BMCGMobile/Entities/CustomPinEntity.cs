@@ -1,9 +1,9 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 
-namespace BMCGMobile
+namespace BMCGMobile.Entities
 {
-    public class CustomPin
+    public class CustomPinEntity : EntityBase
     {
         public Pin Pin { get; set; }
 

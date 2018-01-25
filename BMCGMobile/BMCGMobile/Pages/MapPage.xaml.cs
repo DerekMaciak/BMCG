@@ -1,4 +1,5 @@
-﻿using Plugin.Compass;
+﻿using BMCGMobile.Entities;
+using Plugin.Compass;
 using Plugin.Geolocator;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,14 @@ namespace BMCGMobile
             None
         }
 
+        private enum Units
+        {
+            Miles,
+            Kilometers,
+            Feet,
+            Yards
+        }
+
         private MapZooms _CurrentMapZoom = MapZooms.All;
 
         private double _DefaultStreetZoom = 19d;
@@ -30,9 +39,18 @@ namespace BMCGMobile
 
         private Plugin.Geolocator.Abstractions.Position _LastKnownPosition;
 
+        public TrackingEntity _TrackingEntity;
+
         public MapPage()
         {
             InitializeComponent();
+
+            // Get User Settings
+            var settingsEntity = new SettingsEntity();
+            _TrackingEntity = new TrackingEntity();
+            _TrackingEntity.UserSettings = settingsEntity;
+
+            this.BindingContext = _TrackingEntity;
 
             _SetMapViewToggleButton(MapType.None);
             _SetZoomViewToggleButton(MapZooms.None);
@@ -130,6 +148,14 @@ namespace BMCGMobile
                 {
                     _LastKnownPosition = e.Position;
 
+                    _FindDistanceToNearestCoordinate();
+
+                    if (_TrackingEntity.IsOnTrail)
+                    {
+                        // Set zoom to street view if on trail
+                        _SetZoomViewToggleButton(MapZooms.Street);
+                    }
+
                     if (_CurrentMapZoom == MapZooms.Street && e.Position.Heading != 0)
                     {
                         await _StreetViewAsync(e.Position, _DefaultStreetZoom, _DefaultStreetTilt);
@@ -171,14 +197,14 @@ namespace BMCGMobile
                     new Position(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude), new Position(lastLatCoordinate.Latitude, lastLatCoordinate.Longitude),
                     new Position(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude), new Position(lastLongCoordinate.Latitude, lastLongCoordinate.Longitude) });
 
-                    var distLat = distance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, 'M');
-                    var distLong = distance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, 'M');
+                    var distLat = _CalculateDistance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, Units.Miles);
+                    var distLong = _CalculateDistance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, Units.Miles);
                     var dist = distLat >= distLong ? distLat : distLong;
 
-                    var distPost = distance(centerPosition.Latitude, centerPosition.Longitude, position.Latitude, position.Longitude, 'M');
+                    var distPost = _CalculateDistance(centerPosition.Latitude, centerPosition.Longitude, position.Latitude, position.Longitude, Units.Miles);
                     dist = distPost >= dist ? distPost : dist;
 
-                    dist = dist == 0 ? 0 : dist / 2.5;
+                    dist = dist == 0 ? 0 : dist / 2;
 
                     customMap.MoveToRegion(MapSpan.FromCenterAndRadius(centerPosition, Distance.FromMiles(dist)));
                 }
@@ -202,30 +228,122 @@ namespace BMCGMobile
                     new Position(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude), new Position(lastLatCoordinate.Latitude, lastLatCoordinate.Longitude),
                     new Position(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude), new Position(lastLongCoordinate.Latitude, lastLongCoordinate.Longitude) });
 
-                var distLat = distance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, 'M');
-                var distLong = distance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, 'M');
+                var distLat = _CalculateDistance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, Units.Miles);
+                var distLong = _CalculateDistance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, Units.Miles);
                 var dist = distLat >= distLong ? distLat : distLong;
 
-                dist = dist == 0 ? 0 : dist / 2.5;
+                dist = dist == 0 ? 0 : dist / 2;
 
                 customMap.MoveToRegion(MapSpan.FromCenterAndRadius(centerPosition, Distance.FromMiles(dist)));
             }
         }
 
-        private double distance(double lat1, double lon1, double lat2, double lon2, char unit)
+        private void _FindDistanceToNearestCoordinate()
+        {
+           // var _LastKnownPosition = new Position(40.805293, -74.19676);
+
+            var distanceDict = new Dictionary<Position, double>();
+
+            foreach (var position in CustomMap.RouteCoordinates)
+            {
+                if (!distanceDict.ContainsKey(position))
+                {
+                    distanceDict.Add(position, _CalculateDistance(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude, position.Latitude, position.Longitude, Units.Miles));
+                }
+            }
+
+            var distanceDictAscending = distanceDict.OrderBy(o => o.Value);
+
+            var pt = new Point(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude);
+            var p1 = new Point();
+            var p2 = new Point();
+            int index = 1;
+
+            foreach (var item in distanceDictAscending.Take(2))
+            {
+                if (index == 1)
+                {
+                    p1 = new Point(item.Key.Latitude, item.Key.Longitude);
+                }
+
+                if (index == 2)
+                {
+                    p2 = new Point(item.Key.Latitude, item.Key.Longitude);
+                }
+
+                index += 1;
+            }
+
+            var closestPt = _FindDistanceToSegment(pt, p1, p2);
+
+            _TrackingEntity.DistanceFromTrailCenter = _CalculateDistance(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude, closestPt.X, closestPt.Y, Units.Feet);
+
+            
+            //var list = new List<Point>();
+            //list.Add(pt);
+            //list.Add(closestPt);
+
+            //customMap.PlotClosestPolylineTrack(list);
+        }
+
+        // Calculate the distance between
+        // point pt and the segment p1 --> p2.
+        private Point _FindDistanceToSegment(
+            Point pt, Point p1, Point p2)
+        {
+            var closest = new Point();
+
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            if ((dx == 0) && (dy == 0))
+            {
+                // It's a point not a line segment.
+                closest = p1;
+            }
+
+            // Calculate the t that minimizes the distance.
+            double t = ((pt.X - p1.X) * dx + (pt.Y - p1.Y) * dy) /
+                (dx * dx + dy * dy);
+
+            // See if this represents one of the segment's
+            // end points or a point in the middle.
+            if (t < 0)
+            {
+                closest = new Point(p1.X, p1.Y);
+            }
+            else if (t > 1)
+            {
+                closest = new Point(p2.X, p2.Y);
+            }
+            else
+            {
+                closest = new Point(p1.X + t * dx, p1.Y + t * dy);
+            }
+
+            return closest;
+        }
+
+       
+
+        private double _CalculateDistance(double lat1, double lon1, double lat2, double lon2, Units unit)
         {
             double theta = lon1 - lon2;
             double dist = Math.Sin(deg2rad(lat1)) * Math.Sin(deg2rad(lat2)) + Math.Cos(deg2rad(lat1)) * Math.Cos(deg2rad(lat2)) * Math.Cos(deg2rad(theta));
             dist = Math.Acos(dist);
             dist = rad2deg(dist);
-            dist = dist * 60 * 1.1515;
-            if (unit == 'K')
+            dist = dist * 60 * 1.1515; // Miles - Default
+
+            if (unit == Units.Kilometers)
             {
                 dist = dist * 1.609344;
             }
-            else if (unit == 'N')
+            else if (unit == Units.Feet)
             {
-                dist = dist * 0.8684;
+                dist = dist * 5280;
+            }
+            else if (unit == Units.Yards)
+            {
+                dist = dist * 1760;
             }
 
             return (dist);

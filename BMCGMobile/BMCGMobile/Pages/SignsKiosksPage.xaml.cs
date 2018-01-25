@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BMCGMobile.Entities;
+using System;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -25,7 +26,7 @@ namespace BMCGMobile
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            var customerPin = (sender as Button).CommandParameter as CustomPin;
+            var customerPin = (sender as Button).CommandParameter as CustomPinEntity;
 
             var destAddr = customerPin.Pin.Address.Replace(" ", "+").Replace("\n", "+");
 
@@ -47,7 +48,7 @@ namespace BMCGMobile
 
         private void listViewPins_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            var selectedCustomPin = e.SelectedItem as CustomPin;
+            var selectedCustomPin = e.SelectedItem as CustomPinEntity;
             Device.OpenUri(new Uri(selectedCustomPin.Url));
         }
     }

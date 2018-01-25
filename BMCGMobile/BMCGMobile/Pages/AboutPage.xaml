@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BMCGMobile.AboutPage" Title="About" Icon="about.png">
+             x:Class="BMCGMobile.AboutPage" Title="{Binding Resources[About]}" Icon="about.png">
     <ContentPage.Content>
 
-        <AbsoluteLayout BackgroundColor="#032743">
+        <AbsoluteLayout BackgroundColor="{StaticResource StandardDarkColor}">
 
             <Image Grid.Row="0" Source="BMCGsplash.png" Margin="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Aspect="AspectFit" AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All"></Image>
 
-            <Label  Margin="0" TextColor="White" FontSize="Small" HorizontalOptions="CenterAndExpand" AbsoluteLayout.LayoutBounds=".5,.80,235,50" AbsoluteLayout.LayoutFlags="PositionProportional"  >Version 1.0.0.3 Copyright 2018</Label>
+            <Label Text="{Binding Resources[AboutVersion]}" Style="{StaticResource AboutLabelStyle}" HorizontalOptions="CenterAndExpand" AbsoluteLayout.LayoutBounds=".5,.80,235,50" AbsoluteLayout.LayoutFlags="PositionProportional" ></Label>
         </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

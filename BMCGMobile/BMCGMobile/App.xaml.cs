@@ -1,5 +1,7 @@
-﻿using System;
+﻿using BMCGMobile.Entities;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -11,6 +13,7 @@ namespace BMCGMobile
     {
         public static double ScreenHeight;
         public static double ScreenWidth;
+        public static string CurrentLanguage = "EN";
 
         public App()
         {

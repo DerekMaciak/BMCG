@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BMCGMobile
+namespace BMCGMobile.Entities
 {
-    class SettingsEntity
+    public class AboutEntity : EntityBase
     {
     }
 }

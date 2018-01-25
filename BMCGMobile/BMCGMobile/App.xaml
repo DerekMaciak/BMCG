@@ -2,9 +2,58 @@
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BMCGMobile.App">
-	<Application.Resources>
+    <Application.Resources>
 
-		<!-- Application resource dictionary -->
+        <!-- Application resource dictionary -->
 
-	</Application.Resources>
+        <ResourceDictionary>
+
+            <!--Colors-->
+            <Color x:Key="StandardDarkColor">#032743</Color>
+            <Color x:Key="StandardLightColor">White</Color>
+
+            <Color x:Key="StatusInfoBorderColor">White</Color>
+            <Color x:Key="StatusInfoLabelColor">White</Color>
+            <Color x:Key="StatusInfoDataColor">GhostWhite</Color>
+
+            <Color x:Key="StatusInfoOnTrailBackgroundColor">Green</Color>
+            <Color x:Key="StatusInfoOffTrailBackgroundColor">#A24437</Color>
+
+            <Color x:Key="TrailColor">#A24437</Color>
+
+            <Style x:Key="StatusInfoFrameStyle" TargetType="Frame">
+                <Setter Property="Opacity" Value=".75" />
+                <Setter Property="Margin" Value="3" />
+                <Setter Property="OutlineColor" Value="{StaticResource StatusInfoBorderColor}" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="6" />
+            </Style>
+
+            <Style x:Key="StatusInfoStackLayoutStyle" TargetType="StackLayout">
+            </Style>
+
+            <Style x:Key="StatusInfoLabelStyle" TargetType="Label">
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="Micro" />
+                <Setter Property="TextColor" Value="{StaticResource StatusInfoLabelColor}" />
+            </Style>
+
+            <Style x:Key="StatusInfoLabelDataStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="Micro" />
+                <Setter Property="TextColor" Value="{StaticResource StatusInfoDataColor}" />
+                <Setter Property="Margin" Value="0" />
+            </Style>
+
+            <Style x:Key="StatusInfoLabelStackLayoutStyle" TargetType="StackLayout">
+                <Setter Property="Margin" Value="0" />
+                <Setter Property="Orientation" Value="Horizontal" />
+            </Style>
+
+            <Style x:Key="AboutLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="Small" />
+                <Setter Property="TextColor" Value="{StaticResource StandardLightColor}" />
+                <Setter Property="Margin" Value="0" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

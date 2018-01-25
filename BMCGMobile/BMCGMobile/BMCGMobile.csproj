@@ -35,40 +35,50 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AboutPage.xaml.cs">
+    <Compile Include="Entities\AboutEntity.cs" />
+    <Compile Include="Pages\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="CustomMap.cs" />
-    <Compile Include="CustomPin.cs" />
-    <Compile Include="FitnessHistoryPage.xaml.cs">
+    <Compile Include="Entities\CustomPinEntity.cs" />
+    <Compile Include="Entities\EntityBase.cs" />
+    <Compile Include="Pages\FitnessHistoryPage.xaml.cs">
       <DependentUpon>FitnessHistoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FitnessPage.xaml.cs">
+    <Compile Include="Pages\FitnessPage.xaml.cs">
       <DependentUpon>FitnessPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="GPXLoader.cs" />
     <Compile Include="ICompass.cs" />
-    <Compile Include="MainPage.xaml.cs">
+    <Compile Include="Localization\CultureChangedMessage.cs" />
+    <Compile Include="Localization\LocalizedResources.cs" />
+    <Compile Include="Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MapPage.xaml.cs">
+    <Compile Include="Pages\MapPage.xaml.cs">
       <DependentUpon>MapPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SettingsEntity.cs" />
-    <Compile Include="SettingsPage.xaml.cs">
+    <Compile Include="Resources\DesciptionResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DesciptionResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\SettingsEntity.cs" />
+    <Compile Include="Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SignsKiosksPage.xaml.cs">
+    <Compile Include="Pages\SignsKiosksPage.xaml.cs">
       <DependentUpon>SignsKiosksPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Entities\TrackingEntity.cs" />
     <Compile Include="Variables.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="MainPage.xaml">
+    <EmbeddedResource Include="Pages\MainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -78,15 +88,19 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FitnessPage.xaml">
+    <EmbeddedResource Include="Pages\FitnessPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="MapPage.xaml">
+    <EmbeddedResource Include="Pages\MapPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="SettingsPage.xaml">
+    <EmbeddedResource Include="Resources\DesciptionResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesciptionResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\SettingsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -133,23 +147,24 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SignsKiosksPage.xaml">
+    <EmbeddedResource Include="Pages\SignsKiosksPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AboutPage.xaml">
+    <EmbeddedResource Include="Pages\AboutPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FitnessHistoryPage.xaml">
+    <EmbeddedResource Include="Pages\FitnessHistoryPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.4.0.91020\build\portable-win+net45+wp80+win81+wpa81\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.4.0.91020\build\portable-win+net45+wp80+win81+wpa81\Xamarin.Forms.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
