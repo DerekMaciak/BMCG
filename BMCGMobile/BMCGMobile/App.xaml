@@ -20,6 +20,7 @@
             <Color x:Key="StatusInfoOffTrailBackgroundColor">#A24437</Color>
 
             <Color x:Key="TrailColor">#A24437</Color>
+            <Color x:Key="TrackerColor">Blue</Color>
 
             <Style x:Key="StatusInfoFrameStyle" TargetType="Frame">
                 <Setter Property="Opacity" Value=".75" />

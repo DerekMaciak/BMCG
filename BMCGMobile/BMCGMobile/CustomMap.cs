@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
+using static BMCGMobile.Enums;
 
 namespace BMCGMobile
 {
@@ -13,24 +14,25 @@ namespace BMCGMobile
     {
         private static List<Position> _RouteCoordinates;
         private static List<CustomPinEntity> _CustomPins;
+        private static List<LineSegmentEntity> _LineSegments;
 
         public static List<Position> RouteCoordinates { get { return _RouteCoordinates; } }
         public static List<CustomPinEntity> CustomPins { get { return _CustomPins; } }
+        public static List<LineSegmentEntity> LineSegments { get { return _LineSegments; } }
 
         public CustomMap()
         {
-          
         }
 
         public void LoadMapCoordinates()
         {
-
             try
             {
                 if (_RouteCoordinates == null)
                 {
                     _RouteCoordinates = new List<Position>();
                     _CustomPins = new List<CustomPinEntity>();
+                    _LineSegments = new List<LineSegmentEntity>();
 
                     var gpxLoader = new GPXLoader();
 
@@ -42,6 +44,29 @@ namespace BMCGMobile
                         {
                             _RouteCoordinates.Add(new Position(item.Latitude, item.Longitude));
                         }
+                    }
+
+                    // Load line Segments
+                    Position lastPosition = new Position();
+                    var segmentSequence = 0;
+                    foreach (var position in _RouteCoordinates)
+                    {
+                        if (segmentSequence == 0)
+                        {
+                            lastPosition = position;
+                            segmentSequence += 1;
+                            continue;
+                        }
+
+                        var lineSegment = new LineSegmentEntity(segmentSequence, lastPosition, position, StaticHelpers.CalculateDistance(lastPosition.Latitude, lastPosition.Longitude, position.Latitude, position.Longitude, Units.Miles));
+
+                        if (!_LineSegments.Contains(lineSegment))
+                        {
+                            _LineSegments.Add(lineSegment);
+                        }
+
+                        lastPosition = position;
+                        segmentSequence += 1;
                     }
 
                     // Load Wayfinding Pins
@@ -64,21 +89,26 @@ namespace BMCGMobile
                                     Position = new Position(item.Latitude, item.Longitude),
                                     Label = item.Name,
                                     Address = address,
-                                    Icon = BitmapDescriptorFactory.DefaultMarker(CustomPinEntity.GetPinImageColor(item.PinType)),                                  
-                                
-                                   //Icon = BitmapDescriptorFactory.FromBundle(CustomPinEntity.GetPinImageName(item.PinType))
+                                    Icon = BitmapDescriptorFactory.DefaultMarker(CustomPinEntity.GetPinImageColor(item.PinType)),
+
+                                    //Icon = BitmapDescriptorFactory.FromBundle(CustomPinEntity.GetPinImageName(item.PinType))
                                 },
-                              
-                                
                             };
 
                             _CustomPins.Add(pin);
+
+                            // Add Pin to Closest Line Segment
+                            if (item.PinType == CustomPinEntity.PinTypes.Kiosk || item.PinType == CustomPinEntity.PinTypes.Wayfinding)
+                            {
+                                var lineSegment = FindClosestLineSegment(new Position(item.Latitude, item.Longitude));
+                                // Only 1 pin should be on segment - make sure GPX file complies
+                                lineSegment.CustomPinOnSegment = pin;
+                            }
                         }
 
                         _RetrieveAddressForPosition();
 
                         PlotPolylineTrack();
-                       // PlotBufferPolylineTrack();
                     }
                 }
             }
@@ -86,7 +116,6 @@ namespace BMCGMobile
             {
                 return;
             }
-
         }
 
         public void PlotPolylineTrack()
@@ -99,31 +128,98 @@ namespace BMCGMobile
             }
 
             polyline.IsClickable = false;
-            polyline.StrokeColor = (Color)Application.Current.Resources["TrailColor"]; //Red
+            polyline.StrokeColor = (Color)Application.Current.Resources["TrailColor"];
             polyline.StrokeWidth = 10f;
-            polyline.Tag = "POLYLINE"; // Can set any object
+            polyline.Tag = "TRAIL"; // Can set any object
 
             Polylines.Add(polyline);
         }
 
-        #region Test Code
+       
 
-        public void PlotClosestPolylineTrack(List<Point> points)
+        public void PlotClosestPolylineTrack(List<Position> positions)
         {
             var polyline = new Polyline();
 
-            foreach (var item in points)
+            foreach (var pos in positions)
             {
-                polyline.Positions.Add(new Position(item.X, item.Y));
+                polyline.Positions.Add(pos);
             }
 
             polyline.IsClickable = false;
-            polyline.StrokeColor = Color.FromHex("#551A8B"); //Purple
+            polyline.StrokeColor = (Color)Application.Current.Resources["TrackerColor"];
             polyline.StrokeWidth = 5f;
-            polyline.Tag = "POLYLINEBuffer"; // Can set any object
+            polyline.Tag = "TRACKER"; // Can set any object
+
+            foreach (var item in Polylines)
+            {
+                if (item.Tag == polyline.Tag)
+                {
+                    Polylines.Remove(item);
+                    break;
+                }
+            }
 
             Polylines.Add(polyline);
         }
+
+        public LineSegmentEntity FindClosestLineSegment(Position position)
+        {
+            foreach (var lineSegment in _LineSegments)
+            {
+                lineSegment.ClosestPositionToLocation = StaticHelpers.FindClosestPositionOnLineSegment(position, lineSegment.Position1, lineSegment.Position2);
+                lineSegment.ClosestPositionToLocationDistance = StaticHelpers.CalculateDistance(position.Latitude, position.Longitude, lineSegment.ClosestPositionToLocation.Latitude, lineSegment.ClosestPositionToLocation.Longitude, Units.Miles);
+            }
+
+            return _LineSegments.OrderBy(o => o.ClosestPositionToLocationDistance).FirstOrDefault();
+        }
+
+     
+
+        public bool IsPointInPolygon(List<Position> poly, Position point)
+        {
+            var isPointInPolygon = false;
+
+            int i, j;
+
+            for (i = 0, j = poly.Count - 1; i < poly.Count; j = i++)
+            {
+                if ((((poly[i].Latitude <= point.Latitude) && (point.Latitude < poly[j].Latitude))
+                        || ((poly[j].Latitude <= point.Latitude) && (point.Latitude < poly[i].Latitude)))
+                        && (point.Longitude < (poly[j].Longitude - poly[i].Longitude) * (point.Latitude - poly[i].Latitude)
+                            / (poly[j].Latitude - poly[i].Latitude) + poly[i].Longitude))
+
+                    isPointInPolygon = !isPointInPolygon;
+            }
+
+            return isPointInPolygon;
+        }
+
+        private async void _RetrieveAddressForPosition()
+        {
+            foreach (var item in CustomPins)
+            {
+                item.Pin.Address = await _RetrieveAddressForPositionAsync(item.Pin.Position);
+
+                // Add to Map After address has been obtained
+                Pins.Add(item.Pin);
+            }
+        }
+
+        private async Task<string> _RetrieveAddressForPositionAsync(Position position)
+        {
+            var geoCoder = new Geocoder();
+
+            var possibleAddresses = await geoCoder.GetAddressesForPositionAsync(position);
+            foreach (var address in possibleAddresses)
+            {
+                return address;
+            }
+
+            return null;
+        }
+
+        #region Test Code
 
         //public void PlotBufferPolylineTrack()
         //{
@@ -163,7 +259,6 @@ namespace BMCGMobile
         //    Polylines.Add(polyline);
         //}
 
-
         //public static List<Position> GetBuffer(List<Position> polylinePositions)
         //{
         //    var polylineBufferPositions = new List<Position>();
@@ -191,12 +286,9 @@ namespace BMCGMobile
         //           // break;
         //        }
 
-
-
         //        var g1 = new Point(prevPosition.Latitude, prevPosition.Longitude);
 
         //        var g2 = new Point(position.Latitude, position.Longitude);
-
 
         //        // convert to Mercator (conformal)
         //        double x1, y1, x2, y2;
@@ -220,12 +312,10 @@ namespace BMCGMobile
         //        var gb1 = SphereMercator_2_Wgs(mb1);
         //        var gb2 = SphereMercator_2_Wgs(mb2);
 
-
         //        polylineBufferPositions1.Add(new Position(gb1.X, gb1.Y));
         //        polylineBufferPositions2.Add(new Position(gb2.X, gb2.Y));
 
         //        prevPosition = position;
-
 
         //    }
 
@@ -233,7 +323,6 @@ namespace BMCGMobile
 
         //    polylineBufferPositions2.Reverse();
         //    polylineBufferPositions.AddRange(polylineBufferPositions2);
-
 
         //    return polylineBufferPositions;
 
@@ -254,51 +343,7 @@ namespace BMCGMobile
 
         //    return new Point(x, y);
         //}
-        #endregion TestCode
 
-
-        public bool IsPointInPolygon(List<Position> poly, Position point)
-        {
-            var isPointInPolygon = false;
-
-            int i, j;
-           
-            for (i = 0, j = poly.Count - 1; i < poly.Count; j = i++)
-            {
-                if ((((poly[i].Latitude <= point.Latitude) && (point.Latitude < poly[j].Latitude))
-                        || ((poly[j].Latitude <= point.Latitude) && (point.Latitude < poly[i].Latitude)))
-                        && (point.Longitude < (poly[j].Longitude - poly[i].Longitude) * (point.Latitude - poly[i].Latitude)
-                            / (poly[j].Latitude - poly[i].Latitude) + poly[i].Longitude))
-
-                    isPointInPolygon = !isPointInPolygon;
-            }
-        
-         return isPointInPolygon;
-        }
-
-
-        private async void _RetrieveAddressForPosition()
-        {
-            foreach (var item in CustomPins)
-            {
-                item.Pin.Address = await _RetrieveAddressForPositionAsync(item.Pin.Position);
-
-                // Add to Map After address has been obtained
-                Pins.Add(item.Pin);
-            }
-        }
-
-        private async Task<string> _RetrieveAddressForPositionAsync(Position position)
-        {
-            var geoCoder = new Geocoder();
-
-            var possibleAddresses = await geoCoder.GetAddressesForPositionAsync(position);
-            foreach (var address in possibleAddresses)
-            {
-                return address;
-            }
-
-            return null;
-        }
+        #endregion Test Code
     }
 }

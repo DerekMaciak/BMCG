@@ -10,7 +10,7 @@
 
                 <local:CustomMap x:Name="customMap" MapType="None"  IsShowingUser="True" MyLocationEnabled="True" VerticalOptions="FillAndExpand" Margin="0,0,0,0" AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All" />
 
-                <Frame Style="{StaticResource StatusInfoFrameStyle}" BackgroundColor="{Binding StatusInfoBackgroundColor}" AbsoluteLayout.LayoutBounds="0,0" AbsoluteLayout.LayoutFlags="PositionProportional">
+                <Frame x:Name="statusInfo" Style="{StaticResource StatusInfoFrameStyle}" BackgroundColor="{Binding StatusInfoBackgroundColor}" AbsoluteLayout.LayoutBounds="0,0" AbsoluteLayout.LayoutFlags="PositionProportional" IsVisible="{Binding IsStatusInfoVisible}">
                     <StackLayout Orientation="Vertical" HorizontalOptions="Center"  Style="{StaticResource StatusInfoStackLayoutStyle}">
 
                         <StackLayout Style="{StaticResource StatusInfoLabelStackLayoutStyle}">
@@ -25,9 +25,9 @@
                         </StackLayout>
                         <StackLayout Style="{StaticResource StatusInfoLabelStackLayoutStyle}">
                             <Label Text="{Binding Resources[OnTrailETA]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
-                            <Label Text="{Binding ETAToNextWayFindingSignDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
+                            <Label Text="{Binding ETAToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
                             <Label Text="{Binding Resources[OnTrailDistance]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
-                            <Label Text="{Binding DistanceToNextWayFindingSignDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
+                            <Label Text="{Binding DistanceToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
                         </StackLayout>
                     </StackLayout>
                 </Frame>

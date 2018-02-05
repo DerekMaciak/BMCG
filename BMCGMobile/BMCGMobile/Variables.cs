@@ -21,5 +21,11 @@ namespace BMCGMobile
         public const string GPX_URL = @"http://services.surroundtech.com/BMCGWebsite/downloads/DerekHomeTest.txt";
 
         public const string CMS_WEBSITE_URL = @"http://services.surroundtech.com/BMCGWebsite/Home/";
+
+        public const bool DEBUG_MODE = true;
+
+        public const double DISPLAY_AS_FEET_MIN = 500;
+
+        public const double DISPLAY_STATUS_INFO_MIN_DIST = .25; // Display Within quarter Mile of Trail
     }
 }

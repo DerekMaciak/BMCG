@@ -89,6 +89,15 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Feet.
+        /// </summary>
+        internal static string Feet {
+            get {
+                return ResourceManager.GetString("Feet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hybrid.
         /// </summary>
         internal static string Hybrid {
@@ -112,6 +121,15 @@ namespace BMCGMobile.Resources {
         internal static string MapView {
             get {
                 return ResourceManager.GetString("MapView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Miles.
+        /// </summary>
+        internal static string Miles {
+            get {
+                return ResourceManager.GetString("Miles", resourceCulture);
             }
         }
         

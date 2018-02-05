@@ -126,6 +126,9 @@
   <data name="DistanceFromTrailCenter" xml:space="preserve">
     <value>Trail Center:</value>
   </data>
+  <data name="Feet" xml:space="preserve">
+    <value>Feet</value>
+  </data>
   <data name="Hybrid" xml:space="preserve">
     <value>Hybrid</value>
   </data>
@@ -134,6 +137,9 @@
   </data>
   <data name="MapView" xml:space="preserve">
     <value>Map View</value>
+  </data>
+  <data name="Miles" xml:space="preserve">
+    <value>Miles</value>
   </data>
   <data name="OffTrail" xml:space="preserve">
     <value>Off Trail</value>

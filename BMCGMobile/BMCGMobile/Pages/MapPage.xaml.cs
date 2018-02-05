@@ -3,34 +3,20 @@ using Plugin.Compass;
 using Plugin.Geolocator;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.Xaml;
+using static BMCGMobile.Enums;
 
 namespace BMCGMobile
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MapPage : ContentPage
     {
-        private enum MapZooms
-        {
-            All,
-            Pins,
-            Street,
-            User,
-            None
-        }
-
-        private enum Units
-        {
-            Miles,
-            Kilometers,
-            Feet,
-            Yards
-        }
-
         private MapZooms _CurrentMapZoom = MapZooms.All;
 
         private double _DefaultStreetZoom = 19d;
@@ -50,10 +36,38 @@ namespace BMCGMobile
             _TrackingEntity = new TrackingEntity();
             _TrackingEntity.UserSettings = settingsEntity;
 
+            // Set DistanceFromTrailCenter so that IsOnTrail is false while loading
+            _TrackingEntity.DistanceFromTrailCenter = double.MaxValue;
+
+            _TrackingEntity.PropertyChanged += _TrackingEntity_PropertyChanged;
+
             this.BindingContext = _TrackingEntity;
 
             _SetMapViewToggleButton(MapType.None);
             _SetZoomViewToggleButton(MapZooms.None);
+        }
+
+        private void _TrackingEntity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsOnTrail")
+            {
+                if (_TrackingEntity.IsOnTrail)
+                {
+                    var assembly = typeof(App).GetTypeInfo().Assembly;
+                    Stream audioStream = assembly.GetManifestResourceStream("BMCGMobile.Audio." + "OnTrail.mp3");
+                    var player = Plugin.SimpleAudioPlayer.CrossSimpleAudioPlayer.Current;
+                    player.Load(audioStream);
+                    player.Play();
+                }
+                else
+                {
+                    var assembly = typeof(App).GetTypeInfo().Assembly;
+                    Stream audioStream = assembly.GetManifestResourceStream("BMCGMobile.Audio." + "OffTrail.mp3");
+                    var player = Plugin.SimpleAudioPlayer.CrossSimpleAudioPlayer.Current;
+                    player.Load(audioStream);
+                    player.Play();
+                }
+            }
         }
 
         protected override async void OnAppearing()
@@ -125,14 +139,27 @@ namespace BMCGMobile
                 {
                     CrossCompass.Current.CompassChanged += async (s, e) =>
                     {
-                        if (_CurrentMapZoom == MapZooms.Street && (Device.RuntimePlatform == Device.Android || !geolocator.SupportsHeading))
+                        if ((Device.RuntimePlatform == Device.Android || !geolocator.SupportsHeading))
                         {
                             if (_LastKnownPosition != null)
                             {
                                 if (Math.Abs(_LastCompassHeading - Math.Truncate(e.Heading)) > 2)
                                 {
                                     _LastKnownPosition.Heading = e.Heading;
-                                    await _StreetViewAsync(_LastKnownPosition, _DefaultStreetZoom, _DefaultStreetTilt);
+
+                                    if (_LastKnownPosition.Heading != 0)
+                                    {
+                                        if (_CurrentMapZoom == MapZooms.Street)
+                                        {
+                                            // If Street View, Set Camera Position
+                                            var zoom = customMap.CameraPosition.Zoom == 0 || _TrackingEntity.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
+                                            var tilt = customMap.CameraPosition.Tilt == 0 || _TrackingEntity.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
+
+                                            await _StreetViewAsync(_LastKnownPosition, zoom, tilt);
+                                        }
+
+                                        _SetNextPinBasedOnBearing();
+                                    }
 
                                     _LastCompassHeading = Math.Truncate(e.Heading);
                                 }
@@ -150,15 +177,25 @@ namespace BMCGMobile
 
                     _FindDistanceToNearestCoordinate();
 
-                    if (_TrackingEntity.IsOnTrail)
+                    if (_TrackingEntity.IsJustOnTrail)
                     {
-                        // Set zoom to street view if on trail
+                        // Set zoom to street view if just go on trail
                         _SetZoomViewToggleButton(MapZooms.Street);
+                        _SetStreetViewInitialCameraPosition();
                     }
 
-                    if (_CurrentMapZoom == MapZooms.Street && e.Position.Heading != 0)
+                    if (e.Position.Heading != 0)
                     {
-                        await _StreetViewAsync(e.Position, _DefaultStreetZoom, _DefaultStreetTilt);
+                        if (_CurrentMapZoom == MapZooms.Street)
+                        {
+                            // If Street View, Set Camera Position
+                            var zoom = customMap.CameraPosition.Zoom == 0 || _TrackingEntity.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
+                            var tilt = customMap.CameraPosition.Tilt == 0 || _TrackingEntity.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
+
+                            await _StreetViewAsync(e.Position, zoom, tilt);
+                        }
+
+                        _SetNextPinBasedOnBearing();
                     }
                 };
 
@@ -192,16 +229,16 @@ namespace BMCGMobile
                     var firstLongCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
                     var lastLongCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
 
-                    var centerPosition = GetCentralGeoCoordinate(new List<Position>() {
+                    var centerPosition = StaticHelpers.GetCentralGeoCoordinate(new List<Position>() {
                     new Position(position.Latitude, position.Longitude),
                     new Position(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude), new Position(lastLatCoordinate.Latitude, lastLatCoordinate.Longitude),
                     new Position(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude), new Position(lastLongCoordinate.Latitude, lastLongCoordinate.Longitude) });
 
-                    var distLat = _CalculateDistance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, Units.Miles);
-                    var distLong = _CalculateDistance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, Units.Miles);
+                    var distLat = StaticHelpers.CalculateDistance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, Units.Miles);
+                    var distLong = StaticHelpers.CalculateDistance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, Units.Miles);
                     var dist = distLat >= distLong ? distLat : distLong;
 
-                    var distPost = _CalculateDistance(centerPosition.Latitude, centerPosition.Longitude, position.Latitude, position.Longitude, Units.Miles);
+                    var distPost = StaticHelpers.CalculateDistance(centerPosition.Latitude, centerPosition.Longitude, position.Latitude, position.Longitude, Units.Miles);
                     dist = distPost >= dist ? distPost : dist;
 
                     dist = dist == 0 ? 0 : dist / 2;
@@ -224,12 +261,12 @@ namespace BMCGMobile
                 var firstLongCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
                 var lastLongCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
 
-                var centerPosition = GetCentralGeoCoordinate(new List<Position>() {
+                var centerPosition = StaticHelpers.GetCentralGeoCoordinate(new List<Position>() {
                     new Position(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude), new Position(lastLatCoordinate.Latitude, lastLatCoordinate.Longitude),
                     new Position(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude), new Position(lastLongCoordinate.Latitude, lastLongCoordinate.Longitude) });
 
-                var distLat = _CalculateDistance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, Units.Miles);
-                var distLong = _CalculateDistance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, Units.Miles);
+                var distLat = StaticHelpers.CalculateDistance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, Units.Miles);
+                var distLong = StaticHelpers.CalculateDistance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, Units.Miles);
                 var dist = distLat >= distLong ? distLat : distLong;
 
                 dist = dist == 0 ? 0 : dist / 2;
@@ -238,165 +275,198 @@ namespace BMCGMobile
             }
         }
 
-        private void _FindDistanceToNearestCoordinate()
+        private void _SetNextPinBasedOnBearing()
         {
-           // var _LastKnownPosition = new Position(40.805293, -74.19676);
+            LineSegmentEntity segmentWithNextPin = null;
 
-            var distanceDict = new Dictionary<Position, double>();
+            //Find Closest Line Segment to current position
+            var curPosition = new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude);
+            var closestLineSegmentToPosition = customMap.FindClosestLineSegment(curPosition);
 
-            foreach (var position in CustomMap.RouteCoordinates)
+            if (closestLineSegmentToPosition != null && closestLineSegmentToPosition.CustomPinOnSegment != null)
             {
-                if (!distanceDict.ContainsKey(position))
+                // if heading towards current segment pin, then us that
+                if (_IsHeadingTowardsPosition(closestLineSegmentToPosition.CustomPinOnSegment.Pin.Position))
                 {
-                    distanceDict.Add(position, _CalculateDistance(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude, position.Latitude, position.Longitude, Units.Miles));
+                    segmentWithNextPin = closestLineSegmentToPosition;
+
+                    //Same segement - just calulate distance between pins
+                    _TrackingEntity.DistanceToNextPin = StaticHelpers.CalculateDistance(curPosition.Latitude, curPosition.Longitude, segmentWithNextPin.CustomPinOnSegment.Pin.Position.Latitude, segmentWithNextPin.CustomPinOnSegment.Pin.Position.Longitude, Units.Miles);
                 }
             }
 
-            var distanceDictAscending = distanceDict.OrderBy(o => o.Value);
-
-            var pt = new Point(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude);
-            var p1 = new Point();
-            var p2 = new Point();
-            int index = 1;
-
-            foreach (var item in distanceDictAscending.Take(2))
+            if (segmentWithNextPin == null)
             {
-                if (index == 1)
+                LineSegmentEntity upSeqLineSegment = null;
+                //Find Segment with Pins up Sequence
+                for (int i = closestLineSegmentToPosition.SegmentSequence + 1; i < CustomMap.LineSegments.Count; i++)
                 {
-                    p1 = new Point(item.Key.Latitude, item.Key.Longitude);
+                    if (CustomMap.LineSegments[i - 1].CustomPinOnSegment != null)
+                    {
+                        upSeqLineSegment = CustomMap.LineSegments[i - 1];
+                        break;
+                    }
                 }
 
-                if (index == 2)
+                //Find Segment with Pins down Sequence
+                LineSegmentEntity downSeqLineSegment = null;
+                //Find Segment with Pins down Sequence
+                for (int i = closestLineSegmentToPosition.SegmentSequence - 1; i > 0; i--)
                 {
-                    p2 = new Point(item.Key.Latitude, item.Key.Longitude);
+                    if (CustomMap.LineSegments[i - 1].CustomPinOnSegment != null)
+                    {
+                        downSeqLineSegment = CustomMap.LineSegments[i - 1];
+                        break;
+                    }
                 }
 
-                index += 1;
+                if (upSeqLineSegment == null && downSeqLineSegment != null)
+                {
+                    segmentWithNextPin = downSeqLineSegment;
+                }
+                else if (upSeqLineSegment != null && downSeqLineSegment == null)
+                {
+                    segmentWithNextPin = upSeqLineSegment;
+                }
+
+                if (segmentWithNextPin == null && (downSeqLineSegment != null && upSeqLineSegment != null))
+                {
+                    if (_IsHeadingTowardsPosition(upSeqLineSegment.CustomPinOnSegment.Pin.Position))
+                    {
+                        segmentWithNextPin = upSeqLineSegment;
+                    }
+                    else if (_IsHeadingTowardsPosition(downSeqLineSegment.CustomPinOnSegment.Pin.Position))
+                    {
+                        segmentWithNextPin = downSeqLineSegment;
+                    }
+                }
+
+                if (segmentWithNextPin != null)
+                {
+                    _TrackingEntity.DistanceToNextPin = GetDistancetoNextPin(curPosition, closestLineSegmentToPosition, segmentWithNextPin);
+                }
             }
 
-            var closestPt = _FindDistanceToSegment(pt, p1, p2);
+            if (segmentWithNextPin != null)
+            {
+                _TrackingEntity.NextPin = segmentWithNextPin.CustomPinOnSegment.Pin.Label;
 
-            _TrackingEntity.DistanceFromTrailCenter = _CalculateDistance(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude, closestPt.X, closestPt.Y, Units.Feet);
-
-            
-            //var list = new List<Point>();
-            //list.Add(pt);
-            //list.Add(closestPt);
-
-            //customMap.PlotClosestPolylineTrack(list);
+                if (_CurrentMapZoom == MapZooms.Street)
+                {
+                    // Auto Select Pin on Street View Only
+                    customMap.SelectedPin = segmentWithNextPin.CustomPinOnSegment.Pin;
+                }
+            }
         }
 
-        // Calculate the distance between
-        // point pt and the segment p1 --> p2.
-        private Point _FindDistanceToSegment(
-            Point pt, Point p1, Point p2)
+        private double GetDistancetoNextPin(Position curPosition, LineSegmentEntity closestLineSegmentToCurPosition, LineSegmentEntity pinLineSegment)
         {
-            var closest = new Point();
+            double distance = 0;
 
-            double dx = p2.X - p1.X;
-            double dy = p2.Y - p1.Y;
-            if ((dx == 0) && (dy == 0))
+            // Get Distance to end of current segment from current position
+            if (_IsHeadingTowardsPosition(closestLineSegmentToCurPosition.Position1))
             {
-                // It's a point not a line segment.
-                closest = p1;
-            }
-
-            // Calculate the t that minimizes the distance.
-            double t = ((pt.X - p1.X) * dx + (pt.Y - p1.Y) * dy) /
-                (dx * dx + dy * dy);
-
-            // See if this represents one of the segment's
-            // end points or a point in the middle.
-            if (t < 0)
-            {
-                closest = new Point(p1.X, p1.Y);
-            }
-            else if (t > 1)
-            {
-                closest = new Point(p2.X, p2.Y);
+                distance = StaticHelpers.CalculateDistance(curPosition.Latitude, curPosition.Longitude, closestLineSegmentToCurPosition.Position1.Latitude, closestLineSegmentToCurPosition.Position1.Longitude, Units.Miles);
             }
             else
             {
-                closest = new Point(p1.X + t * dx, p1.Y + t * dy);
+                distance = StaticHelpers.CalculateDistance(curPosition.Latitude, curPosition.Longitude, closestLineSegmentToCurPosition.Position2.Latitude, closestLineSegmentToCurPosition.Position2.Longitude, Units.Miles);
             }
 
-            return closest;
+            // Get Segments in between
+            if (closestLineSegmentToCurPosition.SegmentSequence > pinLineSegment.SegmentSequence)
+            {
+                foreach (var seg in CustomMap.LineSegments)
+                {
+                    if (seg.SegmentSequence > pinLineSegment.SegmentSequence && seg.SegmentSequence < closestLineSegmentToCurPosition.SegmentSequence)
+                    {
+                        distance = distance + seg.SegmentDistanceInMiles;
+                    }
+                }
+            }
+            else if (closestLineSegmentToCurPosition.SegmentSequence < pinLineSegment.SegmentSequence)
+            {
+                foreach (var seg in CustomMap.LineSegments)
+                {
+                    if (seg.SegmentSequence > closestLineSegmentToCurPosition.SegmentSequence && seg.SegmentSequence < pinLineSegment.SegmentSequence)
+                    {
+                        distance = distance + seg.SegmentDistanceInMiles;
+                    }
+                }
+            }
+
+            var dist1 = StaticHelpers.CalculateDistance(curPosition.Latitude, curPosition.Longitude, pinLineSegment.Position1.Latitude, pinLineSegment.Position1.Longitude, Units.Miles);
+            var dist2 = StaticHelpers.CalculateDistance(curPosition.Latitude, curPosition.Longitude, pinLineSegment.Position2.Latitude, pinLineSegment.Position2.Longitude, Units.Miles);
+
+            if (dist1 < dist2)
+            {
+                //Use Postion 1 as it is closer
+
+                distance = distance + StaticHelpers.CalculateDistance(pinLineSegment.CustomPinOnSegment.Pin.Position.Latitude, pinLineSegment.CustomPinOnSegment.Pin.Position.Longitude, pinLineSegment.Position1.Latitude, pinLineSegment.Position1.Longitude, Units.Miles);
+            }
+            else
+            {
+                distance = distance + StaticHelpers.CalculateDistance(pinLineSegment.CustomPinOnSegment.Pin.Position.Latitude, pinLineSegment.CustomPinOnSegment.Pin.Position.Longitude, pinLineSegment.Position2.Latitude, pinLineSegment.Position2.Longitude, Units.Miles);
+            }
+
+            return distance;
         }
 
-       
-
-        private double _CalculateDistance(double lat1, double lon1, double lat2, double lon2, Units unit)
+        private bool _IsHeadingTowardsPosition(Position position)
         {
-            double theta = lon1 - lon2;
-            double dist = Math.Sin(deg2rad(lat1)) * Math.Sin(deg2rad(lat2)) + Math.Cos(deg2rad(lat1)) * Math.Cos(deg2rad(lat2)) * Math.Cos(deg2rad(theta));
-            dist = Math.Acos(dist);
-            dist = rad2deg(dist);
-            dist = dist * 60 * 1.1515; // Miles - Default
+            if (_LastKnownPosition.Heading > 0 && _LastKnownPosition.Heading < 90)
+            {
+                // Use Coordinate that is > Lat and > Long
+                if (position.Latitude > _LastKnownPosition.Latitude && position.Longitude > _LastKnownPosition.Longitude)
+                {
+                    return true;
+                }
+            }
+            else if (_LastKnownPosition.Heading > 90 && _LastKnownPosition.Heading < 180)
+            {
+                // Use Coordinate that is < lat and > Long
+                if (position.Latitude < _LastKnownPosition.Latitude && position.Longitude > _LastKnownPosition.Longitude)
+                {
+                    return true;
+                }
+            }
+            else if (_LastKnownPosition.Heading > 180 && _LastKnownPosition.Heading < 270)
+            {
+                // Use Coordinate that is < lat and < long
+                if (position.Latitude < _LastKnownPosition.Latitude && position.Longitude < _LastKnownPosition.Longitude)
+                {
+                    return true;
+                }
+            }
+            else if (_LastKnownPosition.Heading > 270 && _LastKnownPosition.Heading < 360)
+            {
+                // Use Coordinate that is > lat and < long
+                if (position.Latitude > _LastKnownPosition.Latitude && position.Longitude < _LastKnownPosition.Longitude)
+                {
+                    return true;
+                }
+            }
 
-            if (unit == Units.Kilometers)
-            {
-                dist = dist * 1.609344;
-            }
-            else if (unit == Units.Feet)
-            {
-                dist = dist * 5280;
-            }
-            else if (unit == Units.Yards)
-            {
-                dist = dist * 1760;
-            }
-
-            return (dist);
+            return false;
         }
 
-        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        //::  This function converts decimal degrees to radians             :::
-        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        private double deg2rad(double deg)
+        private void _FindDistanceToNearestCoordinate()
         {
-            return (deg * Math.PI / 180.0);
-        }
+            //var _LastKnownPosition = new Position(40.805293, -74.19676);
+            var curPosition = new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude);
+            var lineSegment = customMap.FindClosestLineSegment(curPosition);
+            _TrackingEntity.DistanceFromTrailCenter = lineSegment.ClosestPositionToLocationDistance;
 
-        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        //::  This function converts radians to decimal degrees             :::
-        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        private double rad2deg(double rad)
-        {
-            return (rad / Math.PI * 180.0);
-        }
-
-        public static Position GetCentralGeoCoordinate(IList<Position> geoCoordinates)
-        {
-            if (geoCoordinates.Count == 1)
+            if (_TrackingEntity.IsStatusInfoVisible)
             {
-                return geoCoordinates[0];
+                //Plot From Current Position to Line Segment if status info is visible
+                var list = new List<Position>();
+                list.Add(curPosition);
+                list.Add(lineSegment.ClosestPositionToLocation);
+
+                customMap.PlotClosestPolylineTrack(list);
+                
             }
-
-            double x = 0;
-            double y = 0;
-            double z = 0;
-
-            foreach (var geoCoordinate in geoCoordinates)
-            {
-                var latitude = geoCoordinate.Latitude * Math.PI / 180;
-                var longitude = geoCoordinate.Longitude * Math.PI / 180;
-
-                x += Math.Cos(latitude) * Math.Cos(longitude);
-                y += Math.Cos(latitude) * Math.Sin(longitude);
-                z += Math.Sin(latitude);
-            }
-
-            var total = geoCoordinates.Count;
-
-            x = x / total;
-            y = y / total;
-            z = z / total;
-
-            var centralLongitude = Math.Atan2(y, x);
-            var centralSquareRoot = Math.Sqrt(x * x + y * y);
-            var centralLatitude = Math.Atan2(z, centralSquareRoot);
-
-            return new Position(centralLatitude * 180 / Math.PI, centralLongitude * 180 / Math.PI);
         }
 
         private void MapViewButton_Clicked(object sender, EventArgs e)
@@ -423,14 +493,18 @@ namespace BMCGMobile
         private void StreetViewButton_Clicked(object sender, EventArgs e)
         {
             _SetZoomViewToggleButton(MapZooms.Street);
+            _SetStreetViewInitialCameraPosition();
+        }
 
+        private void _SetStreetViewInitialCameraPosition()
+        {
             customMap.AnimateCamera(CameraUpdateFactory.NewCameraPosition(
-                                new CameraPosition(
-                                    new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude),
-                                    _DefaultStreetZoom,
-                                    _LastKnownPosition.Heading, // bearing(rotation)
-                                    _DefaultStreetTilt
-                                    )));
+                                 new CameraPosition(
+                                     new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude),
+                                     _DefaultStreetZoom,
+                                     _LastKnownPosition.Heading, // bearing(rotation)
+                                     _DefaultStreetTilt
+                                     )));
         }
 
         private void ZoomPinsButton_Clicked(object sender, EventArgs e)
@@ -475,16 +549,19 @@ namespace BMCGMobile
                 case MapZooms.All:
                     btnZoomAll.BorderColor = onButtonBorderColor;
                     btnZoomAll.BackgroundColor = onButtonBackgroundColor;
+
                     break;
 
                 case MapZooms.User:
                     btnZoomUser.BorderColor = onButtonBorderColor;
                     btnZoomUser.BackgroundColor = onButtonBackgroundColor;
+
                     break;
 
                 case MapZooms.Pins:
                     btnZoomPins.BorderColor = onButtonBorderColor;
                     btnZoomPins.BackgroundColor = onButtonBackgroundColor;
+
                     break;
 
                 case MapZooms.Street:
