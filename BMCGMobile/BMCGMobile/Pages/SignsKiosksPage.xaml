@@ -4,29 +4,49 @@
              x:Class="BMCGMobile.SignsKiosksPage" Title="Pin List View " Icon="map-pin.png">
     <ContentPage.Content>
         <ScrollView>
-            <ListView x:Name="listViewPins" HasUnevenRows="True" ItemSelected="listViewPins_ItemSelected">
+            <ListView x:Name="listViewPins" HasUnevenRows="True" ItemSelected="listViewPins_ItemSelected" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
                             <ViewCell.View>
                                 <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
-                                      
                                     </Grid.ColumnDefinitions>
-                                    <Image Grid.Column="0" Source="{Binding PinImageName}" Margin="5,0,0,0" ></Image>
-                                    <StackLayout  Grid.Column="1" Margin="5">
+                                   
+                                    <Image Grid.Row="0" Grid.Column="0" Source="{Binding PinImageName}" Margin="5,0,0,0" ></Image>
+                                    <StackLayout Grid.Row="0" Grid.Column="1" Margin="5">
                                         <Label Text="{Binding Pin.Label}" FontAttributes="Bold"></Label>
                                         <Label Text="{Binding Pin.Address}" FontSize="Small"></Label>
                                     </StackLayout>
-                                    <Button Grid.Column="2" Text="Directions" Margin="0,2,10,2" CommandParameter="{Binding .}" Clicked="Button_Clicked"></Button>
-                                   
-                                    <!--<Label Grid.Column="1" Text="{Binding id}"></Label>
-                                    <Label Grid.Column="2" Text="{Binding title}"></Label>
-                                    <Label Grid.Column="3" Text="{Binding body}"></Label>-->
+                                    <Button Grid.Row="0" Grid.Column="2" Text="Directions" Margin="0,2,10,2" CommandParameter="{Binding .}" Clicked="Button_Clicked"></Button>
 
+                                    <Frame x:Name="statusInfo" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource StatusInfoFrameStyle}" BackgroundColor="{Binding StatusInfoBackgroundColor}" IsVisible="{Binding IsStatusInfoVisible}">
+                                        
+                                        <StackLayout Orientation="Vertical" HorizontalOptions="Center"  Style="{StaticResource StatusInfoStackLayoutStyle}">
+
+                                            <StackLayout Style="{StaticResource StatusInfoLabelStackLayoutStyle}">
+                                                <Label Text="{Binding Resources[StatusInfoStatus]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
+                                                <Label Text="{Binding Status}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
+                                                <Label Text="{Binding Resources[DistanceFromTrailCenter]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
+                                                <Label Text="{Binding DistanceFromTrailCenterDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
+                                            </StackLayout>
+                                          
+                                            <StackLayout Style="{StaticResource StatusInfoLabelStackLayoutStyle}">
+                                                <Label Text="{Binding Resources[OnTrailETA]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
+                                                <Label Text="{Binding ETAToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
+                                                <Label Text="{Binding Resources[OnTrailDistance]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
+                                                <Label Text="{Binding DistanceToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
+                                            </StackLayout>
+                                        </StackLayout>
+                                    
+                                    </Frame>
                                 </Grid>
                             </ViewCell.View>
                         </ViewCell>

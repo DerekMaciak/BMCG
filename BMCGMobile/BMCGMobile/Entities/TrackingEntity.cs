@@ -88,6 +88,9 @@ namespace BMCGMobile.Entities
 
                     OnPropertyChanged("DistanceToNextPin");
                     OnPropertyChanged("DistanceToNextPinDisplay");
+                    OnPropertyChanged("TimeToNextPin");
+                    OnPropertyChanged("ETAToNextPin");
+                    OnPropertyChanged("ETAToNextPinDisplay");
                 }
             }
         }
@@ -105,9 +108,9 @@ namespace BMCGMobile.Entities
             }
         }
 
-        public TimeSpan TimeToNextPin { set; get; }
+        public TimeSpan TimeToNextPin { get { return TimeSpan.FromHours(DistanceToNextPin / Variables.AVE_WALKING_SPEED); } }
 
-        public DateTime ETAToNextPin { get { return DateTime.Now + TimeToNextPin; } }
+        public DateTime ETAToNextPin { get { return DateTime.Now.Add(TimeToNextPin); } }
 
         public string ETAToNextPinDisplay { get { return ETAToNextPin.ToString("t"); } }
 

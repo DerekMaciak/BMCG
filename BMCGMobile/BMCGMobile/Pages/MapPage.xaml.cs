@@ -25,23 +25,20 @@ namespace BMCGMobile
 
         private Plugin.Geolocator.Abstractions.Position _LastKnownPosition;
 
-        public TrackingEntity _TrackingEntity;
-
         public MapPage()
         {
             InitializeComponent();
 
             // Get User Settings
             var settingsEntity = new SettingsEntity();
-            _TrackingEntity = new TrackingEntity();
-            _TrackingEntity.UserSettings = settingsEntity;
+            CustomMap.TrackingData.UserSettings = settingsEntity;
 
             // Set DistanceFromTrailCenter so that IsOnTrail is false while loading
-            _TrackingEntity.DistanceFromTrailCenter = double.MaxValue;
+            CustomMap.TrackingData.DistanceFromTrailCenter = double.MaxValue;
 
-            _TrackingEntity.PropertyChanged += _TrackingEntity_PropertyChanged;
+            CustomMap.TrackingData.PropertyChanged += _TrackingEntity_PropertyChanged;
 
-            this.BindingContext = _TrackingEntity;
+            this.BindingContext = CustomMap.TrackingData;
 
             _SetMapViewToggleButton(MapType.None);
             _SetZoomViewToggleButton(MapZooms.None);
@@ -51,7 +48,7 @@ namespace BMCGMobile
         {
             if (e.PropertyName == "IsOnTrail")
             {
-                if (_TrackingEntity.IsOnTrail)
+                if (CustomMap.TrackingData.IsOnTrail)
                 {
                     var assembly = typeof(App).GetTypeInfo().Assembly;
                     Stream audioStream = assembly.GetManifestResourceStream("BMCGMobile.Audio." + "OnTrail.mp3");
@@ -152,8 +149,8 @@ namespace BMCGMobile
                                         if (_CurrentMapZoom == MapZooms.Street)
                                         {
                                             // If Street View, Set Camera Position
-                                            var zoom = customMap.CameraPosition.Zoom == 0 || _TrackingEntity.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
-                                            var tilt = customMap.CameraPosition.Tilt == 0 || _TrackingEntity.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
+                                            var zoom = customMap.CameraPosition.Zoom == 0 || CustomMap.TrackingData.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
+                                            var tilt = customMap.CameraPosition.Tilt == 0 || CustomMap.TrackingData.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
 
                                             await _StreetViewAsync(_LastKnownPosition, zoom, tilt);
                                         }
@@ -177,7 +174,7 @@ namespace BMCGMobile
 
                     _FindDistanceToNearestCoordinate();
 
-                    if (_TrackingEntity.IsJustOnTrail)
+                    if (CustomMap.TrackingData.IsJustOnTrail)
                     {
                         // Set zoom to street view if just go on trail
                         _SetZoomViewToggleButton(MapZooms.Street);
@@ -189,8 +186,8 @@ namespace BMCGMobile
                         if (_CurrentMapZoom == MapZooms.Street)
                         {
                             // If Street View, Set Camera Position
-                            var zoom = customMap.CameraPosition.Zoom == 0 || _TrackingEntity.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
-                            var tilt = customMap.CameraPosition.Tilt == 0 || _TrackingEntity.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
+                            var zoom = customMap.CameraPosition.Zoom == 0 || CustomMap.TrackingData.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
+                            var tilt = customMap.CameraPosition.Tilt == 0 || CustomMap.TrackingData.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
 
                             await _StreetViewAsync(e.Position, zoom, tilt);
                         }
@@ -291,7 +288,7 @@ namespace BMCGMobile
                     segmentWithNextPin = closestLineSegmentToPosition;
 
                     //Same segement - just calulate distance between pins
-                    _TrackingEntity.DistanceToNextPin = StaticHelpers.CalculateDistance(curPosition.Latitude, curPosition.Longitude, segmentWithNextPin.CustomPinOnSegment.Pin.Position.Latitude, segmentWithNextPin.CustomPinOnSegment.Pin.Position.Longitude, Units.Miles);
+                    CustomMap.TrackingData.DistanceToNextPin = StaticHelpers.CalculateDistance(curPosition.Latitude, curPosition.Longitude, segmentWithNextPin.CustomPinOnSegment.Pin.Position.Latitude, segmentWithNextPin.CustomPinOnSegment.Pin.Position.Longitude, Units.Miles);
                 }
             }
 
@@ -343,19 +340,33 @@ namespace BMCGMobile
 
                 if (segmentWithNextPin != null)
                 {
-                    _TrackingEntity.DistanceToNextPin = GetDistancetoNextPin(curPosition, closestLineSegmentToPosition, segmentWithNextPin);
+                    CustomMap.TrackingData.DistanceToNextPin = GetDistancetoNextPin(curPosition, closestLineSegmentToPosition, segmentWithNextPin);
                 }
             }
 
             if (segmentWithNextPin != null)
             {
-                _TrackingEntity.NextPin = segmentWithNextPin.CustomPinOnSegment.Pin.Label;
+                //Auto Select List View Item
+                foreach (var item in CustomMap.CustomPins)
+                {
+                    item.IsStatusInfoVisible = false;
+                }
+                var selPin = CustomMap.CustomPins.Where(s => s.Pin == segmentWithNextPin.CustomPinOnSegment.Pin).FirstOrDefault();
+                if (selPin != null)
+                {
+                    selPin.SetStatusInfo(true, CustomMap.TrackingData.StatusInfoBackgroundColor, CustomMap.TrackingData.Status, CustomMap.TrackingData.DistanceFromTrailCenterDisplay, CustomMap.TrackingData.ETAToNextPinDisplay, CustomMap.TrackingData.DistanceToNextPinDisplay);
+                }
 
+                // Set Next Pin
+                CustomMap.TrackingData.NextPin = segmentWithNextPin.CustomPinOnSegment.Pin.Label;
+                
                 if (_CurrentMapZoom == MapZooms.Street)
                 {
                     // Auto Select Pin on Street View Only
-                    customMap.SelectedPin = segmentWithNextPin.CustomPinOnSegment.Pin;
+                    customMap.SelectedPin = segmentWithNextPin.CustomPinOnSegment.Pin;           
                 }
+
+               
             }
         }
 
@@ -455,9 +466,9 @@ namespace BMCGMobile
             //var _LastKnownPosition = new Position(40.805293, -74.19676);
             var curPosition = new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude);
             var lineSegment = customMap.FindClosestLineSegment(curPosition);
-            _TrackingEntity.DistanceFromTrailCenter = lineSegment.ClosestPositionToLocationDistance;
+            CustomMap.TrackingData.DistanceFromTrailCenter = lineSegment.ClosestPositionToLocationDistance;
 
-            if (_TrackingEntity.IsStatusInfoVisible)
+            if (CustomMap.TrackingData.IsStatusInfoVisible)
             {
                 //Plot From Current Position to Line Segment if status info is visible
                 var list = new List<Position>();

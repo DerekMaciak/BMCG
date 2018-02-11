@@ -2,6 +2,7 @@
 using BMCGMobile.Resources;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -12,14 +13,15 @@ namespace BMCGMobile
 {
     public class CustomMap : Map
     {
+        public static TrackingEntity TrackingData = new TrackingEntity();
         private static List<Position> _RouteCoordinates;
-        private static List<CustomPinEntity> _CustomPins;
+        private static ObservableCollection<CustomPinEntity> _CustomPins;
         private static List<LineSegmentEntity> _LineSegments;
 
         public static List<Position> RouteCoordinates { get { return _RouteCoordinates; } }
-        public static List<CustomPinEntity> CustomPins { get { return _CustomPins; } }
+        public static ObservableCollection<CustomPinEntity> CustomPins { get { return _CustomPins; } }
         public static List<LineSegmentEntity> LineSegments { get { return _LineSegments; } }
-
+        
         public CustomMap()
         {
         }
@@ -31,7 +33,7 @@ namespace BMCGMobile
                 if (_RouteCoordinates == null)
                 {
                     _RouteCoordinates = new List<Position>();
-                    _CustomPins = new List<CustomPinEntity>();
+                    _CustomPins = new ObservableCollection<CustomPinEntity>();
                     _LineSegments = new List<LineSegmentEntity>();
 
                     var gpxLoader = new GPXLoader();
@@ -134,8 +136,6 @@ namespace BMCGMobile
 
             Polylines.Add(polyline);
         }
-
-       
 
         public void PlotClosestPolylineTrack(List<Position> positions)
         {

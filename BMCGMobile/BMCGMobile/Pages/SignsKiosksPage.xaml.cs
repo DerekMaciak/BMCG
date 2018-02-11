@@ -1,6 +1,6 @@
 ﻿using BMCGMobile.Entities;
 using System;
-
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -12,6 +12,8 @@ namespace BMCGMobile
         public SignsKiosksPage()
         {
             InitializeComponent();
+
+          
         }
 
         protected override void OnAppearing()
@@ -21,6 +23,25 @@ namespace BMCGMobile
             if (listViewPins.ItemsSource == null)
             {
                 listViewPins.ItemsSource = CustomMap.CustomPins;
+            }
+
+            CustomMap.TrackingData.PropertyChanged += TrackingData_PropertyChanged;
+        }
+
+        private void TrackingData_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "NextPin")
+            {
+                // Need to rebind so the height of cell is adjusted
+                listViewPins.ItemsSource = null;
+                listViewPins.ItemsSource = CustomMap.CustomPins;
+
+                // Move Selected pin to center
+                var selectedPin = CustomMap.CustomPins.Where(s => s.IsStatusInfoVisible).FirstOrDefault();
+                if (selectedPin != null)
+                {
+                    listViewPins.ScrollTo(selectedPin, ScrollToPosition.MakeVisible, true);
+                }
             }
         }
 
@@ -44,12 +65,16 @@ namespace BMCGMobile
             {
                 Device.OpenUri(new Uri("bingmaps:?rtp=adr.394 Pacific Ave San Francisco CA~adr.One Microsoft Way Redmond WA 98052"));
             }
+
+           
         }
 
         private void listViewPins_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             var selectedCustomPin = e.SelectedItem as CustomPinEntity;
             Device.OpenUri(new Uri(selectedCustomPin.Url));
+
+           
         }
     }
 }
