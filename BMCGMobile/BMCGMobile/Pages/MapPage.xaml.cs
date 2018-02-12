@@ -172,6 +172,9 @@ namespace BMCGMobile
                 {
                     _LastKnownPosition = e.Position;
 
+                    // Set Position for User on trail
+                    CustomMap.TrackingData.AddUserPosition(e.Position);
+
                     _FindDistanceToNearestCoordinate();
 
                     if (CustomMap.TrackingData.IsJustOnTrail)

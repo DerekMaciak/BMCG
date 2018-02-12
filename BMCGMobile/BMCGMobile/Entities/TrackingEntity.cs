@@ -1,5 +1,8 @@
 ﻿using BMCGMobile.Resources;
+using Plugin.Geolocator.Abstractions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace BMCGMobile.Entities
@@ -11,6 +14,11 @@ namespace BMCGMobile.Entities
         public string Status { get { return IsOnTrail ? DesciptionResource.OnTrail : DesciptionResource.OffTrail; } }
         public Color StatusInfoBackgroundColor { get { return IsOnTrail ? (Color)Application.Current.Resources["StatusInfoOnTrailBackgroundColor"] : (Color)Application.Current.Resources["StatusInfoOffTrailBackgroundColor"]; } }
         public bool IsStatusInfoVisible { get { return DistanceFromTrailCenter <= Variables.DISPLAY_STATUS_INFO_MIN_DIST; } }
+
+        public List<UserOnTrailSegmentEntity> UserOnTrailSegments = new List<UserOnTrailSegmentEntity>();
+        private bool _CreateNewUserOnTrailSegment = true;
+
+        public Dictionary<DateTime, DateTime> UserTimesOnTrail = new Dictionary<DateTime, DateTime>();
 
         private double _DistanceFromTrailCenter;
 
@@ -34,11 +42,7 @@ namespace BMCGMobile.Entities
 
                         if (IsOnTrail)
                         {
-                            OnTrailStartDateTime = DateTime.Now;
-                        }
-                        else
-                        {
-                            OnTrailEndDateTime = DateTime.Now;
+                            _OnTrailStartDateTime = DateTime.Now;
                         }
                     }
 
@@ -116,12 +120,132 @@ namespace BMCGMobile.Entities
 
         public SettingsEntity UserSettings { set; get; }
 
-        public DateTime OnTrailStartDateTime { set; get; }
+        // Today On Trail Properties
 
-        public DateTime OnTrailEndDateTime { set; get; }
+        private DateTime _OnTrailStartDateTime;
 
-        public TimeSpan OnTrailTime { get { return DateTime.Now - OnTrailStartDateTime; } }
+        private TimeSpan _OnTrailTime { get { return DateTime.Now - _OnTrailStartDateTime; } }
 
-        public bool IsJustOnTrail { get { return OnTrailTime.TotalSeconds < 3; } }
+        public bool IsJustOnTrail { get { return _OnTrailTime.TotalSeconds < 3; } }
+
+        private double _TotalDistanceOnTrailToday;
+
+        public double TotalDistanceOnTrailToday { get { return _TotalDistanceOnTrailToday; } }
+
+        public string TotalDistanceOnTrailTodayDisplay
+        {
+            get
+            {
+                if (StaticHelpers.ConvertMilesToFeet(TotalDistanceOnTrailToday) < Variables.DISPLAY_AS_FEET_MIN)
+                {
+                    return string.Format("{0} {1}", StaticHelpers.ConvertMilesToFeet(TotalDistanceOnTrailToday).ToString("N0"), DesciptionResource.Feet);
+                }
+
+                return string.Format("{0} {1}", TotalDistanceOnTrailToday.ToString("N2"), DesciptionResource.Miles);
+            }
+        }
+
+        private TimeSpan _TotalTimeOnTrailToday;
+
+        public TimeSpan TotalTimeOnTrailToday { get { return _TotalTimeOnTrailToday; } }
+
+        public string TotalTimeOnTrailTodayDisplay
+        {
+            get
+            {
+                return string.Format(DesciptionResource.TimeSpanDisplay, TotalTimeOnTrailToday);
+            }
+        }
+
+        private int _TotalStepCountToday;
+
+        public int TotalStepCountToday { get { return _TotalStepCountToday; } }
+
+        private double _TotalCaloriesToday;
+
+        public double TotalCaloriesToday { get { return _TotalCaloriesToday; } }
+
+        public string TotalCaloriesTodayDisplay { get { return TotalCaloriesToday.ToString("N0"); } }
+
+        public TrackingEntity()
+        {
+            MessagingCenter.Subscribe<IStepCounter, int>(this, "StepCount", (sender, args) =>
+            {
+                if (UserOnTrailSegments != null && UserOnTrailSegments.Count > 0)
+                {
+                    var curSeg = UserOnTrailSegments.Last();
+
+                    curSeg.TotalSegmentStepCount = args;
+                }
+              
+            });
+
+            MessagingCenter.Subscribe<IStepCounter, double>(this, "Distance", (sender, args) =>
+            {
+                if (UserOnTrailSegments != null && UserOnTrailSegments.Count > 0)
+                {
+                    var curSeg = UserOnTrailSegments.Last();
+
+                    curSeg.TotalSegmentDistanceBySteps = args;
+                }
+            });
+        }
+
+        public void AddUserPosition(Position position)
+        {
+            if (IsOnTrail)
+            {
+               
+                if (_CreateNewUserOnTrailSegment)
+                {
+                    UserOnTrailSegments.Add(new UserOnTrailSegmentEntity());
+
+                    MessagingCenter.Send<TrackingEntity>(this, "StartStepUpdates");
+                    _CreateNewUserOnTrailSegment = false;
+                }
+
+                var currentSegment = UserOnTrailSegments.Last();
+                currentSegment.AddUserPosition(position);
+
+                // Add up Total Distance And Time from each Segment
+                int totalStepCount = 0;
+                double totalDistance = 0;
+                TimeSpan totalTime = new TimeSpan();
+                double totalCalories = 0;
+                foreach (var seg in UserOnTrailSegments)
+                {
+                    totalStepCount = totalStepCount + seg.TotalSegmentStepCount;
+                    totalDistance = totalDistance + seg.TotalSegmentDistanceBySteps;
+                    totalTime = totalTime + seg.TotalSegmentTimeSpan;
+                    totalCalories = totalCalories + seg.TotalSegmentCaloriesByDistance;
+                }
+
+                _TotalStepCountToday = totalStepCount;
+                _TotalDistanceOnTrailToday = totalDistance;
+                _TotalTimeOnTrailToday = totalTime;
+                _TotalCaloriesToday = totalCalories;
+
+
+                OnPropertyChanged("TotalStepCountToday");
+                OnPropertyChanged("TotalDistanceOnTrailToday");
+                OnPropertyChanged("TotalDistanceOnTrailTodayDisplay");
+                OnPropertyChanged("TotalTimeOnTrailToday");
+                OnPropertyChanged("TotalTimeOnTrailTodayDisplay");
+                OnPropertyChanged("TotalCaloriesToday");
+                OnPropertyChanged("TotalCaloriesTodayDisplay");
+
+            }
+            else
+            {
+                _CreateNewUserOnTrailSegment = true;
+
+                if (UserOnTrailSegments != null && UserOnTrailSegments.Count > 0)
+                {
+                    var curSeg = UserOnTrailSegments.Last();
+                }
+
+                MessagingCenter.Send<TrackingEntity>(this, "StopStepUpdates");
+            }
+        }
     }
 }

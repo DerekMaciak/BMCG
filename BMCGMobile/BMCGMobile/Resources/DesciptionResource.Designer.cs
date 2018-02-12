@@ -80,6 +80,33 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Active Time.
+        /// </summary>
+        internal static string ActiveTime {
+            get {
+                return ResourceManager.GetString("ActiveTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Calories.
+        /// </summary>
+        internal static string Calories {
+            get {
+                return ResourceManager.GetString("Calories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Distance.
+        /// </summary>
+        internal static string Distance {
+            get {
+                return ResourceManager.GetString("Distance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Trail Center:.
         /// </summary>
         internal static string DistanceFromTrailCenter {
@@ -130,6 +157,15 @@ namespace BMCGMobile.Resources {
         internal static string Miles {
             get {
                 return ResourceManager.GetString("Miles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to mph.
+        /// </summary>
+        internal static string MilesPerHour {
+            get {
+                return ResourceManager.GetString("MilesPerHour", resourceCulture);
             }
         }
         
@@ -197,11 +233,47 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Steps.
+        /// </summary>
+        internal static string Steps {
+            get {
+                return ResourceManager.GetString("Steps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Street.
         /// </summary>
         internal static string Street {
             get {
                 return ResourceManager.GetString("Street", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time.
+        /// </summary>
+        internal static string Time {
+            get {
+                return ResourceManager.GetString("Time", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:%h} hrs {0:%m} mins.
+        /// </summary>
+        internal static string TimeSpanDisplay {
+            get {
+                return ResourceManager.GetString("TimeSpanDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Today&apos;s Fitness Tracking.
+        /// </summary>
+        internal static string TodayFitnessTracking {
+            get {
+                return ResourceManager.GetString("TodayFitnessTracking", resourceCulture);
             }
         }
     }

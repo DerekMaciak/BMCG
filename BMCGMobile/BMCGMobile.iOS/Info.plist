@@ -34,6 +34,8 @@
 	<string>We are using your location</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Can we use your location</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Can we access your motion usage</string>
 	<key>CFBundleName</key>
 	<string>Bloomfield Greenway</string>
 	<key>XSAppIconAssets</key>

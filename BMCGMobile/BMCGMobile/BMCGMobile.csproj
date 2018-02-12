@@ -35,6 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Entities\UserOnTrailSegmentEntity.cs" />
+    <Compile Include="IStepCounter.cs" />
     <Compile Include="StaticHelpers.cs" />
     <Compile Include="Entities\AboutEntity.cs" />
     <Compile Include="Entities\LineSegmentEntity.cs" />

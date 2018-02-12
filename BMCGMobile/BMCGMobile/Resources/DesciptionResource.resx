@@ -123,6 +123,15 @@
   <data name="AboutVersion" xml:space="preserve">
     <value>Version 1.0.0.3 Copyright 2018</value>
   </data>
+  <data name="ActiveTime" xml:space="preserve">
+    <value>Active Time</value>
+  </data>
+  <data name="Calories" xml:space="preserve">
+    <value>Calories</value>
+  </data>
+  <data name="Distance" xml:space="preserve">
+    <value>Distance</value>
+  </data>
   <data name="DistanceFromTrailCenter" xml:space="preserve">
     <value>Trail Center:</value>
   </data>
@@ -140,6 +149,9 @@
   </data>
   <data name="Miles" xml:space="preserve">
     <value>Miles</value>
+  </data>
+  <data name="MilesPerHour" xml:space="preserve">
+    <value>mph</value>
   </data>
   <data name="OffTrail" xml:space="preserve">
     <value>Off Trail</value>
@@ -162,7 +174,19 @@
   <data name="StatusInfoStatus" xml:space="preserve">
     <value>Status:</value>
   </data>
+  <data name="Steps" xml:space="preserve">
+    <value>Steps</value>
+  </data>
   <data name="Street" xml:space="preserve">
     <value>Street</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="TimeSpanDisplay" xml:space="preserve">
+    <value>{0:%h} hrs {0:%m} mins</value>
+  </data>
+  <data name="TodayFitnessTracking" xml:space="preserve">
+    <value>Today's Fitness Tracking</value>
   </data>
 </root>

@@ -15,7 +15,9 @@ namespace BMCGMobile
 		public FitnessPage ()
 		{
 			InitializeComponent ();
-		}
+
+            this.BindingContext = CustomMap.TrackingData;
+        }
 
         async void OnFitnessHistoryButtonClicked(object sender, EventArgs e)
         {

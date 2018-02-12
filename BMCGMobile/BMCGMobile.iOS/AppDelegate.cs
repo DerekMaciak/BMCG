@@ -13,6 +13,7 @@ namespace BMCGMobile.iOS
     [Register("AppDelegate")]
     public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
+        private StepCounter _stepCounter;
         //
         // This method is invoked when the application has loaded and is ready to run. In this 
         // method you should instantiate the window, load the UI into it and then make the window
@@ -34,6 +35,9 @@ namespace BMCGMobile.iOS
 
             App.ScreenWidth = UIScreen.MainScreen.Bounds.Width;
             App.ScreenHeight = UIScreen.MainScreen.Bounds.Height;
+
+            // Instantiate StepCounter
+            _stepCounter = new StepCounter();
 
             LoadApplication(new App());
 
