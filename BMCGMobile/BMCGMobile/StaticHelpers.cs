@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BMCGMobile.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -74,6 +75,11 @@ namespace BMCGMobile
         public static double ConvertMilesToFeet(double miles)
         {
             return miles * 5280;
+        }
+
+        public static double ConvertFeetToMiles(double feet)
+        {
+            return feet * 0.000189394;
         }
 
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -181,6 +187,13 @@ namespace BMCGMobile
             var adjusted_weight = lbs / 2.2;
             var val = Math.Round(((adjusted_weight * met) / pace) * miles);
             return val;
+        }
+
+
+        //https://www.beachbodyondemand.com/blog/how-many-steps-walk-per-mile
+        public static double ConvertStepsToMiles(int steps)
+        {
+            return ConvertFeetToMiles((StaticData.TrackingData.UserSettings.HeightInInches * Variables.AVE_STRIDE_MULTIPLE) / 12) * steps;
         }
     }
 }

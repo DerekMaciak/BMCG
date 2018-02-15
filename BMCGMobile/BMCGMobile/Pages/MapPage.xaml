@@ -10,7 +10,7 @@
 
                 <local:CustomMap x:Name="customMap" MapType="None"  IsShowingUser="True" MyLocationEnabled="True" VerticalOptions="FillAndExpand" Margin="0,0,0,0" AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All" />
 
-                <Frame x:Name="statusInfo" Style="{StaticResource StatusInfoFrameStyle}" BackgroundColor="{Binding StatusInfoBackgroundColor}" AbsoluteLayout.LayoutBounds="0,0" AbsoluteLayout.LayoutFlags="PositionProportional" IsVisible="{Binding IsStatusInfoVisible}">
+                <Frame x:Name="statusInfo" Style="{StaticResource StatusInfoFrameStyle}" BackgroundColor="{Binding StatusInfoBackgroundColor}" AbsoluteLayout.LayoutBounds="0,0,285,85" AbsoluteLayout.LayoutFlags="PositionProportional" IsVisible="{Binding IsStatusInfoVisible}">
                     <StackLayout Orientation="Vertical" HorizontalOptions="Center"  Style="{StaticResource StatusInfoStackLayoutStyle}">
 
                         <StackLayout Style="{StaticResource StatusInfoLabelStackLayoutStyle}">
@@ -32,7 +32,7 @@
                     </StackLayout>
                 </Frame>
 
-                <StackLayout Orientation="Vertical" HorizontalOptions="Center" Margin="3,0,3,55" BackgroundColor="Transparent" AbsoluteLayout.LayoutBounds="1,1,50,275" AbsoluteLayout.LayoutFlags="PositionProportional">
+                <StackLayout Orientation="Vertical" HorizontalOptions="Center" Margin="3,0,3,55" BackgroundColor="Transparent" AbsoluteLayout.LayoutBounds="0,1,50,275" AbsoluteLayout.LayoutFlags="PositionProportional">
                     <Button x:Name="btnZoomAll" Image="zoomtoseeall.png" Clicked="ZoomAllButton_Clicked" HeightRequest="50" WidthRequest="50" BorderRadius="5" BorderWidth="2" />
                     <Button x:Name="btnZoomUser" Image="zoomtouser.png" Clicked="ZoomUserButton_Clicked" HeightRequest="50" WidthRequest="50" BorderRadius="5" BorderWidth="2" />
                     <Button x:Name="btnZoomPins" Image="zoomtoseepins.png" Clicked="ZoomPinsButton_Clicked" HeightRequest="50" WidthRequest="50" BorderRadius="5" BorderWidth="2" />

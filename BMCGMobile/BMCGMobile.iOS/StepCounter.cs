@@ -77,6 +77,10 @@ namespace BMCGMobile.iOS
                             //Meters converted to Miles
                             MessagingCenter.Send<IStepCounter, double>(this, "Distance", (pedometerData.Distance.DoubleValue * 0.000621371));
                         }
+                        else
+                        {
+                            MessagingCenter.Send<IStepCounter, double>(this, "Distance", StaticHelpers.ConvertStepsToMiles(pedometerData.NumberOfSteps.Int32Value));
+                        }
 
                         //if (CMPedometer.IsCadenceAvailable)
                         //{

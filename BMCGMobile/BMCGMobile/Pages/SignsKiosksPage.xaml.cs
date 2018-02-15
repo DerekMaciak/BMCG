@@ -22,10 +22,10 @@ namespace BMCGMobile
 
             if (listViewPins.ItemsSource == null)
             {
-                listViewPins.ItemsSource = CustomMap.CustomPins;
+                listViewPins.ItemsSource = StaticData.CustomPins;
             }
 
-            CustomMap.TrackingData.PropertyChanged += TrackingData_PropertyChanged;
+            StaticData.TrackingData.PropertyChanged += TrackingData_PropertyChanged;
         }
 
         private void TrackingData_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -34,10 +34,10 @@ namespace BMCGMobile
             {
                 // Need to rebind so the height of cell is adjusted
                 listViewPins.ItemsSource = null;
-                listViewPins.ItemsSource = CustomMap.CustomPins;
+                listViewPins.ItemsSource = StaticData.CustomPins;
 
                 // Move Selected pin to center
-                var selectedPin = CustomMap.CustomPins.Where(s => s.IsStatusInfoVisible).FirstOrDefault();
+                var selectedPin = StaticData.CustomPins.Where(s => s.IsStatusInfoVisible).FirstOrDefault();
                 if (selectedPin != null)
                 {
                     listViewPins.ScrollTo(selectedPin, ScrollToPosition.MakeVisible, true);

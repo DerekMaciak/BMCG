@@ -13,15 +13,6 @@ namespace BMCGMobile
 {
     public class CustomMap : Map
     {
-        public static TrackingEntity TrackingData = new TrackingEntity();
-        private static List<Position> _RouteCoordinates;
-        private static ObservableCollection<CustomPinEntity> _CustomPins;
-        private static List<LineSegmentEntity> _LineSegments;
-
-        public static List<Position> RouteCoordinates { get { return _RouteCoordinates; } }
-        public static ObservableCollection<CustomPinEntity> CustomPins { get { return _CustomPins; } }
-        public static List<LineSegmentEntity> LineSegments { get { return _LineSegments; } }
-        
         public CustomMap()
         {
         }
@@ -30,11 +21,11 @@ namespace BMCGMobile
         {
             try
             {
-                if (_RouteCoordinates == null)
+                if (StaticData.RouteCoordinates == null)
                 {
-                    _RouteCoordinates = new List<Position>();
-                    _CustomPins = new ObservableCollection<CustomPinEntity>();
-                    _LineSegments = new List<LineSegmentEntity>();
+                    StaticData.RouteCoordinates = new List<Position>();
+                    StaticData.CustomPins = new ObservableCollection<CustomPinEntity>();
+                    StaticData.LineSegments = new List<LineSegmentEntity>();
 
                     var gpxLoader = new GPXLoader();
 
@@ -44,14 +35,14 @@ namespace BMCGMobile
                     {
                         foreach (var item in trackCoordinates)
                         {
-                            _RouteCoordinates.Add(new Position(item.Latitude, item.Longitude));
+                            StaticData.RouteCoordinates.Add(new Position(item.Latitude, item.Longitude));
                         }
                     }
 
                     // Load line Segments
                     Position lastPosition = new Position();
                     var segmentSequence = 0;
-                    foreach (var position in _RouteCoordinates)
+                    foreach (var position in StaticData.RouteCoordinates)
                     {
                         if (segmentSequence == 0)
                         {
@@ -62,9 +53,9 @@ namespace BMCGMobile
 
                         var lineSegment = new LineSegmentEntity(segmentSequence, lastPosition, position, StaticHelpers.CalculateDistance(lastPosition.Latitude, lastPosition.Longitude, position.Latitude, position.Longitude, Units.Miles));
 
-                        if (!_LineSegments.Contains(lineSegment))
+                        if (!StaticData.LineSegments.Contains(lineSegment))
                         {
-                            _LineSegments.Add(lineSegment);
+                            StaticData.LineSegments.Add(lineSegment);
                         }
 
                         lastPosition = position;
@@ -97,7 +88,7 @@ namespace BMCGMobile
                                 },
                             };
 
-                            _CustomPins.Add(pin);
+                            StaticData.CustomPins.Add(pin);
 
                             // Add Pin to Closest Line Segment
                             if (item.PinType == CustomPinEntity.PinTypes.Kiosk || item.PinType == CustomPinEntity.PinTypes.Wayfinding)
@@ -124,7 +115,7 @@ namespace BMCGMobile
         {
             var polyline = new Polyline();
 
-            foreach (var item in RouteCoordinates)
+            foreach (var item in StaticData.RouteCoordinates)
             {
                 polyline.Positions.Add(new Position(item.Latitude, item.Longitude));
             }
@@ -165,16 +156,14 @@ namespace BMCGMobile
 
         public LineSegmentEntity FindClosestLineSegment(Position position)
         {
-            foreach (var lineSegment in _LineSegments)
+            foreach (var lineSegment in StaticData.LineSegments)
             {
                 lineSegment.ClosestPositionToLocation = StaticHelpers.FindClosestPositionOnLineSegment(position, lineSegment.Position1, lineSegment.Position2);
                 lineSegment.ClosestPositionToLocationDistance = StaticHelpers.CalculateDistance(position.Latitude, position.Longitude, lineSegment.ClosestPositionToLocation.Latitude, lineSegment.ClosestPositionToLocation.Longitude, Units.Miles);
             }
 
-            return _LineSegments.OrderBy(o => o.ClosestPositionToLocationDistance).FirstOrDefault();
+            return StaticData.LineSegments.OrderBy(o => o.ClosestPositionToLocationDistance).FirstOrDefault();
         }
-
-     
 
         public bool IsPointInPolygon(List<Position> poly, Position point)
         {
@@ -197,7 +186,7 @@ namespace BMCGMobile
 
         private async void _RetrieveAddressForPosition()
         {
-            foreach (var item in CustomPins)
+            foreach (var item in StaticData.CustomPins)
             {
                 item.Pin.Address = await _RetrieveAddressForPositionAsync(item.Pin.Position);
 

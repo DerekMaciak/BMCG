@@ -1,19 +1,34 @@
-﻿using System;
-using HockeyApp.Android;
-using Android.App;
+﻿using Android.App;
+using Android.Content;
 using Android.Content.PM;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.OS;
+using Android.Runtime;
 using Plugin.Permissions;
-using Plugin.Permissions.Abstractions;
+using System;
 
 namespace BMCGMobile.Droid
 {
     [Activity(Label = "Bloomfield Greenway", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
+        private StepCounterServiceBinder _Binder;
+        private bool _Registered;
+        public bool IsBound { get; set; }
+        private StepCounterServiceConnection _ServiceConnection;
+
+        public StepCounterServiceBinder Binder
+        {
+            get { return _Binder; }
+            set
+            {
+                _Binder = value;
+                if (_Binder == null)
+                    return;
+
+                _Registered = true;
+            }
+        }
+
         protected override void OnCreate(Bundle bundle)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -24,7 +39,8 @@ namespace BMCGMobile.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             Xamarin.FormsGoogleMaps.Init(this, bundle); // initialize for Xamarin.Forms.GoogleMaps
             LoadApplication(new App());
-            
+
+            _StartStepCounterService();
         }
 
         protected override void OnResume()
@@ -37,7 +53,58 @@ namespace BMCGMobile.Droid
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-      
+
+        private void _StartStepCounterService()
+        {
+            try
+            {
+                var service = new Intent(this, typeof(StepCounterService));
+                var componentName = StartService(service);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        protected override void OnStop()
+        {
+            base.OnStop();
+            if (IsBound)
+            {
+                UnbindService(_ServiceConnection);
+                IsBound = false;
+            }
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (IsBound)
+            {
+                UnbindService(_ServiceConnection);
+                IsBound = false;
+            }
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+
+            //if (!Utils.IsKitKatWithStepCounter(PackageManager))
+            //{
+            //    Console.WriteLine("Not compatible with sensors, stopping service.");
+            //    return;
+            //}
+
+            // if (!firstRun)
+            _StartStepCounterService();
+
+            if (IsBound)
+                return;
+
+            var serviceIntent = new Intent(this, typeof(StepCounterService));
+            _ServiceConnection = new StepCounterServiceConnection(this);
+            BindService(serviceIntent, _ServiceConnection, Bind.AutoCreate);
+        }
     }
 }
-

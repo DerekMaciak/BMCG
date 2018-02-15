@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="Entities\UserOnTrailSegmentEntity.cs" />
     <Compile Include="IStepCounter.cs" />
+    <Compile Include="StaticData.cs" />
     <Compile Include="StaticHelpers.cs" />
     <Compile Include="Entities\AboutEntity.cs" />
     <Compile Include="Entities\LineSegmentEntity.cs" />

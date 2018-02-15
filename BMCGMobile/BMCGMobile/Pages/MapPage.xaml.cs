@@ -29,16 +29,22 @@ namespace BMCGMobile
         {
             InitializeComponent();
 
+            if (Device.RuntimePlatform == Device.Android)
+            {
+                // Move StatusInfo to Right for Android
+                AbsoluteLayout.SetLayoutBounds(statusInfo, new Rectangle(1, 0, 285, 85));
+            }
+
             // Get User Settings
             var settingsEntity = new SettingsEntity();
-            CustomMap.TrackingData.UserSettings = settingsEntity;
+            StaticData.TrackingData.UserSettings = settingsEntity;
 
             // Set DistanceFromTrailCenter so that IsOnTrail is false while loading
-            CustomMap.TrackingData.DistanceFromTrailCenter = double.MaxValue;
+            StaticData.TrackingData.DistanceFromTrailCenter = double.MaxValue;
 
-            CustomMap.TrackingData.PropertyChanged += _TrackingEntity_PropertyChanged;
+            StaticData.TrackingData.PropertyChanged += _TrackingEntity_PropertyChanged;
 
-            this.BindingContext = CustomMap.TrackingData;
+            this.BindingContext = StaticData.TrackingData;
 
             _SetMapViewToggleButton(MapType.None);
             _SetZoomViewToggleButton(MapZooms.None);
@@ -48,7 +54,7 @@ namespace BMCGMobile
         {
             if (e.PropertyName == "IsOnTrail")
             {
-                if (CustomMap.TrackingData.IsOnTrail)
+                if (StaticData.TrackingData.IsOnTrail)
                 {
                     var assembly = typeof(App).GetTypeInfo().Assembly;
                     Stream audioStream = assembly.GetManifestResourceStream("BMCGMobile.Audio." + "OnTrail.mp3");
@@ -73,7 +79,7 @@ namespace BMCGMobile
 
             try
             {
-                if (CustomMap.RouteCoordinates == null)
+                if (StaticData.RouteCoordinates == null)
                 {
                     customMap.LoadMapCoordinates();
 
@@ -121,7 +127,7 @@ namespace BMCGMobile
 
         private void CustomMap_InfoWindowClicked(object sender, InfoWindowClickedEventArgs e)
         {
-            var selectedCustomPin = CustomMap.CustomPins.Where(s => s.Id == e.Pin.Tag.ToString()).FirstOrDefault();
+            var selectedCustomPin = StaticData.CustomPins.Where(s => s.Id == e.Pin.Tag.ToString()).FirstOrDefault();
             Device.OpenUri(new Uri(selectedCustomPin.Url));
         }
 
@@ -149,8 +155,8 @@ namespace BMCGMobile
                                         if (_CurrentMapZoom == MapZooms.Street)
                                         {
                                             // If Street View, Set Camera Position
-                                            var zoom = customMap.CameraPosition.Zoom == 0 || CustomMap.TrackingData.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
-                                            var tilt = customMap.CameraPosition.Tilt == 0 || CustomMap.TrackingData.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
+                                            var zoom = customMap.CameraPosition.Zoom == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
+                                            var tilt = customMap.CameraPosition.Tilt == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
 
                                             await _StreetViewAsync(_LastKnownPosition, zoom, tilt);
                                         }
@@ -173,11 +179,11 @@ namespace BMCGMobile
                     _LastKnownPosition = e.Position;
 
                     // Set Position for User on trail
-                    CustomMap.TrackingData.AddUserPosition(e.Position);
+                    StaticData.TrackingData.AddUserPosition(e.Position);
 
                     _FindDistanceToNearestCoordinate();
 
-                    if (CustomMap.TrackingData.IsJustOnTrail)
+                    if (StaticData.TrackingData.IsJustOnTrail)
                     {
                         // Set zoom to street view if just go on trail
                         _SetZoomViewToggleButton(MapZooms.Street);
@@ -189,8 +195,8 @@ namespace BMCGMobile
                         if (_CurrentMapZoom == MapZooms.Street)
                         {
                             // If Street View, Set Camera Position
-                            var zoom = customMap.CameraPosition.Zoom == 0 || CustomMap.TrackingData.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
-                            var tilt = customMap.CameraPosition.Tilt == 0 || CustomMap.TrackingData.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
+                            var zoom = customMap.CameraPosition.Zoom == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
+                            var tilt = customMap.CameraPosition.Tilt == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
 
                             await _StreetViewAsync(e.Position, zoom, tilt);
                         }
@@ -222,12 +228,12 @@ namespace BMCGMobile
         {
             if (position != null)
             {
-                if (CustomMap.RouteCoordinates != null && CustomMap.RouteCoordinates.Count > 0)
+                if (StaticData.RouteCoordinates != null && StaticData.RouteCoordinates.Count > 0)
                 {
-                    var firstLatCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
-                    var lastLatCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
-                    var firstLongCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
-                    var lastLongCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
+                    var firstLatCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
+                    var lastLatCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
+                    var firstLongCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
+                    var lastLongCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
 
                     var centerPosition = StaticHelpers.GetCentralGeoCoordinate(new List<Position>() {
                     new Position(position.Latitude, position.Longitude),
@@ -254,12 +260,12 @@ namespace BMCGMobile
 
         private void _CenterMapToPins()
         {
-            if (CustomMap.RouteCoordinates != null && CustomMap.RouteCoordinates.Count > 0)
+            if (StaticData.RouteCoordinates != null && StaticData.RouteCoordinates.Count > 0)
             {
-                var firstLatCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
-                var lastLatCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
-                var firstLongCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
-                var lastLongCoordinate = CustomMap.RouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
+                var firstLatCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
+                var lastLatCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
+                var firstLongCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
+                var lastLongCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
 
                 var centerPosition = StaticHelpers.GetCentralGeoCoordinate(new List<Position>() {
                     new Position(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude), new Position(lastLatCoordinate.Latitude, lastLatCoordinate.Longitude),
@@ -291,7 +297,7 @@ namespace BMCGMobile
                     segmentWithNextPin = closestLineSegmentToPosition;
 
                     //Same segement - just calulate distance between pins
-                    CustomMap.TrackingData.DistanceToNextPin = StaticHelpers.CalculateDistance(curPosition.Latitude, curPosition.Longitude, segmentWithNextPin.CustomPinOnSegment.Pin.Position.Latitude, segmentWithNextPin.CustomPinOnSegment.Pin.Position.Longitude, Units.Miles);
+                    StaticData.TrackingData.DistanceToNextPin = StaticHelpers.CalculateDistance(curPosition.Latitude, curPosition.Longitude, segmentWithNextPin.CustomPinOnSegment.Pin.Position.Latitude, segmentWithNextPin.CustomPinOnSegment.Pin.Position.Longitude, Units.Miles);
                 }
             }
 
@@ -299,11 +305,11 @@ namespace BMCGMobile
             {
                 LineSegmentEntity upSeqLineSegment = null;
                 //Find Segment with Pins up Sequence
-                for (int i = closestLineSegmentToPosition.SegmentSequence + 1; i < CustomMap.LineSegments.Count; i++)
+                for (int i = closestLineSegmentToPosition.SegmentSequence + 1; i < StaticData.LineSegments.Count; i++)
                 {
-                    if (CustomMap.LineSegments[i - 1].CustomPinOnSegment != null)
+                    if (StaticData.LineSegments[i - 1].CustomPinOnSegment != null)
                     {
-                        upSeqLineSegment = CustomMap.LineSegments[i - 1];
+                        upSeqLineSegment = StaticData.LineSegments[i - 1];
                         break;
                     }
                 }
@@ -313,9 +319,9 @@ namespace BMCGMobile
                 //Find Segment with Pins down Sequence
                 for (int i = closestLineSegmentToPosition.SegmentSequence - 1; i > 0; i--)
                 {
-                    if (CustomMap.LineSegments[i - 1].CustomPinOnSegment != null)
+                    if (StaticData.LineSegments[i - 1].CustomPinOnSegment != null)
                     {
-                        downSeqLineSegment = CustomMap.LineSegments[i - 1];
+                        downSeqLineSegment = StaticData.LineSegments[i - 1];
                         break;
                     }
                 }
@@ -343,25 +349,25 @@ namespace BMCGMobile
 
                 if (segmentWithNextPin != null)
                 {
-                    CustomMap.TrackingData.DistanceToNextPin = GetDistancetoNextPin(curPosition, closestLineSegmentToPosition, segmentWithNextPin);
+                    StaticData.TrackingData.DistanceToNextPin = GetDistancetoNextPin(curPosition, closestLineSegmentToPosition, segmentWithNextPin);
                 }
             }
 
             if (segmentWithNextPin != null)
             {
                 //Auto Select List View Item
-                foreach (var item in CustomMap.CustomPins)
+                foreach (var item in StaticData.CustomPins)
                 {
                     item.IsStatusInfoVisible = false;
                 }
-                var selPin = CustomMap.CustomPins.Where(s => s.Pin == segmentWithNextPin.CustomPinOnSegment.Pin).FirstOrDefault();
+                var selPin = StaticData.CustomPins.Where(s => s.Pin == segmentWithNextPin.CustomPinOnSegment.Pin).FirstOrDefault();
                 if (selPin != null)
                 {
-                    selPin.SetStatusInfo(true, CustomMap.TrackingData.StatusInfoBackgroundColor, CustomMap.TrackingData.Status, CustomMap.TrackingData.DistanceFromTrailCenterDisplay, CustomMap.TrackingData.ETAToNextPinDisplay, CustomMap.TrackingData.DistanceToNextPinDisplay);
+                    selPin.SetStatusInfo(true, StaticData.TrackingData.StatusInfoBackgroundColor, StaticData.TrackingData.Status, StaticData.TrackingData.DistanceFromTrailCenterDisplay, StaticData.TrackingData.ETAToNextPinDisplay, StaticData.TrackingData.DistanceToNextPinDisplay);
                 }
 
                 // Set Next Pin
-                CustomMap.TrackingData.NextPin = segmentWithNextPin.CustomPinOnSegment.Pin.Label;
+                StaticData.TrackingData.NextPin = segmentWithNextPin.CustomPinOnSegment.Pin.Label;
                 
                 if (_CurrentMapZoom == MapZooms.Street)
                 {
@@ -390,7 +396,7 @@ namespace BMCGMobile
             // Get Segments in between
             if (closestLineSegmentToCurPosition.SegmentSequence > pinLineSegment.SegmentSequence)
             {
-                foreach (var seg in CustomMap.LineSegments)
+                foreach (var seg in StaticData.LineSegments)
                 {
                     if (seg.SegmentSequence > pinLineSegment.SegmentSequence && seg.SegmentSequence < closestLineSegmentToCurPosition.SegmentSequence)
                     {
@@ -400,7 +406,7 @@ namespace BMCGMobile
             }
             else if (closestLineSegmentToCurPosition.SegmentSequence < pinLineSegment.SegmentSequence)
             {
-                foreach (var seg in CustomMap.LineSegments)
+                foreach (var seg in StaticData.LineSegments)
                 {
                     if (seg.SegmentSequence > closestLineSegmentToCurPosition.SegmentSequence && seg.SegmentSequence < pinLineSegment.SegmentSequence)
                     {
@@ -469,9 +475,9 @@ namespace BMCGMobile
             //var _LastKnownPosition = new Position(40.805293, -74.19676);
             var curPosition = new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude);
             var lineSegment = customMap.FindClosestLineSegment(curPosition);
-            CustomMap.TrackingData.DistanceFromTrailCenter = lineSegment.ClosestPositionToLocationDistance;
+            StaticData.TrackingData.DistanceFromTrailCenter = lineSegment.ClosestPositionToLocationDistance;
 
-            if (CustomMap.TrackingData.IsStatusInfoVisible)
+            if (StaticData.TrackingData.IsStatusInfoVisible)
             {
                 //Plot From Current Position to Line Segment if status info is visible
                 var list = new List<Position>();

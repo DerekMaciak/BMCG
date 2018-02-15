@@ -29,5 +29,7 @@ namespace BMCGMobile
         public const double DISPLAY_STATUS_INFO_MIN_DIST = .25; // Display Within quarter Mile of Trail
 
         public const double AVE_WALKING_SPEED = 3.1; // 3.1 Miles per hour
+
+        public const double AVE_STRIDE_MULTIPLE = 0.413; 
     }
 }

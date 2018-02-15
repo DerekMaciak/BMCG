@@ -223,6 +223,9 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SplashActivity.cs" />
+    <Compile Include="StepCounterServiceBinder.cs" />
+    <Compile Include="StepCounterService.cs" />
+    <Compile Include="StepCounterServiceConnection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -16,7 +16,7 @@ namespace BMCGMobile
 		{
 			InitializeComponent ();
 
-            this.BindingContext = CustomMap.TrackingData;
+            this.BindingContext = StaticData.TrackingData;
         }
 
         async void OnFitnessHistoryButtonClicked(object sender, EventArgs e)

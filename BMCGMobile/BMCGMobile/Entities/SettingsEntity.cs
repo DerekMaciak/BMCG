@@ -12,10 +12,13 @@ namespace BMCGMobile.Entities
         {
             AutoTrackingMaximumDistanceFromTrailInFeet = 50; // 50 Feet
             IsAutoTracking = true;
+            HeightInInches = 70;
         }
 
         public double AutoTrackingMaximumDistanceFromTrailInFeet { set; get; }
 
         public bool IsAutoTracking { set; get; }
+
+        public int HeightInInches { set; get; }
     }
 }
