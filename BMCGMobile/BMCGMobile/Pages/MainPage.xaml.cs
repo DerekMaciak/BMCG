@@ -1,17 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// ***********************************************************************
+// Assembly         : BMCGMobile
+// Author           : Derek Maciak
+// Created          : 01-23-2018
+//
+// Last Modified By : Derek Maciak
+// Last Modified On : 02-06-2018
+// ***********************************************************************
+// <copyright file="MainPage.xaml.cs" company="">
+//     Copyright ©  2018
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 using Xamarin.Forms;
 
 namespace BMCGMobile
 {
-	public partial class MainPage : TabbedPage
+    /// <summary>
+    /// Class MainPage.
+    /// </summary>
+    /// <seealso cref="Xamarin.Forms.TabbedPage" />
+    public partial class MainPage : TabbedPage
     {
-		public MainPage()
-		{
-			InitializeComponent();
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainPage"/> class.
+        /// </summary>
+        public MainPage()
+        {
+            InitializeComponent();
 
             if (Device.RuntimePlatform == Device.Android)
             {
@@ -23,8 +38,7 @@ namespace BMCGMobile
                         item.Title = string.Empty;
                     }
                 }
-               
             }
         }
-	}
+    }
 }

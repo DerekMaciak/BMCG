@@ -1,4 +1,17 @@
-﻿using BMCGMobile.Entities;
+﻿// ***********************************************************************
+// Assembly         : BMCGMobile
+// Author           : Derek Maciak
+// Created          : 10-09-2017
+//
+// Last Modified By : Derek Maciak
+// Last Modified On : 02-14-2018
+// ***********************************************************************
+// <copyright file="CustomMap.cs" company="">
+//     Copyright ©  2018
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using BMCGMobile.Entities;
 using BMCGMobile.Resources;
 using System;
 using System.Collections.Generic;
@@ -11,12 +24,22 @@ using static BMCGMobile.Enums;
 
 namespace BMCGMobile
 {
+    /// <summary>
+    /// Class CustomMap.
+    /// </summary>
+    /// <seealso cref="Xamarin.Forms.GoogleMaps.Map" />
     public class CustomMap : Map
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomMap"/> class.
+        /// </summary>
         public CustomMap()
         {
         }
 
+        /// <summary>
+        /// Loads the map coordinates.
+        /// </summary>
         public void LoadMapCoordinates()
         {
             try
@@ -111,6 +134,9 @@ namespace BMCGMobile
             }
         }
 
+        /// <summary>
+        /// Plots the polyline track.
+        /// </summary>
         public void PlotPolylineTrack()
         {
             var polyline = new Polyline();
@@ -128,6 +154,10 @@ namespace BMCGMobile
             Polylines.Add(polyline);
         }
 
+        /// <summary>
+        /// Plots the closest polyline track.
+        /// </summary>
+        /// <param name="positions">The positions.</param>
         public void PlotClosestPolylineTrack(List<Position> positions)
         {
             var polyline = new Polyline();
@@ -154,6 +184,11 @@ namespace BMCGMobile
             Polylines.Add(polyline);
         }
 
+        /// <summary>
+        /// Finds the closest line segment.
+        /// </summary>
+        /// <param name="position">The position.</param>
+        /// <returns>LineSegmentEntity.</returns>
         public LineSegmentEntity FindClosestLineSegment(Position position)
         {
             foreach (var lineSegment in StaticData.LineSegments)
@@ -165,6 +200,12 @@ namespace BMCGMobile
             return StaticData.LineSegments.OrderBy(o => o.ClosestPositionToLocationDistance).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Determines whether [is point in polygon] [the specified poly].
+        /// </summary>
+        /// <param name="poly">The poly.</param>
+        /// <param name="point">The point.</param>
+        /// <returns><c>true</c> if [is point in polygon] [the specified poly]; otherwise, <c>false</c>.</returns>
         public bool IsPointInPolygon(List<Position> poly, Position point)
         {
             var isPointInPolygon = false;
@@ -184,6 +225,9 @@ namespace BMCGMobile
             return isPointInPolygon;
         }
 
+        /// <summary>
+        /// Retrieves the address for position.
+        /// </summary>
         private async void _RetrieveAddressForPosition()
         {
             foreach (var item in StaticData.CustomPins)
@@ -195,6 +239,11 @@ namespace BMCGMobile
             }
         }
 
+        /// <summary>
+        /// retrieve address for position as an asynchronous operation.
+        /// </summary>
+        /// <param name="position">The position.</param>
+        /// <returns>Task&lt;System.String&gt;.</returns>
         private async Task<string> _RetrieveAddressForPositionAsync(Position position)
         {
             var geoCoder = new Geocoder();

@@ -1,4 +1,17 @@
-﻿using Newtonsoft.Json;
+﻿// ***********************************************************************
+// Assembly         : BMCGMobile
+// Author           : Derek Maciak
+// Created          : 12-03-2017
+//
+// Last Modified By : Derek Maciak
+// Last Modified On : 01-23-2018
+// ***********************************************************************
+// <copyright file="GPXLoader.cs" company="">
+//     Copyright ©  2018
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +22,14 @@ using static BMCGMobile.Entities.CustomPinEntity;
 
 namespace BMCGMobile
 {
+    /// <summary>
+    /// Class GPXLoader.
+    /// </summary>
     public class GPXLoader
     {
+        /// <summary>
+        /// The file content
+        /// </summary>
         private static string _FileContent;
 
         /// <summary>
@@ -38,7 +57,7 @@ namespace BMCGMobile
         /// <summary>
         /// Load the Xml document for parsing
         /// </summary>
-        /// <param name="sFile">Fully qualified file name (local)</param>
+        /// <param name="fileContent">Content of the file.</param>
         /// <returns>XDocument</returns>
         private XDocument GetGpxDoc(string fileContent)
         {
@@ -48,7 +67,7 @@ namespace BMCGMobile
         /// <summary>
         /// Load the namespace for a standard GPX document
         /// </summary>
-        /// <returns></returns>
+        /// <returns>XNamespace.</returns>
         private XNamespace GetGpxNameSpace()
         {
             return XNamespace.Get("http://www.topografix.com/GPX/1/1");
@@ -157,24 +176,80 @@ namespace BMCGMobile
             }
         }
 
+        /// <summary>
+        /// Class JsonComment.
+        /// </summary>
         private class JsonComment
         {
+            /// <summary>
+            /// Gets or sets the type of the pin.
+            /// </summary>
+            /// <value>The type of the pin.</value>
             public string PinType { get; set; }
+            /// <summary>
+            /// Gets or sets the URL.
+            /// </summary>
+            /// <value>The URL.</value>
             public string URL { get; set; }
+            /// <summary>
+            /// Gets or sets the sequence.
+            /// </summary>
+            /// <value>The sequence.</value>
             public int Sequence { get; set; }
         }
     }
 
+    /// <summary>
+    /// Class GPXWayPoint.
+    /// </summary>
     public class GPXWayPoint
     {
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>The name.</value>
         public string Name { get; set; }
+        /// <summary>
+        /// Gets or sets the description.
+        /// </summary>
+        /// <value>The description.</value>
         public string Description { get; set; }
+        /// <summary>
+        /// Gets or sets the type of the pin.
+        /// </summary>
+        /// <value>The type of the pin.</value>
         public PinTypes PinType { get; set; }
+        /// <summary>
+        /// Gets or sets the URL.
+        /// </summary>
+        /// <value>The URL.</value>
         public string URL { get; set; }
+        /// <summary>
+        /// Gets or sets the latitude.
+        /// </summary>
+        /// <value>The latitude.</value>
         public double Latitude { get; set; }
+        /// <summary>
+        /// Gets or sets the longitude.
+        /// </summary>
+        /// <value>The longitude.</value>
         public double Longitude { get; set; }
+        /// <summary>
+        /// Gets or sets the sequence.
+        /// </summary>
+        /// <value>The sequence.</value>
         public int Sequence { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GPXWayPoint"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="description">The description.</param>
+        /// <param name="sequence">The sequence.</param>
+        /// <param name="pinType">Type of the pin.</param>
+        /// <param name="url">The URL.</param>
+        /// <param name="latitude">The latitude.</param>
+        /// <param name="longitude">The longitude.</param>
         public GPXWayPoint(string name, string description, int sequence, PinTypes pinType, string url, double latitude, double longitude)
         {
             Name = name;
@@ -187,11 +262,27 @@ namespace BMCGMobile
         }
     }
 
+    /// <summary>
+    /// Class GPXLocation.
+    /// </summary>
     public class GPXLocation
     {
+        /// <summary>
+        /// Gets or sets the latitude.
+        /// </summary>
+        /// <value>The latitude.</value>
         public double Latitude { get; set; }
+        /// <summary>
+        /// Gets or sets the longitude.
+        /// </summary>
+        /// <value>The longitude.</value>
         public double Longitude { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GPXLocation"/> class.
+        /// </summary>
+        /// <param name="latitude">The latitude.</param>
+        /// <param name="longitude">The longitude.</param>
         public GPXLocation(double latitude, double longitude)
         {
             Latitude = latitude;

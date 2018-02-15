@@ -1,4 +1,17 @@
-﻿using BMCGMobile.Entities;
+﻿// ***********************************************************************
+// Assembly         : BMCGMobile
+// Author           : Derek Maciak
+// Created          : 01-23-2018
+//
+// Last Modified By : Derek Maciak
+// Last Modified On : 02-14-2018
+// ***********************************************************************
+// <copyright file="MapPage.xaml.cs" company="">
+//     Copyright ©  2018
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using BMCGMobile.Entities;
 using Plugin.Compass;
 using Plugin.Geolocator;
 using System;
@@ -14,17 +27,39 @@ using static BMCGMobile.Enums;
 
 namespace BMCGMobile
 {
+    /// <summary>
+    /// Class MapPage.
+    /// </summary>
+    /// <seealso cref="Xamarin.Forms.ContentPage" />
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MapPage : ContentPage
     {
+        /// <summary>
+        /// The current map zoom
+        /// </summary>
         private MapZooms _CurrentMapZoom = MapZooms.All;
 
+        /// <summary>
+        /// The default street zoom
+        /// </summary>
         private double _DefaultStreetZoom = 19d;
+        /// <summary>
+        /// The default street tilt
+        /// </summary>
         private double _DefaultStreetTilt = 70d;
+        /// <summary>
+        /// The last compass heading
+        /// </summary>
         private Double _LastCompassHeading = 0;
 
+        /// <summary>
+        /// The last known position
+        /// </summary>
         private Plugin.Geolocator.Abstractions.Position _LastKnownPosition;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MapPage"/> class.
+        /// </summary>
         public MapPage()
         {
             InitializeComponent();
@@ -50,6 +85,11 @@ namespace BMCGMobile
             _SetZoomViewToggleButton(MapZooms.None);
         }
 
+        /// <summary>
+        /// Handles the PropertyChanged event of the _TrackingEntity control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
         private void _TrackingEntity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsOnTrail")
@@ -73,6 +113,10 @@ namespace BMCGMobile
             }
         }
 
+        /// <summary>
+        /// When overridden, allows application developers to customize behavior immediately prior to the <see cref="T:Xamarin.Forms.Page" /> becoming visible.
+        /// </summary>
+        /// <remarks>To be added.</remarks>
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -125,12 +169,21 @@ namespace BMCGMobile
             }
         }
 
+        /// <summary>
+        /// Handles the InfoWindowClicked event of the CustomMap control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="InfoWindowClickedEventArgs"/> instance containing the event data.</param>
         private void CustomMap_InfoWindowClicked(object sender, InfoWindowClickedEventArgs e)
         {
             var selectedCustomPin = StaticData.CustomPins.Where(s => s.Id == e.Pin.Tag.ToString()).FirstOrDefault();
             Device.OpenUri(new Uri(selectedCustomPin.Url));
         }
 
+        /// <summary>
+        /// Retrieves the current location.
+        /// </summary>
+        /// <returns>Task.</returns>
         private async Task _RetrieveCurrentLocation()
         {
             var geolocator = CrossGeolocator.Current;
@@ -213,6 +266,13 @@ namespace BMCGMobile
             _CenterMap(_LastKnownPosition);
         }
 
+        /// <summary>
+        /// street view as an asynchronous operation.
+        /// </summary>
+        /// <param name="position">The position.</param>
+        /// <param name="zoom">The zoom.</param>
+        /// <param name="tilt">The tilt.</param>
+        /// <returns>Task.</returns>
         private async Task _StreetViewAsync(Plugin.Geolocator.Abstractions.Position position, double zoom, double tilt)
         {
             await customMap.MoveCamera(CameraUpdateFactory.NewCameraPosition(
@@ -224,6 +284,10 @@ namespace BMCGMobile
                                      )));
         }
 
+        /// <summary>
+        /// Centers the map.
+        /// </summary>
+        /// <param name="position">The position.</param>
         private void _CenterMap(Plugin.Geolocator.Abstractions.Position position)
         {
             if (position != null)
@@ -258,6 +322,9 @@ namespace BMCGMobile
             }
         }
 
+        /// <summary>
+        /// Centers the map to pins.
+        /// </summary>
         private void _CenterMapToPins()
         {
             if (StaticData.RouteCoordinates != null && StaticData.RouteCoordinates.Count > 0)
@@ -281,6 +348,9 @@ namespace BMCGMobile
             }
         }
 
+        /// <summary>
+        /// Sets the next pin based on bearing.
+        /// </summary>
         private void _SetNextPinBasedOnBearing()
         {
             LineSegmentEntity segmentWithNextPin = null;
@@ -368,17 +438,22 @@ namespace BMCGMobile
 
                 // Set Next Pin
                 StaticData.TrackingData.NextPin = segmentWithNextPin.CustomPinOnSegment.Pin.Label;
-                
+
                 if (_CurrentMapZoom == MapZooms.Street)
                 {
                     // Auto Select Pin on Street View Only
-                    customMap.SelectedPin = segmentWithNextPin.CustomPinOnSegment.Pin;           
+                    customMap.SelectedPin = segmentWithNextPin.CustomPinOnSegment.Pin;
                 }
-
-               
             }
         }
 
+        /// <summary>
+        /// Gets the distanceto next pin.
+        /// </summary>
+        /// <param name="curPosition">The current position.</param>
+        /// <param name="closestLineSegmentToCurPosition">The closest line segment to current position.</param>
+        /// <param name="pinLineSegment">The pin line segment.</param>
+        /// <returns>System.Double.</returns>
         private double GetDistancetoNextPin(Position curPosition, LineSegmentEntity closestLineSegmentToCurPosition, LineSegmentEntity pinLineSegment)
         {
             double distance = 0;
@@ -432,6 +507,11 @@ namespace BMCGMobile
             return distance;
         }
 
+        /// <summary>
+        /// Determines whether [is heading towards position] [the specified position].
+        /// </summary>
+        /// <param name="position">The position.</param>
+        /// <returns><c>true</c> if [is heading towards position] [the specified position]; otherwise, <c>false</c>.</returns>
         private bool _IsHeadingTowardsPosition(Position position)
         {
             if (_LastKnownPosition.Heading > 0 && _LastKnownPosition.Heading < 90)
@@ -470,6 +550,9 @@ namespace BMCGMobile
             return false;
         }
 
+        /// <summary>
+        /// Finds the distance to nearest coordinate.
+        /// </summary>
         private void _FindDistanceToNearestCoordinate()
         {
             //var _LastKnownPosition = new Position(40.805293, -74.19676);
@@ -485,10 +568,14 @@ namespace BMCGMobile
                 list.Add(lineSegment.ClosestPositionToLocation);
 
                 customMap.PlotClosestPolylineTrack(list);
-                
             }
         }
 
+        /// <summary>
+        /// Handles the Clicked event of the MapViewButton control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void MapViewButton_Clicked(object sender, EventArgs e)
         {
             var b = sender as Button;
@@ -510,12 +597,20 @@ namespace BMCGMobile
             _SetMapViewToggleButton(customMap.MapType);
         }
 
+        /// <summary>
+        /// Handles the Clicked event of the StreetViewButton control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void StreetViewButton_Clicked(object sender, EventArgs e)
         {
             _SetZoomViewToggleButton(MapZooms.Street);
             _SetStreetViewInitialCameraPosition();
         }
 
+        /// <summary>
+        /// Sets the street view initial camera position.
+        /// </summary>
         private void _SetStreetViewInitialCameraPosition()
         {
             customMap.AnimateCamera(CameraUpdateFactory.NewCameraPosition(
@@ -527,24 +622,43 @@ namespace BMCGMobile
                                      )));
         }
 
+        /// <summary>
+        /// Handles the Clicked event of the ZoomPinsButton control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ZoomPinsButton_Clicked(object sender, EventArgs e)
         {
             _SetZoomViewToggleButton(MapZooms.Pins);
             _CenterMapToPins();
         }
 
+        /// <summary>
+        /// Handles the Clicked event of the ZoomAllButton control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ZoomAllButton_Clicked(object sender, EventArgs e)
         {
             _SetZoomViewToggleButton(MapZooms.All);
             _CenterMap(_LastKnownPosition);
         }
 
+        /// <summary>
+        /// Handles the Clicked event of the ZoomUserButton control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void ZoomUserButton_Clicked(object sender, EventArgs e)
         {
             _SetZoomViewToggleButton(MapZooms.User);
             customMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude), Distance.FromMiles(1)));
         }
 
+        /// <summary>
+        /// Sets the zoom view toggle button.
+        /// </summary>
+        /// <param name="mapZoom">The map zoom.</param>
         private void _SetZoomViewToggleButton(MapZooms mapZoom)
         {
             var onButtonBorderColor = Color.Black;
@@ -596,6 +710,10 @@ namespace BMCGMobile
             _CurrentMapZoom = mapZoom;
         }
 
+        /// <summary>
+        /// Sets the map view toggle button.
+        /// </summary>
+        /// <param name="mapType">Type of the map.</param>
         private void _SetMapViewToggleButton(MapType mapType)
         {
             var onButtonBorderColor = Color.Black;
