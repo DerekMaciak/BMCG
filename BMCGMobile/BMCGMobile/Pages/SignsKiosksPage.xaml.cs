@@ -86,12 +86,12 @@ namespace BMCGMobile
             if (Device.RuntimePlatform == Device.iOS)
             {
                 //https://developer.apple.com/library/ios/featuredarticles/iPhoneURLScheme_Reference/MapLinks/MapLinks.html
-                Device.OpenUri(new Uri(string.Format("http://maps.apple.com/?daddr={0}&saddr={1}", destAddr, null)));
+                Device.OpenUri(new Uri(string.Format("http://maps.apple.com/?daddr={0},{1}&saddr={2},{3}", customerPin.Pin.Position.Latitude, customerPin.Pin.Position.Longitude, StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude)));
             }
             else if (Device.RuntimePlatform == Device.Android)
             {
                 // opens the 'task chooser' so the user can pick Maps, Chrome or other mapping app
-                Device.OpenUri(new Uri(string.Format("http://maps.google.com/?daddr={0}&saddr={1}", destAddr, null)));
+                Device.OpenUri(new Uri(string.Format("http://maps.google.com/?daddr={0},{1}&saddr={2},{3}", customerPin.Pin.Position.Latitude, customerPin.Pin.Position.Longitude, StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude)));
             }
             else if (Device.RuntimePlatform == Device.WinPhone)
             {

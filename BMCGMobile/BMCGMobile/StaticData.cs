@@ -28,10 +28,10 @@ namespace BMCGMobile
         /// </summary>
         public static TrackingEntity TrackingData = new TrackingEntity();
         /// <summary>
-        /// Gets or sets the route coordinates.
+        /// Gets or sets the the greenway trail route coordinates.
         /// </summary>
         /// <value>The route coordinates.</value>
-        public static List<Position> RouteCoordinates { set; get; }
+        public static List<Position> GreenwayTrailRouteCoordinates { set; get; }
         /// <summary>
         /// Gets or sets the custom pins.
         /// </summary>
@@ -42,5 +42,11 @@ namespace BMCGMobile
         /// </summary>
         /// <value>The line segments.</value>
         public static List<LineSegmentEntity> LineSegments { set; get; }
+
+        /// <summary>
+        /// Gets or sets the Morris Canal route coordinates.
+        /// </summary>
+        /// <value>The route coordinates.</value>
+        public static Dictionary<string, List<Position>> MorrisCanalRouteCoordinates { set; get; }
     }
 }

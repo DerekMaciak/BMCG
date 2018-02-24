@@ -36,16 +36,15 @@ namespace BMCGMobile
         /// </summary>
         public const string BING_MAPS_UWP_API_KEY = "your_bing_maps_apikey";
 
-        //public const string GPX_URL = @"http://services.surroundtech.com/BMCGWebsite/downloads/BMCGCoordinates.txt";
         /// <summary>
         /// The GPX URL
         /// </summary>
-        public const string GPX_URL = @"http://services.surroundtech.com/BMCGWebsite/downloads/DerekHomeTest.txt";
+        public const string GPX_URL = @"http://www.morriscanalbloomfieldnj.org/MorrisCanalBloomfield.gpx.txt";
 
         /// <summary>
         /// The CMS website URL
         /// </summary>
-        public const string CMS_WEBSITE_URL = @"http://services.surroundtech.com/BMCGWebsite/Home/";
+        public const string CMS_WEBSITE_URL = @"http://www.morriscanalbloomfieldnj.org/";
 
         /// <summary>
         /// The debug mode

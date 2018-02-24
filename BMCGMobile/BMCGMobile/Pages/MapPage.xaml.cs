@@ -43,19 +43,16 @@ namespace BMCGMobile
         /// The default street zoom
         /// </summary>
         private double _DefaultStreetZoom = 19d;
+
         /// <summary>
         /// The default street tilt
         /// </summary>
         private double _DefaultStreetTilt = 70d;
+
         /// <summary>
         /// The last compass heading
         /// </summary>
         private Double _LastCompassHeading = 0;
-
-        /// <summary>
-        /// The last known position
-        /// </summary>
-        private Plugin.Geolocator.Abstractions.Position _LastKnownPosition;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MapPage"/> class.
@@ -123,7 +120,7 @@ namespace BMCGMobile
 
             try
             {
-                if (StaticData.RouteCoordinates == null)
+                if (StaticData.GreenwayTrailRouteCoordinates == null)
                 {
                     customMap.LoadMapCoordinates();
 
@@ -197,13 +194,15 @@ namespace BMCGMobile
                     {
                         if ((Device.RuntimePlatform == Device.Android || !geolocator.SupportsHeading))
                         {
-                            if (_LastKnownPosition != null)
+                            if (StaticData.TrackingData.LastKnownPosition != null)
                             {
-                                if (Math.Abs(_LastCompassHeading - Math.Truncate(e.Heading)) > 2)
+                                if (Math.Abs(_LastCompassHeading - Math.Truncate(e.Heading)) > 3)
                                 {
-                                    _LastKnownPosition.Heading = e.Heading;
+                                    var position = new Plugin.Geolocator.Abstractions.Position(StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude);
+                                    position.Heading = e.Heading;
+                                    StaticData.TrackingData.LastKnownPosition.Heading = e.Heading;
 
-                                    if (_LastKnownPosition.Heading != 0)
+                                    if (position.Heading != 0)
                                     {
                                         if (_CurrentMapZoom == MapZooms.Street)
                                         {
@@ -211,7 +210,7 @@ namespace BMCGMobile
                                             var zoom = customMap.CameraPosition.Zoom == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
                                             var tilt = customMap.CameraPosition.Tilt == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
 
-                                            await _StreetViewAsync(_LastKnownPosition, zoom, tilt);
+                                            await _StreetViewAsync(position, zoom, tilt);
                                         }
 
                                         _SetNextPinBasedOnBearing();
@@ -229,7 +228,7 @@ namespace BMCGMobile
                 // MoveToCamera with Position and Zoom
                 geolocator.PositionChanged += async (sender, e) =>
                 {
-                    _LastKnownPosition = e.Position;
+                    StaticData.TrackingData.LastKnownPosition = e.Position;
 
                     // Set Position for User on trail
                     StaticData.TrackingData.AddUserPosition(e.Position);
@@ -243,7 +242,7 @@ namespace BMCGMobile
                         _SetStreetViewInitialCameraPosition();
                     }
 
-                    if (e.Position.Heading != 0)
+                    if ((Device.RuntimePlatform != Device.Android) && e.Position.Heading != 0)
                     {
                         if (_CurrentMapZoom == MapZooms.Street)
                         {
@@ -261,9 +260,9 @@ namespace BMCGMobile
                 await geolocator.StartListeningAsync(new TimeSpan(1000), 1, true);
             }
 
-            _LastKnownPosition = await geolocator.GetPositionAsync();
+            StaticData.TrackingData.LastKnownPosition = await geolocator.GetPositionAsync();
 
-            _CenterMap(_LastKnownPosition);
+            _CenterMap(StaticData.TrackingData.LastKnownPosition);
         }
 
         /// <summary>
@@ -292,12 +291,12 @@ namespace BMCGMobile
         {
             if (position != null)
             {
-                if (StaticData.RouteCoordinates != null && StaticData.RouteCoordinates.Count > 0)
+                if (StaticData.GreenwayTrailRouteCoordinates != null && StaticData.GreenwayTrailRouteCoordinates.Count > 0)
                 {
-                    var firstLatCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
-                    var lastLatCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
-                    var firstLongCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
-                    var lastLongCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
+                    var firstLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
+                    var lastLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
+                    var firstLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
+                    var lastLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
 
                     var centerPosition = StaticHelpers.GetCentralGeoCoordinate(new List<Position>() {
                     new Position(position.Latitude, position.Longitude),
@@ -327,12 +326,12 @@ namespace BMCGMobile
         /// </summary>
         private void _CenterMapToPins()
         {
-            if (StaticData.RouteCoordinates != null && StaticData.RouteCoordinates.Count > 0)
+            if (StaticData.GreenwayTrailRouteCoordinates != null && StaticData.GreenwayTrailRouteCoordinates.Count > 0)
             {
-                var firstLatCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
-                var lastLatCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
-                var firstLongCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
-                var lastLongCoordinate = StaticData.RouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
+                var firstLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
+                var lastLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
+                var firstLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
+                var lastLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
 
                 var centerPosition = StaticHelpers.GetCentralGeoCoordinate(new List<Position>() {
                     new Position(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude), new Position(lastLatCoordinate.Latitude, lastLatCoordinate.Longitude),
@@ -356,7 +355,7 @@ namespace BMCGMobile
             LineSegmentEntity segmentWithNextPin = null;
 
             //Find Closest Line Segment to current position
-            var curPosition = new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude);
+            var curPosition = new Position(StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude);
             var closestLineSegmentToPosition = customMap.FindClosestLineSegment(curPosition);
 
             if (closestLineSegmentToPosition != null && closestLineSegmentToPosition.CustomPinOnSegment != null)
@@ -514,34 +513,34 @@ namespace BMCGMobile
         /// <returns><c>true</c> if [is heading towards position] [the specified position]; otherwise, <c>false</c>.</returns>
         private bool _IsHeadingTowardsPosition(Position position)
         {
-            if (_LastKnownPosition.Heading > 0 && _LastKnownPosition.Heading < 90)
+            if (StaticData.TrackingData.LastKnownPosition.Heading > 0 && StaticData.TrackingData.LastKnownPosition.Heading < 90)
             {
                 // Use Coordinate that is > Lat and > Long
-                if (position.Latitude > _LastKnownPosition.Latitude && position.Longitude > _LastKnownPosition.Longitude)
+                if (position.Latitude > StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude > StaticData.TrackingData.LastKnownPosition.Longitude)
                 {
                     return true;
                 }
             }
-            else if (_LastKnownPosition.Heading > 90 && _LastKnownPosition.Heading < 180)
+            else if (StaticData.TrackingData.LastKnownPosition.Heading > 90 && StaticData.TrackingData.LastKnownPosition.Heading < 180)
             {
                 // Use Coordinate that is < lat and > Long
-                if (position.Latitude < _LastKnownPosition.Latitude && position.Longitude > _LastKnownPosition.Longitude)
+                if (position.Latitude < StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude > StaticData.TrackingData.LastKnownPosition.Longitude)
                 {
                     return true;
                 }
             }
-            else if (_LastKnownPosition.Heading > 180 && _LastKnownPosition.Heading < 270)
+            else if (StaticData.TrackingData.LastKnownPosition.Heading > 180 && StaticData.TrackingData.LastKnownPosition.Heading < 270)
             {
                 // Use Coordinate that is < lat and < long
-                if (position.Latitude < _LastKnownPosition.Latitude && position.Longitude < _LastKnownPosition.Longitude)
+                if (position.Latitude < StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude < StaticData.TrackingData.LastKnownPosition.Longitude)
                 {
                     return true;
                 }
             }
-            else if (_LastKnownPosition.Heading > 270 && _LastKnownPosition.Heading < 360)
+            else if (StaticData.TrackingData.LastKnownPosition.Heading > 270 && StaticData.TrackingData.LastKnownPosition.Heading < 360)
             {
                 // Use Coordinate that is > lat and < long
-                if (position.Latitude > _LastKnownPosition.Latitude && position.Longitude < _LastKnownPosition.Longitude)
+                if (position.Latitude > StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude < StaticData.TrackingData.LastKnownPosition.Longitude)
                 {
                     return true;
                 }
@@ -556,7 +555,7 @@ namespace BMCGMobile
         private void _FindDistanceToNearestCoordinate()
         {
             //var _LastKnownPosition = new Position(40.805293, -74.19676);
-            var curPosition = new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude);
+            var curPosition = new Position(StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude);
             var lineSegment = customMap.FindClosestLineSegment(curPosition);
             StaticData.TrackingData.DistanceFromTrailCenter = lineSegment.ClosestPositionToLocationDistance;
 
@@ -615,9 +614,9 @@ namespace BMCGMobile
         {
             customMap.AnimateCamera(CameraUpdateFactory.NewCameraPosition(
                                  new CameraPosition(
-                                     new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude),
+                                     new Position(StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude),
                                      _DefaultStreetZoom,
-                                     _LastKnownPosition.Heading, // bearing(rotation)
+                                     StaticData.TrackingData.LastKnownPosition.Heading, // bearing(rotation)
                                      _DefaultStreetTilt
                                      )));
         }
@@ -641,7 +640,7 @@ namespace BMCGMobile
         private void ZoomAllButton_Clicked(object sender, EventArgs e)
         {
             _SetZoomViewToggleButton(MapZooms.All);
-            _CenterMap(_LastKnownPosition);
+            _CenterMap(StaticData.TrackingData.LastKnownPosition);
         }
 
         /// <summary>
@@ -652,7 +651,7 @@ namespace BMCGMobile
         private void ZoomUserButton_Clicked(object sender, EventArgs e)
         {
             _SetZoomViewToggleButton(MapZooms.User);
-            customMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude), Distance.FromMiles(1)));
+            customMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude), Distance.FromMiles(1)));
         }
 
         /// <summary>

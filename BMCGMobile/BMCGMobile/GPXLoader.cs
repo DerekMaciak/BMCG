@@ -108,11 +108,11 @@ namespace BMCGMobile
                 var gpxWayPoints = new List<GPXWayPoint>();
                 foreach (var wpt in waypoints)
                 {
-                    var jsonComment = JsonConvert.DeserializeObject<JsonComment>(wpt.Comment);
-                    var pinTypeString = string.IsNullOrWhiteSpace(wpt.Comment) ? null : jsonComment.PinType;
+                    var jsonData = JsonConvert.DeserializeObject<JsonData>(wpt.Description);
+                    var pinTypeString = string.IsNullOrWhiteSpace(wpt.Description) ? null : jsonData.PinType;
                     var pinType = string.IsNullOrWhiteSpace(pinTypeString) ? PinTypes.POI : (PinTypes)Enum.Parse(typeof(PinTypes), pinTypeString);
 
-                    gpxWayPoints.Add(new GPXWayPoint(wpt.Name, wpt.Description, jsonComment.Sequence, pinType, jsonComment?.URL, Convert.ToDouble(wpt.Latitude), Convert.ToDouble(wpt.Longitude)));
+                    gpxWayPoints.Add(new GPXWayPoint(wpt.Name, wpt.Description, wpt.Comment, jsonData.Sequence, pinType, jsonData?.URL, Convert.ToDouble(wpt.Latitude), Convert.ToDouble(wpt.Longitude)));
                 }
 
                 return gpxWayPoints;
@@ -145,8 +145,16 @@ namespace BMCGMobile
                              {
                                  Name = track.Element(gpx + "name") != null ?
                                 track.Element(gpx + "name").Value : null,
-                                 Segs = (
-                                    from trackpoint in track.Descendants(gpx + "trkpt")
+
+
+
+                                 trackSegs = (
+                                    from trkSegment in track.Descendants(gpx + "trkseg")
+                                    select new
+                                    {
+                                      
+                                 trackPoints = (
+                                    from trackpoint in trkSegment.Descendants(gpx + "trkpt")
                                     select new
                                     {
                                         Latitude = trackpoint.Attribute("lat").Value,
@@ -155,17 +163,28 @@ namespace BMCGMobile
                                         trackpoint.Element(gpx + "ele").Value : null,
                                         Time = trackpoint.Element(gpx + "time") != null ?
                                         trackpoint.Element(gpx + "time").Value : null
+                                    })
+
                                     }
                                   )
                              };
 
                 var gpxLocations = new List<GPXLocation>();
-                foreach (var trk in tracks)
+
+                var trackNum = 0;
+                foreach (var track in tracks)
                 {
+                    trackNum += 1;
+                    var segmentNum = 0;
                     // Populate track data objects.
-                    foreach (var trkSeg in trk.Segs)
+                    foreach (var trackSeg in track.trackSegs)
                     {
-                        gpxLocations.Add(new GPXLocation(Convert.ToDouble(trkSeg.Latitude), Convert.ToDouble(trkSeg.Longitude)));
+                        segmentNum += 1;
+                        foreach (var trackPoint in trackSeg.trackPoints)
+                        {
+                            gpxLocations.Add(new GPXLocation(trackNum, track.Name, segmentNum, Convert.ToDouble(trackPoint.Latitude), Convert.ToDouble(trackPoint.Longitude)));
+                        }
+        
                     }
                 }
                 return gpxLocations;
@@ -177,9 +196,9 @@ namespace BMCGMobile
         }
 
         /// <summary>
-        /// Class JsonComment.
+        /// Class JsonData.
         /// </summary>
-        private class JsonComment
+        private class JsonData
         {
             /// <summary>
             /// Gets or sets the type of the pin.
@@ -212,8 +231,13 @@ namespace BMCGMobile
         /// <summary>
         /// Gets or sets the description.
         /// </summary>
-        /// <value>The description.</value>
+        /// <value>The description - Contains Json Information.</value>
         public string Description { get; set; }
+        /// <summary>
+        /// Gets or sets the comment.
+        /// </summary>
+        /// <value>The Comment - Used as secondary Title.</value>
+        public string Comment { get; set; }
         /// <summary>
         /// Gets or sets the type of the pin.
         /// </summary>
@@ -250,10 +274,11 @@ namespace BMCGMobile
         /// <param name="url">The URL.</param>
         /// <param name="latitude">The latitude.</param>
         /// <param name="longitude">The longitude.</param>
-        public GPXWayPoint(string name, string description, int sequence, PinTypes pinType, string url, double latitude, double longitude)
+        public GPXWayPoint(string name, string description, string comment, int sequence, PinTypes pinType, string url, double latitude, double longitude)
         {
             Name = name;
             Description = description;
+            Comment = comment;
             Sequence = sequence;
             PinType = pinType;
             URL = url;
@@ -267,6 +292,25 @@ namespace BMCGMobile
     /// </summary>
     public class GPXLocation
     {
+
+        /// <summary>
+        /// Gets or sets the track.
+        /// </summary>
+        /// <value>The track number.</value>
+        public int Track { get; set; }
+
+        /// <summary>
+        /// Gets or sets the track name.
+        /// </summary>
+        /// <value>The track name.</value>
+        public string TrackName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the segment.
+        /// </summary>
+        /// <value>The segment number.</value>
+        public int Segment { get; set; }
+
         /// <summary>
         /// Gets or sets the latitude.
         /// </summary>
@@ -283,8 +327,11 @@ namespace BMCGMobile
         /// </summary>
         /// <param name="latitude">The latitude.</param>
         /// <param name="longitude">The longitude.</param>
-        public GPXLocation(double latitude, double longitude)
+        public GPXLocation(int track, string trackName, int segment, double latitude, double longitude)
         {
+            Track = track;
+            TrackName = trackName;
+            Segment = segment;
             Latitude = latitude;
             Longitude = longitude;
         }

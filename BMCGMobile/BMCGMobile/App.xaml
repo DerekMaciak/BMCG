@@ -19,7 +19,8 @@
             <Color x:Key="StatusInfoOnTrailBackgroundColor">Green</Color>
             <Color x:Key="StatusInfoOffTrailBackgroundColor">#A24437</Color>
 
-            <Color x:Key="TrailColor">#A24437</Color>
+            <Color x:Key="GreenwayTrailColor">#A24437</Color>
+            <Color x:Key="MorrisCanalColor">Green</Color>
             <Color x:Key="TrackerColor">Blue</Color>
 
             <Style x:Key="StatusInfoFrameStyle" TargetType="Frame">

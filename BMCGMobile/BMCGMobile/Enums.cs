@@ -67,5 +67,14 @@ namespace BMCGMobile
             /// </summary>
             None
         }
-    }
+
+        /// <summary>
+        /// Enum TrackTypes
+        /// </summary>
+        public enum TrackTypes
+        {
+            BloomfieldGreenwayTrail,
+            MorrisCanal
+        }
+   }
 }

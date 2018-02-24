@@ -69,9 +69,9 @@ namespace BMCGMobile.Entities
             Kiosk,
 
             /// <summary>
-            /// The wayfinding
+            /// The marker
             /// </summary>
-            Wayfinding,
+            Marker,
 
             /// <summary>
             /// The poi
@@ -91,7 +91,7 @@ namespace BMCGMobile.Entities
                 case PinTypes.Kiosk:
                     return "marker26green.png";
 
-                case PinTypes.Wayfinding:
+                case PinTypes.Marker:
                     return "marker26red.png";
 
                 case PinTypes.POI:
@@ -116,7 +116,7 @@ namespace BMCGMobile.Entities
                 case PinTypes.Kiosk:
                     return Color.Green;
 
-                case PinTypes.Wayfinding:
+                case PinTypes.Marker:
                     return Color.FromHex("#A24437"); //Red
 
                 case PinTypes.POI:

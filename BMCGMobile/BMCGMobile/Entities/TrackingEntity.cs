@@ -26,6 +26,11 @@ namespace BMCGMobile.Entities
     /// <seealso cref="BMCGMobile.Entities.EntityBase" />
     public class TrackingEntity : EntityBase
     {
+
+        /// <summary>
+        /// The last known position
+        /// </summary>
+        public Plugin.Geolocator.Abstractions.Position LastKnownPosition;
         /// <summary>
         /// The is on trail
         /// </summary>
