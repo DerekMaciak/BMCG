@@ -108,8 +108,8 @@ namespace BMCGMobile
                 var gpxWayPoints = new List<GPXWayPoint>();
                 foreach (var wpt in waypoints)
                 {
-                    var jsonData = JsonConvert.DeserializeObject<JsonData>(wpt.Description);
-                    var pinTypeString = string.IsNullOrWhiteSpace(wpt.Description) ? null : jsonData.PinType;
+                    var jsonData = JsonConvert.DeserializeObject<JsonData>(wpt.Comment);
+                    var pinTypeString = string.IsNullOrWhiteSpace(wpt.Comment) ? null : jsonData.PinType;
                     var pinType = string.IsNullOrWhiteSpace(pinTypeString) ? PinTypes.POI : (PinTypes)Enum.Parse(typeof(PinTypes), pinTypeString);
 
                     gpxWayPoints.Add(new GPXWayPoint(wpt.Name, wpt.Description, wpt.Comment, jsonData.Sequence, pinType, jsonData?.URL, Convert.ToDouble(wpt.Latitude), Convert.ToDouble(wpt.Longitude)));

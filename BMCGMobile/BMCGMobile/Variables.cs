@@ -39,12 +39,12 @@ namespace BMCGMobile
         /// <summary>
         /// The GPX URL
         /// </summary>
-        public const string GPX_URL = @"http://www.morriscanalbloomfieldnj.org/MorrisCanalBloomfield.gpx.txt";
+        public const string GPX_URL = @"http://morriscanalbloomfield.org/MorrisCanalBloomfield.gpx.txt";
 
         /// <summary>
         /// The CMS website URL
         /// </summary>
-        public const string CMS_WEBSITE_URL = @"http://www.morriscanalbloomfieldnj.org/";
+        public const string CMS_WEBSITE_URL = @"http://morriscanalbloomfield.org/";
 
         /// <summary>
         /// The debug mode

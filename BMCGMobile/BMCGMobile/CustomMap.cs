@@ -110,7 +110,7 @@ namespace BMCGMobile
                         foreach (var item in wayfindingCoordinates.OrderBy(p => p.Sequence))
                         {
                             // var address = string.IsNullOrWhiteSpace(item.Description) ? string.Format(DesciptionResource.LatitudeLongitude, item.Latitude, item.Longitude) : item.Description;
-                            var address = item.Comment;
+                            var address = item.Description;
 
                             var pin = new CustomPinEntity
                             {

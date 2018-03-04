@@ -28,7 +28,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.bloomfield.MorrisCanalGreenway</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.0.3</string>
+	<string>1.0.0.5</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
