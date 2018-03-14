@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BMCGMobile.SignsKiosksPage" Title="Pin List View " Icon="map-pin.png">
+             x:Class="BMCGMobile.SignsKiosksPage" Icon="map-pin.png" Title="{Binding Resources[MarkerListView]}">
     <ContentPage.Content>
         <ScrollView>
             <ListView x:Name="listViewPins" HasUnevenRows="True" ItemSelected="listViewPins_ItemSelected" >
@@ -29,7 +29,16 @@
 
                                     <Frame x:Name="statusInfo" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource StatusInfoFrameStyle}" BackgroundColor="{Binding StatusInfoBackgroundColor}" IsVisible="{Binding IsStatusInfoVisible}">
                                         
-                                        <StackLayout Orientation="Vertical" HorizontalOptions="Center"  Style="{StaticResource StatusInfoStackLayoutStyle}">
+                                        <StackLayout Orientation="Vertical" Style="{StaticResource StatusInfoListStackLayoutStyle}">
+
+                                            <StackLayout Style="{StaticResource StatusInfoLabelStackLayoutStyle}">
+                                                <Label Text="{Binding Resources[OnTrailETA]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
+                                                <Label Text="{Binding ETAToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
+                                                <Label Text="{Binding Resources[OnTrailDistance]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
+                                                <Label Text="{Binding DistanceToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
+                                                <Label Text="{Binding Resources[OnTrailDirection]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
+                                                <Label Text="{Binding HeadingDirection}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
+                                            </StackLayout>
 
                                             <StackLayout Style="{StaticResource StatusInfoLabelStackLayoutStyle}">
                                                 <Label Text="{Binding Resources[StatusInfoStatus]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
@@ -37,13 +46,7 @@
                                                 <Label Text="{Binding Resources[DistanceFromTrailCenter]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
                                                 <Label Text="{Binding DistanceFromTrailCenterDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
                                             </StackLayout>
-                                          
-                                            <StackLayout Style="{StaticResource StatusInfoLabelStackLayoutStyle}">
-                                                <Label Text="{Binding Resources[OnTrailETA]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
-                                                <Label Text="{Binding ETAToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
-                                                <Label Text="{Binding Resources[OnTrailDistance]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
-                                                <Label Text="{Binding DistanceToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
-                                            </StackLayout>
+
                                         </StackLayout>
                                     
                                     </Frame>

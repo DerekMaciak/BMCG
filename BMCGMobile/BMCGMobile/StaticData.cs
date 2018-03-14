@@ -48,5 +48,11 @@ namespace BMCGMobile
         /// </summary>
         /// <value>The route coordinates.</value>
         public static Dictionary<string, List<Position>> MorrisCanalRouteCoordinates { set; get; }
+
+        /// <summary>
+        /// Gets or sets the wayfinding coordinates.
+        /// </summary>
+        /// <value>The wayfinding coordinates.</value>
+        public static List<GPXWayPoint> WayfindingCoordinates { set; get; }
     }
 }

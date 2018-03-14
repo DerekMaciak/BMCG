@@ -71,8 +71,14 @@ namespace BMCGMobile.Droid
             base.OnStop();
             if (IsBound)
             {
-                UnbindService(_ServiceConnection);
-                IsBound = false;
+                try
+                {
+                    UnbindService(_ServiceConnection);
+                    IsBound = false;
+                }
+                catch (Exception ex)
+                {
+                }
             }
         }
 
@@ -81,8 +87,14 @@ namespace BMCGMobile.Droid
             base.OnDestroy();
             if (IsBound)
             {
-                UnbindService(_ServiceConnection);
-                IsBound = false;
+                try
+                {
+                    UnbindService(_ServiceConnection);
+                    IsBound = false;
+                }
+                catch (Exception ex)
+                {
+                }
             }
         }
 
@@ -97,14 +109,20 @@ namespace BMCGMobile.Droid
             //}
 
             // if (!firstRun)
-            _StartStepCounterService();
+            try
+            {
+                _StartStepCounterService();
 
-            if (IsBound)
-                return;
+                if (IsBound)
+                    return;
 
-            var serviceIntent = new Intent(this, typeof(StepCounterService));
-            _ServiceConnection = new StepCounterServiceConnection(this);
-            BindService(serviceIntent, _ServiceConnection, Bind.AutoCreate);
+                var serviceIntent = new Intent(this, typeof(StepCounterService));
+                _ServiceConnection = new StepCounterServiceConnection(this);
+                BindService(serviceIntent, _ServiceConnection, Bind.AutoCreate);
+            }
+            catch (Exception ex)
+            {
+            }
         }
     }
 }

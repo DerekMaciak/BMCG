@@ -61,7 +61,6 @@ namespace BMCGMobile
                         {
                             // Just Combine Track Seqments
                             StaticData.GreenwayTrailRouteCoordinates.Add(new Position(item.Latitude, item.Longitude));
-                           
                         }
 
                         // Morris Canal
@@ -104,48 +103,16 @@ namespace BMCGMobile
                     }
 
                     // Load Wayfinding Pins
-                    var wayfindingCoordinates = gpxLoader.LoadGPXWayPoints(Variables.GPX_URL);
-                    if (wayfindingCoordinates != null)
+                    StaticData.WayfindingCoordinates = gpxLoader.LoadGPXWayPoints(Variables.GPX_URL);
+                    if (StaticData.WayfindingCoordinates != null)
                     {
-                        foreach (var item in wayfindingCoordinates.OrderBy(p => p.Sequence))
-                        {
-                            // var address = string.IsNullOrWhiteSpace(item.Description) ? string.Format(DesciptionResource.LatitudeLongitude, item.Latitude, item.Longitude) : item.Description;
-                            var address = item.Description;
-
-                            var pin = new CustomPinEntity
-                            {
-                                Id = item.Name,
-                                Url = new Uri(new Uri(Variables.CMS_WEBSITE_URL), item.URL).ToString(),
-                                PinType = item.PinType,
-                                Pin = new Pin
-                                {
-                                    Tag = item.Name,
-                                    Type = PinType.Place,
-                                    Position = new Position(item.Latitude, item.Longitude),
-                                    Label = item.Name,
-                                    Address = address,
-                                    Icon = BitmapDescriptorFactory.DefaultMarker(CustomPinEntity.GetPinImageColor(item.PinType)),
-
-                                    //Icon = BitmapDescriptorFactory.FromBundle(CustomPinEntity.GetPinImageName(item.PinType))
-                                },
-                            };
-
-                            StaticData.CustomPins.Add(pin);
-                            Pins.Add(pin.Pin);
-
-                            // Add Pin to Closest Line Segment
-                            if (item.PinType == CustomPinEntity.PinTypes.Kiosk || item.PinType == CustomPinEntity.PinTypes.Marker)
-                            {
-                                var lineSegment = FindClosestLineSegment(new Position(item.Latitude, item.Longitude));
-                                // Only 1 pin should be on segment - make sure GPX file complies
-                                lineSegment.CustomPinOnSegment = pin;
-                            }
-                        }
+                        LoadWayFindingCoordinatePins();
 
                         //_RetrieveAddressForPosition();
-
-                        PlotPolylineTrack();
+                        
                     }
+
+                    PlotPolylineTrack();
                 }
             }
             catch (Exception ex)
@@ -154,12 +121,49 @@ namespace BMCGMobile
             }
         }
 
+        public void LoadWayFindingCoordinatePins()
+        {
+            foreach (var item in StaticData.WayfindingCoordinates.OrderBy(p => p.Sequence))
+            {
+                // var address = string.IsNullOrWhiteSpace(item.Description) ? string.Format(DesciptionResource.LatitudeLongitude, item.Latitude, item.Longitude) : item.Description;
+                var address = item.Description;
+
+                var pin = new CustomPinEntity
+                {
+                    Id = item.Name,
+                    Url = new Uri(new Uri(Variables.CMS_WEBSITE_URL), item.URL).ToString(),
+                    PinType = item.PinType,
+                    Pin = new Pin
+                    {
+                        Tag = item.Name,
+                        Type = PinType.Place,
+                        Position = new Position(item.Latitude, item.Longitude),
+                        Label = item.Name,
+                        Address = address,
+                        Icon = BitmapDescriptorFactory.DefaultMarker(CustomPinEntity.GetPinImageColor(item.PinType)),
+
+                        //Icon = BitmapDescriptorFactory.FromBundle(CustomPinEntity.GetPinImageName(item.PinType))
+                    },
+                };
+
+                StaticData.CustomPins.Add(pin);
+                Pins.Add(pin.Pin);
+
+                // Add Pin to Closest Line Segment
+                if (item.PinType == CustomPinEntity.PinTypes.Kiosk || item.PinType == CustomPinEntity.PinTypes.Marker)
+                {
+                    var lineSegment = FindClosestLineSegment(new Position(item.Latitude, item.Longitude));
+                    // Only 1 pin should be on segment - make sure GPX file complies
+                    lineSegment.CustomPinOnSegment = pin;
+                }
+            }
+        }
+
         /// <summary>
         /// Plots the polyline track.
         /// </summary>
         public void PlotPolylineTrack()
         {
-           
             // Plot Morris Canal Route Coordinates
             //===============================================
 
@@ -193,7 +197,6 @@ namespace BMCGMobile
             polylineGreenwayTrail.Tag = TrackTypes.BloomfieldGreenwayTrail.ToString();
 
             Polylines.Add(polylineGreenwayTrail);
-
         }
 
         /// <summary>
@@ -224,6 +227,50 @@ namespace BMCGMobile
             }
 
             Polylines.Add(polyline);
+        }
+
+        public void PlotUserOnTrailSegmentsPolylineTrack(DateTime fitnessDate)
+        {
+            // Plot User On Trail Segments Polyline Track
+            //===============================================
+
+            // Remove existing Polyline
+            var poyLinesToRemove = new List<Polyline>();
+            foreach (var item in Polylines.Where(s => s.Tag.ToString() == "UserOnTrailSegments"))
+            {
+
+                poyLinesToRemove.Add(item);
+                  
+            }
+            foreach (var item in poyLinesToRemove)
+            {
+                Polylines.Remove(item);
+            }
+
+            var fitnessEntity = StaticData.TrackingData.FitnessHistory.Where(w => w.FitnessDate.Date == fitnessDate.Date).FirstOrDefault();
+            if (fitnessEntity != null)
+            {
+                
+                foreach (var trackSegments in fitnessEntity.UserOnTrailSegments)
+                {
+                    var polyline = new Polyline();
+                    foreach (var tracks in trackSegments.UserPositionsOnTrail)
+                    {
+                        polyline.Positions.Add(new Position(tracks.Latitude, tracks.Longitude));
+                    }
+                    polyline.IsClickable = false;
+                    polyline.StrokeColor = (Color)Application.Current.Resources["UserOnTrailSegmentsColor"];
+                    polyline.StrokeWidth = 5f;
+                    polyline.Tag = "UserOnTrailSegments";
+
+
+                    if (polyline.Positions.Count() > 2)
+                    {
+                        Polylines.Add(polyline);
+                    }
+
+                }
+            }
         }
 
         /// <summary>
@@ -296,6 +343,123 @@ namespace BMCGMobile
             }
 
             return null;
+        }
+
+        public async void CreateMapSnapShotAsync()
+        {
+            var stream = await this.TakeSnapshot();
+
+           // StaticData.TrackingData.FitnessToday.MapSnapShot = ImageSource.FromStream(() => stream);
+        }
+
+        /// <summary>
+        /// Centers the map.
+        /// </summary>
+        /// <param name="position">The position.</param>
+        public void CenterMap(Plugin.Geolocator.Abstractions.Position position)
+        {
+            if (position != null)
+            {
+                if (StaticData.GreenwayTrailRouteCoordinates != null && StaticData.GreenwayTrailRouteCoordinates.Count > 0)
+                {
+                    var firstLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
+                    var lastLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
+                    var firstLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
+                    var lastLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
+
+                    var centerPosition = StaticHelpers.GetCentralGeoCoordinate(new List<Position>() {
+                    new Position(position.Latitude, position.Longitude),
+                    new Position(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude), new Position(lastLatCoordinate.Latitude, lastLatCoordinate.Longitude),
+                    new Position(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude), new Position(lastLongCoordinate.Latitude, lastLongCoordinate.Longitude) });
+
+                    var distLat = StaticHelpers.CalculateDistance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, Units.Miles);
+                    var distLong = StaticHelpers.CalculateDistance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, Units.Miles);
+                    var dist = distLat >= distLong ? distLat : distLong;
+
+                    var distPost = StaticHelpers.CalculateDistance(centerPosition.Latitude, centerPosition.Longitude, position.Latitude, position.Longitude, Units.Miles);
+                    dist = distPost >= dist ? distPost : dist;
+
+                    dist = dist == 0 ? 0 : dist / 2;
+
+                    this.MoveToRegion(MapSpan.FromCenterAndRadius(centerPosition, Distance.FromMiles(dist)));
+                }
+                else
+                {
+                    this.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMiles(15)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Centers the map to pins.
+        /// </summary>
+        public void CenterMapToPins()
+        {
+            if (StaticData.GreenwayTrailRouteCoordinates != null && StaticData.GreenwayTrailRouteCoordinates.Count > 0)
+            {
+                var firstLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
+                var lastLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
+                var firstLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
+                var lastLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
+
+                var centerPosition = StaticHelpers.GetCentralGeoCoordinate(new List<Position>() {
+                    new Position(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude), new Position(lastLatCoordinate.Latitude, lastLatCoordinate.Longitude),
+                    new Position(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude), new Position(lastLongCoordinate.Latitude, lastLongCoordinate.Longitude) });
+
+                var distLat = StaticHelpers.CalculateDistance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, Units.Miles);
+                var distLong = StaticHelpers.CalculateDistance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, Units.Miles);
+                var dist = distLat >= distLong ? distLat : distLong;
+
+                dist = dist == 0 ? 0 : dist / 2;
+
+                this.MoveToRegion(MapSpan.FromCenterAndRadius(centerPosition, Distance.FromMiles(dist)));
+            }
+        }
+
+        public void CenterMapToUserPositions(DateTime fitnessDate)
+        {
+            var userOnTrailSegments = StaticData.TrackingData.FitnessHistory.Where(w => w.FitnessDate.Date == fitnessDate.Date).FirstOrDefault().UserOnTrailSegments;
+
+            if (userOnTrailSegments != null && userOnTrailSegments.Count > 0)
+            {
+                var userPositions = new List<Position>();
+
+                foreach (var item in userOnTrailSegments)
+                {
+                    foreach (var pos in item.UserPositionsOnTrail)
+                    {
+                        userPositions.Add(new Position(pos.Latitude, pos.Longitude));
+                    }
+                }
+
+                if (userPositions.Count == 0)
+                {
+                    CenterMapToPins();
+                    return;
+                }
+
+                var firstLatCoordinate = userPositions.OrderBy(o => o.Latitude).FirstOrDefault();
+                var lastLatCoordinate = userPositions.OrderBy(o => o.Latitude).LastOrDefault();
+                var firstLongCoordinate = userPositions.OrderBy(o => o.Longitude).FirstOrDefault();
+                var lastLongCoordinate = userPositions.OrderBy(o => o.Longitude).LastOrDefault();
+
+                var centerPosition = StaticHelpers.GetCentralGeoCoordinate(new List<Position>() {
+                    new Position(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude), new Position(lastLatCoordinate.Latitude, lastLatCoordinate.Longitude),
+                    new Position(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude), new Position(lastLongCoordinate.Latitude, lastLongCoordinate.Longitude) });
+
+                var distLat = StaticHelpers.CalculateDistance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, Units.Miles);
+                var distLong = StaticHelpers.CalculateDistance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, Units.Miles);
+                var dist = distLat >= distLong ? distLat : distLong;
+
+                dist = dist == 0 ? 0 : dist / 2;
+
+                this.MoveToRegion(MapSpan.FromCenterAndRadius(centerPosition, Distance.FromMiles(dist)));
+            }
+            else
+            {
+
+                CenterMapToPins();
+            }
         }
 
         #region Test Code

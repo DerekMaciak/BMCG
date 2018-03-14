@@ -11,6 +11,7 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BMCGMobile.Resources;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -29,6 +30,33 @@ namespace BMCGMobile
         public SettingsPage()
         {
             InitializeComponent();
+
+            this.BindingContext = StaticData.TrackingData.UserSettings;
+
+            StaticData.TrackingData.UserSettings.PropertyChanged += UserSettings_PropertyChanged;
         }
+
+        private void UserSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsAutoTracking")
+            {
+                if (!StaticData.TrackingData.UserSettings.IsAutoTracking)
+                {
+                    _DisplayAlertAsync();
+                }
+            }
+        }
+
+        private void RestoreDefaultsButton_Clicked(object sender, System.EventArgs e)
+        {
+            StaticData.TrackingData.UserSettings.SetDefaults();
+        }
+
+        private async void _DisplayAlertAsync()
+        {
+            await DisplayAlert(DesciptionResource.Notification, string.Format(DesciptionResource.AutoTrackingInformationalMessage, DesciptionResource.AutoTrack, DesciptionResource.DisplayOffTrailAlert, DesciptionResource.TodayFitnessTracking ), "Ok");
+
+        }
+
     }
 }

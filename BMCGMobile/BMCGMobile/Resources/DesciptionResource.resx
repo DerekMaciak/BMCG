@@ -126,8 +126,26 @@
   <data name="ActiveTime" xml:space="preserve">
     <value>Active Time</value>
   </data>
+  <data name="AutoTrack" xml:space="preserve">
+    <value>Auto detect on/off trail status</value>
+  </data>
+  <data name="AutoTrackingInformationalMessage" xml:space="preserve">
+    <value>If you turn off "{0}", the setting "{1}" will also be turned off.  Fitness can only be tracked when the status is "On Trail".  You will need to manually turn on/off trail status on the "{2}" page in order to track fitness.</value>
+  </data>
+  <data name="AutoTrackingMaximumDistanceFromTrail" xml:space="preserve">
+    <value>Auto detect max distance from trail</value>
+  </data>
+  <data name="AverageWalkingSpeed" xml:space="preserve">
+    <value>Average walking speed</value>
+  </data>
   <data name="Calories" xml:space="preserve">
     <value>Calories</value>
+  </data>
+  <data name="DaysAbrev" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="DisplayOffTrailAlert" xml:space="preserve">
+    <value>Display off trail alert to extend on trail status</value>
   </data>
   <data name="Distance" xml:space="preserve">
     <value>Distance</value>
@@ -135,17 +153,41 @@
   <data name="DistanceFromTrailCenter" xml:space="preserve">
     <value>Trail Center:</value>
   </data>
+  <data name="FarFromTrailQuestion" xml:space="preserve">
+    <value>We have detected you are {0} from the trail center and the setting "{1}" is turned off. The "On Trail" setting needs to be manually turned on/off on the "{2}" page in order to track fitness. Do you want to turn it off now?</value>
+  </data>
   <data name="Feet" xml:space="preserve">
     <value>Feet</value>
+  </data>
+  <data name="FeetAbrev" xml:space="preserve">
+    <value>ft</value>
+  </data>
+  <data name="FitnessHistory" xml:space="preserve">
+    <value>Fitness History</value>
+  </data>
+  <data name="Height" xml:space="preserve">
+    <value>Height</value>
   </data>
   <data name="Hybrid" xml:space="preserve">
     <value>Hybrid</value>
   </data>
+  <data name="Inches" xml:space="preserve">
+    <value>Inches</value>
+  </data>
+  <data name="InchesAbrev" xml:space="preserve">
+    <value>in</value>
+  </data>
   <data name="LatitudeLongitude" xml:space="preserve">
     <value>Latitude: {0} Longitude: {1}</value>
   </data>
+  <data name="LbsAbrev" xml:space="preserve">
+    <value>lbs</value>
+  </data>
   <data name="MapView" xml:space="preserve">
     <value>Map View</value>
+  </data>
+  <data name="MarkerListView" xml:space="preserve">
+    <value>Marker List View</value>
   </data>
   <data name="Miles" xml:space="preserve">
     <value>Miles</value>
@@ -153,20 +195,53 @@
   <data name="MilesPerHour" xml:space="preserve">
     <value>mph</value>
   </data>
+  <data name="MinutesAbrev" xml:space="preserve">
+    <value>mins</value>
+  </data>
+  <data name="MinutesToExtendOnTrailStatus" xml:space="preserve">
+    <value>Minutes to extend on trail status</value>
+  </data>
+  <data name="MphAbrev" xml:space="preserve">
+    <value>mph</value>
+  </data>
+  <data name="Notification" xml:space="preserve">
+    <value>Notification</value>
+  </data>
+  <data name="NumFitnessHistoryDaysToKeep" xml:space="preserve">
+    <value>Number of fitness history days to keep</value>
+  </data>
   <data name="OffTrail" xml:space="preserve">
     <value>Off Trail</value>
+  </data>
+  <data name="OffTrailQuestion" xml:space="preserve">
+    <value>You status is changing to "Off Trail". Do you want to extend the "On Trail" status by {0} mins in order to keep tracking your fitness?</value>
   </data>
   <data name="OnTrail" xml:space="preserve">
     <value>On Trail</value>
   </data>
+  <data name="OnTrailDirection" xml:space="preserve">
+    <value>Head:</value>
+  </data>
   <data name="OnTrailDistance" xml:space="preserve">
-    <value>Distance:</value>
+    <value>Dist:</value>
   </data>
   <data name="OnTrailETA" xml:space="preserve">
     <value>ETA:</value>
   </data>
   <data name="OnTrailNextPin" xml:space="preserve">
-    <value>Next Pin:</value>
+    <value>Next:</value>
+  </data>
+  <data name="OnTrailQuestion" xml:space="preserve">
+    <value>We have detected you are {0} from the trail center and the setting "{1}" is turned off. The "On Trail" setting needs to be manually turned on/off on the "{2}" page in order to track fitness. Do you want to turn it on now?</value>
+  </data>
+  <data name="Question" xml:space="preserve">
+    <value>Question?</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RestoreDefaults" xml:space="preserve">
+    <value>Restore Defaults</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>Satellite</value>
@@ -187,6 +262,9 @@
     <value>{0:%h} hrs {0:%m} mins</value>
   </data>
   <data name="TodayFitnessTracking" xml:space="preserve">
-    <value>Today's Fitness Tracking</value>
+    <value>Today's On Trail Fitness Tracking</value>
+  </data>
+  <data name="UserSettings" xml:space="preserve">
+    <value>User Settings</value>
   </data>
 </root>

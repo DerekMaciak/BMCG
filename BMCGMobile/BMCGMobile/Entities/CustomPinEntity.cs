@@ -13,6 +13,7 @@
 // ***********************************************************************
 using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
+using static BMCGMobile.Enums;
 
 namespace BMCGMobile.Entities
 {
@@ -262,6 +263,30 @@ namespace BMCGMobile.Entities
         }
 
         /// <summary>
+        /// The heading direction
+        /// </summary>
+        private Direction _HeadingDirection;
+
+        /// <summary>
+        /// Gets or sets the heading direction.
+        /// </summary>
+        /// <value>The Heading direction.</value>
+        public Direction HeadingDirection
+        {
+            get { return _HeadingDirection; }
+            set
+            {
+                if (_HeadingDirection != value)
+                {
+                    _HeadingDirection = value;
+
+                    OnPropertyChanged("HeadingDirection");
+
+                }
+            }
+        }
+
+        /// <summary>
         /// Sets the status information.
         /// </summary>
         /// <param name="isStatusInfoVisible">if set to <c>true</c> [is status information visible].</param>
@@ -270,7 +295,7 @@ namespace BMCGMobile.Entities
         /// <param name="distanceFromTrailCenterDisplay">The distance from trail center display.</param>
         /// <param name="etaToNextPinDisplay">The eta to next pin display.</param>
         /// <param name="distanceToNextPinDisplay">The distance to next pin display.</param>
-        public void SetStatusInfo(bool isStatusInfoVisible, Color statusInfoBackgroundColor, string status, string distanceFromTrailCenterDisplay, string etaToNextPinDisplay, string distanceToNextPinDisplay)
+        public void SetStatusInfo(bool isStatusInfoVisible, Color statusInfoBackgroundColor, string status, string distanceFromTrailCenterDisplay, string etaToNextPinDisplay, string distanceToNextPinDisplay, Direction headingDirection)
         {
             IsStatusInfoVisible = isStatusInfoVisible;
             StatusInfoBackgroundColor = statusInfoBackgroundColor;
@@ -278,6 +303,7 @@ namespace BMCGMobile.Entities
             DistanceFromTrailCenterDisplay = distanceFromTrailCenterDisplay;
             ETAToNextPinDisplay = etaToNextPinDisplay;
             DistanceToNextPinDisplay = distanceToNextPinDisplay;
+            HeadingDirection = headingDirection;
         }
     }
 }

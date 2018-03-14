@@ -35,6 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Entities\FitnessEntity.cs" />
     <Compile Include="Entities\UserOnTrailSegmentEntity.cs" />
     <Compile Include="IStepCounter.cs" />
     <Compile Include="StaticData.cs" />
@@ -73,7 +74,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DesciptionResource.resx</DependentUpon>
     </Compile>
-    <Compile Include="Entities\SettingsEntity.cs" />
+    <Compile Include="Entities\UserSettingsEntity.cs" />
     <Compile Include="Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>

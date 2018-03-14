@@ -39,7 +39,8 @@ namespace BMCGMobile
         /// <summary>
         /// The GPX URL
         /// </summary>
-        public const string GPX_URL = @"http://morriscanalbloomfield.org/MorrisCanalBloomfield.gpx.txt";
+        //public const string GPX_URL = @"http://morriscanalbloomfield.org/MorrisCanalBloomfield.gpx.txt";
+        public const string GPX_URL = @"http://morriscanalbloomfield.org/DerekHomeTest.gpx.txt";
 
         /// <summary>
         /// The CMS website URL
@@ -60,11 +61,6 @@ namespace BMCGMobile
         /// The display status information minimum dist
         /// </summary>
         public const double DISPLAY_STATUS_INFO_MIN_DIST = .25; // Display Within quarter Mile of Trail
-
-        /// <summary>
-        /// The ave walking speed
-        /// </summary>
-        public const double AVE_WALKING_SPEED = 3.1; // 3.1 Miles per hour
 
         /// <summary>
         /// The ave stride multiple

@@ -13,6 +13,7 @@
 // ***********************************************************************
 using BMCGMobile.Localization;
 using BMCGMobile.Resources;
+using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -28,6 +29,7 @@ namespace BMCGMobile.Entities
         /// Gets the resources.
         /// </summary>
         /// <value>The resources.</value>
+        [JsonIgnore]
         public LocalizedResources Resources
         {
             get;

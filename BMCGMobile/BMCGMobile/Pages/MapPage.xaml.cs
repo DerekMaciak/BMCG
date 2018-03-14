@@ -12,6 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using BMCGMobile.Entities;
+using BMCGMobile.Resources;
 using Plugin.Compass;
 using Plugin.Geolocator;
 using System;
@@ -50,9 +51,16 @@ namespace BMCGMobile
         private double _DefaultStreetTilt = 70d;
 
         /// <summary>
-        /// The last compass heading
+        /// The last compass header
         /// </summary>
-        private Double _LastCompassHeading = 0;
+        private double _LastCompassHeading;
+
+        /// <summary>
+        /// The last position change update
+        /// </summary>
+        private DateTime _LastPositionChangeUpdate = DateTime.Now;
+
+        private bool _FirstTimeOnTrail = true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MapPage"/> class.
@@ -64,12 +72,8 @@ namespace BMCGMobile
             if (Device.RuntimePlatform == Device.Android)
             {
                 // Move StatusInfo to Right for Android
-                AbsoluteLayout.SetLayoutBounds(statusInfo, new Rectangle(1, 0, 285, 85));
+                AbsoluteLayout.SetLayoutBounds(statusInfo, new Rectangle(1, 0, 295, 85));
             }
-
-            // Get User Settings
-            var settingsEntity = new SettingsEntity();
-            StaticData.TrackingData.UserSettings = settingsEntity;
 
             // Set DistanceFromTrailCenter so that IsOnTrail is false while loading
             StaticData.TrackingData.DistanceFromTrailCenter = double.MaxValue;
@@ -91,6 +95,11 @@ namespace BMCGMobile
         {
             if (e.PropertyName == "IsOnTrail")
             {
+                if (!StaticData.TrackingData.IsOnTrail && StaticData.TrackingData.UserSettings.IsAutoTracking && StaticData.TrackingData.UserSettings.IsDisplayOffTrailAlert)
+                {
+                    _DisplayAlertAsync(DesciptionResource.OffTrailQuestion);
+                }
+
                 if (StaticData.TrackingData.IsOnTrail)
                 {
                     var assembly = typeof(App).GetTypeInfo().Assembly;
@@ -107,6 +116,22 @@ namespace BMCGMobile
                     player.Load(audioStream);
                     player.Play();
                 }
+            }
+        }
+
+        private async void _DisplayAlertAsync(string alert)
+        {
+            if (alert == DesciptionResource.OffTrailQuestion)
+            {
+                StaticData.TrackingData.UserExtendIsOntrail = await DisplayAlert(DesciptionResource.Question, string.Format(DesciptionResource.OffTrailQuestion, StaticData.TrackingData.UserSettings.MinutesToExtendOnTrailStatus), "Yes", "No");
+            }
+            else if (alert == DesciptionResource.OnTrailQuestion)
+            {
+                StaticData.TrackingData.IsOnTrail = await DisplayAlert(DesciptionResource.Question, string.Format(DesciptionResource.OnTrailQuestion, StaticData.TrackingData.DistanceFromTrailCenterDisplay, DesciptionResource.AutoTrack, DesciptionResource.TodayFitnessTracking), "Yes", "No");
+            }
+            else if (alert == DesciptionResource.FarFromTrailQuestion)
+            {
+                StaticData.TrackingData.IsOnTrail = !await DisplayAlert(DesciptionResource.Question, string.Format(DesciptionResource.FarFromTrailQuestion, StaticData.TrackingData.DistanceFromTrailCenterDisplay, DesciptionResource.AutoTrack, DesciptionResource.TodayFitnessTracking), "Yes", "No");
             }
         }
 
@@ -188,72 +213,67 @@ namespace BMCGMobile
 
             if (!geolocator.IsListening)
             {
-                if (Device.RuntimePlatform == Device.Android)
+                CrossCompass.Current.CompassChanged += async (s, e) =>
                 {
-                    CrossCompass.Current.CompassChanged += async (s, e) =>
+                    StaticData.TrackingData.Heading = Math.Truncate(e.Heading);
+                    StaticData.TrackingData.HeadingDirection = StaticHelpers.GetDirectionHeading((int)Math.Truncate(e.Heading));
+
+                    var headingChanged = true;
+
+                    if (StaticData.TrackingData.LastKnownPosition != null)
                     {
-                        if ((Device.RuntimePlatform == Device.Android || !geolocator.SupportsHeading))
+                        headingChanged = StaticHelpers.IsSectorDifferent(e.Heading, _LastCompassHeading);
+
+                        _LastCompassHeading = e.Heading;
+
+                        if (headingChanged)
                         {
-                            if (StaticData.TrackingData.LastKnownPosition != null)
-                            {
-                                if (Math.Abs(_LastCompassHeading - Math.Truncate(e.Heading)) > 3)
-                                {
-                                    var position = new Plugin.Geolocator.Abstractions.Position(StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude);
-                                    position.Heading = e.Heading;
-                                    StaticData.TrackingData.LastKnownPosition.Heading = e.Heading;
+                            var newPosition = new Plugin.Geolocator.Abstractions.Position(StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude) { Heading = e.Heading };
 
-                                    if (position.Heading != 0)
-                                    {
-                                        if (_CurrentMapZoom == MapZooms.Street)
-                                        {
-                                            // If Street View, Set Camera Position
-                                            var zoom = customMap.CameraPosition.Zoom == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
-                                            var tilt = customMap.CameraPosition.Tilt == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
-
-                                            await _StreetViewAsync(position, zoom, tilt);
-                                        }
-
-                                        _SetNextPinBasedOnBearing();
-                                    }
-
-                                    _LastCompassHeading = Math.Truncate(e.Heading);
-                                }
-                            }
-                        }
-                    };
-
-                    CrossCompass.Current.Start();
-                }
-
-                // MoveToCamera with Position and Zoom
-                geolocator.PositionChanged += async (sender, e) =>
-                {
-                    StaticData.TrackingData.LastKnownPosition = e.Position;
-
-                    // Set Position for User on trail
-                    StaticData.TrackingData.AddUserPosition(e.Position);
-
-                    _FindDistanceToNearestCoordinate();
-
-                    if (StaticData.TrackingData.IsJustOnTrail)
-                    {
-                        // Set zoom to street view if just go on trail
-                        _SetZoomViewToggleButton(MapZooms.Street);
-                        _SetStreetViewInitialCameraPosition();
-                    }
-
-                    if ((Device.RuntimePlatform != Device.Android) && e.Position.Heading != 0)
-                    {
-                        if (_CurrentMapZoom == MapZooms.Street)
-                        {
-                            // If Street View, Set Camera Position
-                            var zoom = customMap.CameraPosition.Zoom == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
-                            var tilt = customMap.CameraPosition.Tilt == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
-
-                            await _StreetViewAsync(e.Position, zoom, tilt);
+                            await _StreetViewAsync(newPosition);
+                          
                         }
 
                         _SetNextPinBasedOnBearing();
+                    }
+                };
+
+                CrossCompass.Current.Start();
+
+                // MoveToCamera with Position and Zoom
+                geolocator.PositionChanged += (sender, e) =>
+                {
+                    var positionChanged = true;
+
+                    if (StaticData.TrackingData.LastKnownPosition != null)
+                    {
+                        if ((e.Position.Latitude == StaticData.TrackingData.LastKnownPosition.Latitude) && (e.Position.Longitude == StaticData.TrackingData.LastKnownPosition.Longitude))
+                        {
+                            positionChanged = false;
+                        }
+                    }
+
+                    StaticData.TrackingData.LastKnownPosition = e.Position;
+
+                    if (positionChanged)
+                    {
+
+                        if ((DateTime.Now -_LastPositionChangeUpdate).Seconds > 3)
+                        {
+                            // Set Position for User on trail
+                            StaticData.TrackingData.AddUserPosition(e.Position);
+
+                            _LastPositionChangeUpdate = DateTime.Now;
+                        }
+                        
+                        _FindDistanceToNearestCoordinate();
+
+                        if (StaticData.TrackingData.IsJustOnTrail)
+                        {
+                                // Set zoom to street view if just go on trail
+                                _SetZoomViewToggleButton(MapZooms.Street);
+                            _SetStreetViewInitialCameraPosition();
+                        }
                     }
                 };
 
@@ -262,88 +282,29 @@ namespace BMCGMobile
 
             StaticData.TrackingData.LastKnownPosition = await geolocator.GetPositionAsync();
 
-            _CenterMap(StaticData.TrackingData.LastKnownPosition);
+            customMap.CenterMap(StaticData.TrackingData.LastKnownPosition);
         }
 
         /// <summary>
         /// street view as an asynchronous operation.
         /// </summary>
         /// <param name="position">The position.</param>
-        /// <param name="zoom">The zoom.</param>
-        /// <param name="tilt">The tilt.</param>
         /// <returns>Task.</returns>
-        private async Task _StreetViewAsync(Plugin.Geolocator.Abstractions.Position position, double zoom, double tilt)
+        private async Task _StreetViewAsync(Plugin.Geolocator.Abstractions.Position position)
         {
-            await customMap.MoveCamera(CameraUpdateFactory.NewCameraPosition(
+            if (_CurrentMapZoom == MapZooms.Street)
+            {
+                // If Street View, Set Camera Position
+                var zoom = customMap.CameraPosition.Zoom == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetZoom : customMap.CameraPosition.Zoom;
+                var tilt = customMap.CameraPosition.Tilt == 0 || StaticData.TrackingData.IsJustOnTrail ? _DefaultStreetTilt : customMap.CameraPosition.Tilt;
+
+                await customMap.AnimateCamera(CameraUpdateFactory.NewCameraPosition(
                                  new CameraPosition(
                                      new Position(position.Latitude, position.Longitude),
                                      zoom,
                                      position.Heading, // bearing(rotation)
                                      tilt
                                      )));
-        }
-
-        /// <summary>
-        /// Centers the map.
-        /// </summary>
-        /// <param name="position">The position.</param>
-        private void _CenterMap(Plugin.Geolocator.Abstractions.Position position)
-        {
-            if (position != null)
-            {
-                if (StaticData.GreenwayTrailRouteCoordinates != null && StaticData.GreenwayTrailRouteCoordinates.Count > 0)
-                {
-                    var firstLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
-                    var lastLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
-                    var firstLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
-                    var lastLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
-
-                    var centerPosition = StaticHelpers.GetCentralGeoCoordinate(new List<Position>() {
-                    new Position(position.Latitude, position.Longitude),
-                    new Position(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude), new Position(lastLatCoordinate.Latitude, lastLatCoordinate.Longitude),
-                    new Position(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude), new Position(lastLongCoordinate.Latitude, lastLongCoordinate.Longitude) });
-
-                    var distLat = StaticHelpers.CalculateDistance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, Units.Miles);
-                    var distLong = StaticHelpers.CalculateDistance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, Units.Miles);
-                    var dist = distLat >= distLong ? distLat : distLong;
-
-                    var distPost = StaticHelpers.CalculateDistance(centerPosition.Latitude, centerPosition.Longitude, position.Latitude, position.Longitude, Units.Miles);
-                    dist = distPost >= dist ? distPost : dist;
-
-                    dist = dist == 0 ? 0 : dist / 2;
-
-                    customMap.MoveToRegion(MapSpan.FromCenterAndRadius(centerPosition, Distance.FromMiles(dist)));
-                }
-                else
-                {
-                    customMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude), Distance.FromMiles(15)));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Centers the map to pins.
-        /// </summary>
-        private void _CenterMapToPins()
-        {
-            if (StaticData.GreenwayTrailRouteCoordinates != null && StaticData.GreenwayTrailRouteCoordinates.Count > 0)
-            {
-                var firstLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).FirstOrDefault();
-                var lastLatCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Latitude).LastOrDefault();
-                var firstLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).FirstOrDefault();
-                var lastLongCoordinate = StaticData.GreenwayTrailRouteCoordinates.OrderBy(o => o.Longitude).LastOrDefault();
-
-                var centerPosition = StaticHelpers.GetCentralGeoCoordinate(new List<Position>() {
-                    new Position(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude), new Position(lastLatCoordinate.Latitude, lastLatCoordinate.Longitude),
-                    new Position(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude), new Position(lastLongCoordinate.Latitude, lastLongCoordinate.Longitude) });
-
-                var distLat = StaticHelpers.CalculateDistance(firstLatCoordinate.Latitude, firstLatCoordinate.Longitude, lastLatCoordinate.Latitude, lastLatCoordinate.Longitude, Units.Miles);
-                var distLong = StaticHelpers.CalculateDistance(firstLongCoordinate.Latitude, firstLongCoordinate.Longitude, lastLongCoordinate.Latitude, lastLongCoordinate.Longitude, Units.Miles);
-                var dist = distLat >= distLong ? distLat : distLong;
-
-                dist = dist == 0 ? 0 : dist / 2;
-
-                customMap.MoveToRegion(MapSpan.FromCenterAndRadius(centerPosition, Distance.FromMiles(dist)));
             }
         }
 
@@ -432,7 +393,7 @@ namespace BMCGMobile
                 var selPin = StaticData.CustomPins.Where(s => s.Pin == segmentWithNextPin.CustomPinOnSegment.Pin).FirstOrDefault();
                 if (selPin != null)
                 {
-                    selPin.SetStatusInfo(true, StaticData.TrackingData.StatusInfoBackgroundColor, StaticData.TrackingData.Status, StaticData.TrackingData.DistanceFromTrailCenterDisplay, StaticData.TrackingData.ETAToNextPinDisplay, StaticData.TrackingData.DistanceToNextPinDisplay);
+                    selPin.SetStatusInfo(true, StaticData.TrackingData.StatusInfoBackgroundColor, StaticData.TrackingData.Status, StaticData.TrackingData.DistanceFromTrailCenterDisplay, StaticData.TrackingData.ETAToNextPinDisplay, StaticData.TrackingData.DistanceToNextPinDisplay, StaticData.TrackingData.HeadingDirection);
                 }
 
                 // Set Next Pin
@@ -568,6 +529,18 @@ namespace BMCGMobile
 
                 customMap.PlotClosestPolylineTrack(list);
             }
+
+            if (_FirstTimeOnTrail && StaticData.TrackingData.IsActuallyOnTrail && !StaticData.TrackingData.IsOnTrail && !StaticData.TrackingData.UserSettings.IsAutoTracking)
+            {
+                _FirstTimeOnTrail = false;
+                // First Time on Trail and Auto Detect if off.  Notify User that they need to turn on Fitness tracking.
+                _DisplayAlertAsync(DesciptionResource.OnTrailQuestion);
+            }
+            if (StaticData.TrackingData.DistanceFromTrailCenter > Variables.DISPLAY_STATUS_INFO_MIN_DIST && StaticData.TrackingData.IsOnTrail && !StaticData.TrackingData.UserSettings.IsAutoTracking)
+            {
+                // Auto Tracking is turned off and they user is outside the range of the trail. Prompt them to turn off Is On Trail.
+                _DisplayAlertAsync(DesciptionResource.FarFromTrailQuestion);
+            }
         }
 
         /// <summary>
@@ -629,7 +602,7 @@ namespace BMCGMobile
         private void ZoomPinsButton_Clicked(object sender, EventArgs e)
         {
             _SetZoomViewToggleButton(MapZooms.Pins);
-            _CenterMapToPins();
+            customMap.CenterMapToPins();
         }
 
         /// <summary>
@@ -640,7 +613,7 @@ namespace BMCGMobile
         private void ZoomAllButton_Clicked(object sender, EventArgs e)
         {
             _SetZoomViewToggleButton(MapZooms.All);
-            _CenterMap(StaticData.TrackingData.LastKnownPosition);
+            customMap.CenterMap(StaticData.TrackingData.LastKnownPosition);
         }
 
         /// <summary>

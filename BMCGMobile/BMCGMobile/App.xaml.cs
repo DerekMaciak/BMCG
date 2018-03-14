@@ -60,6 +60,8 @@ namespace BMCGMobile
         protected override void OnSleep()
         {
             // Handle when your app sleeps
+
+            StaticData.TrackingData.SaveProperties();
         }
 
         /// <summary>

@@ -15,6 +15,8 @@ using System.Collections.ObjectModel;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using System.Linq;
+using BMCGMobile.Entities;
 
 namespace BMCGMobile
 {
@@ -25,11 +27,7 @@ namespace BMCGMobile
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FitnessHistoryPage : ContentPage
     {
-        /// <summary>
-        /// Gets or sets the items.
-        /// </summary>
-        /// <value>The items.</value>
-        public ObservableCollection<string> Items { get; set; }
+       
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FitnessHistoryPage"/> class.
@@ -38,16 +36,16 @@ namespace BMCGMobile
         {
             InitializeComponent();
 
-            Items = new ObservableCollection<string>
-            {
-                "Item 1",
-                "Item 2",
-                "Item 3",
-                "Item 4",
-                "Item 5"
-            };
+            listViewFitness.ItemsSource = StaticData.TrackingData.FitnessHistory.OrderByDescending(o => o.FitnessDate); 
+        }
 
-            MyListView.ItemsSource = Items;
+        protected override void OnAppearing()
+        {
+            // Rebind in case the user removed a fitness history
+            listViewFitness.ItemsSource = null;
+            listViewFitness.ItemsSource = StaticData.TrackingData.FitnessHistory.OrderByDescending(o => o.FitnessDate); 
+            
+            base.OnAppearing();
         }
 
         /// <summary>
@@ -60,10 +58,21 @@ namespace BMCGMobile
             if (e.Item == null)
                 return;
 
-            await DisplayAlert("Item Tapped", "An item was tapped.", "OK");
+            var currentFitnessEntity = e.Item as FitnessEntity;
+
+            //await DisplayAlert("Item Tapped", "An item was tapped.", "OK");
+
+            var nextPage = new FitnessPage(currentFitnessEntity.FitnessDate);
+            await this.Navigation.PushAsync(nextPage);
+
 
             //Deselect Item
             ((ListView)sender).SelectedItem = null;
+        }
+
+        private void listViewFitness_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+
         }
     }
 }

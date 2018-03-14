@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BMCGMobile"
              x:Class="BMCGMobile.FitnessPage" Icon="fitness.png" Title="{Binding Resources[TodayFitnessTracking]}">
     <ContentPage.Content>
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
@@ -16,9 +17,11 @@
                 <Label Text="Today's Fitness Details" />
             </StackLayout>-->
 
-            <StackLayout Grid.Row="1">
+            <local:CustomMap Grid.Row="0" x:Name="customMap" MapType="Terrain" IsVisible="False"  IsShowingUser="False" MyLocationEnabled="False" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="5,5,5,0" />
 
-                <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+
+            <StackLayout x:Name="statistics" Grid.Row="1" Margin="0,0,0,10">
+                <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="0,10,0,10">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width=".5*" />
@@ -27,20 +30,20 @@
 
                         <StackLayout Grid.Column="0" VerticalOptions="Start" HorizontalOptions="Center">
                             <Image Source="steps.png" HorizontalOptions="Center"></Image>
-                            <Label Text="{Binding TotalStepCountToday}" Style="{StaticResource FitnessTrackingLabelDataStyle}"></Label>
+                            <Label Text="{Binding TotalStepCount}" Style="{StaticResource FitnessTrackingLabelDataStyle}"></Label>
                             <Label Text="{Binding Resources[Steps]}" Style="{StaticResource FitnessTrackingLabelStyle}"></Label>
                         </StackLayout>
 
                         <StackLayout Grid.Column="1" VerticalOptions="Start" HorizontalOptions="Center">
                             <Image Source="distance.png" HorizontalOptions="Center"></Image>
-                            <Label Text="{Binding TotalDistanceOnTrailTodayDisplay}" Style="{StaticResource FitnessTrackingLabelDataStyle}"></Label>
+                            <Label Text="{Binding TotalDistanceOnTrailDisplay}" Style="{StaticResource FitnessTrackingLabelDataStyle}"></Label>
                             <Label Text="{Binding Resources[Distance]}" Style="{StaticResource FitnessTrackingLabelStyle}"></Label>
 
                         </StackLayout>
                     </Grid>
                 </StackLayout>
 
-                <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"  Margin="0,5,0,10">
                     <Grid>
 
                         <Grid.ColumnDefinitions>
@@ -50,20 +53,31 @@
 
                         <StackLayout Grid.Column="0" VerticalOptions="Start" HorizontalOptions="Center">
                             <Image Source="activetime.png" HorizontalOptions="Center"></Image>
-                            <Label Text="{Binding TotalTimeOnTrailTodayDisplay}" Style="{StaticResource FitnessTrackingLabelDataStyle}"></Label>
+                            <Label Text="{Binding TotalTimeOnTrailDisplay}" Style="{StaticResource FitnessTrackingLabelDataStyle}"></Label>
                             <Label Text="{Binding Resources[Time]}" Style="{StaticResource FitnessTrackingLabelStyle}"></Label>
                         </StackLayout>
 
                         <StackLayout Grid.Column="1" VerticalOptions="Start" HorizontalOptions="Center">
                             <Image Source="caloriesburned.png" HorizontalOptions="Center"></Image>
-                            <Label Text="{Binding TotalCaloriesTodayDisplay}" Style="{StaticResource FitnessTrackingLabelDataStyle}"></Label>
+                            <Label Text="{Binding TotalCaloriesDisplay}" Style="{StaticResource FitnessTrackingLabelDataStyle}"></Label>
                             <Label Text="{Binding Resources[Calories]}" Style="{StaticResource FitnessTrackingLabelStyle}"></Label>
                         </StackLayout>
                     </Grid>
                 </StackLayout>
             </StackLayout>
 
-            <Button Image="fitnesshistory.png" Grid.Row="2" Margin="0,0,0,10" Text="Fitness History" Clicked="OnFitnessHistoryButtonClicked" HorizontalOptions="Center" />
+            <StackLayout x:Name="fitnessToday" Grid.Row="2" Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Margin="10,0,10,10">
+
+                <Button x:Name="btnFitnessHistory" Image="fitnesshistory.png" BorderWidth="1" WidthRequest="150"  Text="{Binding Resources[FitnessHistory]}" Clicked="OnFitnessHistoryButtonClicked" HorizontalOptions="Center" />
+
+                <StackLayout Margin="10, 0, 0, 0" Orientation="Horizontal">
+                    <Label Text="{Binding Resources[OnTrail]}" FontAttributes="Bold" VerticalTextAlignment="Center"></Label>
+                    <Switch x:Name="isOnTrailSwitch" IsToggled="{Binding IsOnTrail}" Margin="5,6,0,0"></Switch>
+                </StackLayout>
+
+            </StackLayout>
+            <Button x:Name="btnRemoveFitnessHistory" IsVisible="False" Grid.Row="2" BorderWidth="1" WidthRequest="200" Margin="0,0,0,10" Text="{Binding Resources[Remove]}" Clicked="OnRemoveFitnessHistoryButtonClicked" HorizontalOptions="Center"  Style="{StaticResource RemoveButtonStyle}"/>
+            
         </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -2,32 +2,61 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BMCGMobile.FitnessHistoryPage" Icon="fitnesshistory.png" Title="Fitness History">
-  <ListView x:Name="MyListView"
-            ItemsSource="{Binding Items}"
-            ItemTapped="Handle_ItemTapped"
-            CachingStrategy="RecycleElement">
-            
-    <!--Built in Cells-->
-    <ListView.ItemTemplate>
-        <DataTemplate>
-            <TextCell Text="{Binding .}" />
-        </DataTemplate>
-    </ListView.ItemTemplate>
-    
-    <!--Custom View Cells-->
-    <!--
-    <ListView.ItemTemplate>
-      <DataTemplate>
-        <ViewCell>
-          <StackLayout>
-            <Label Text="{Binding Text}" 
-                   Style="{DynamicResource ListItemTextStyle}" />
-            <Label Text="{Binding Detail}" 
-                   Style="{DynamicResource ListItemDetailTextStyle}"/>
-          </StackLayout>
-        </ViewCell>
-      </DataTemplate>
-    </ListView.ItemTemplate>
-    -->
-  </ListView>
+    <ScrollView>
+        <ListView x:Name="listViewFitness" HasUnevenRows="True" ItemSelected="listViewFitness_ItemSelected" ItemTapped="Handle_ItemTapped"  >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <ViewCell.View>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!--<Image Grid.Row="0" Grid.Column="0" WidthRequest="24" HeightRequest="24" Source="{Binding MapSnapShot}" Margin="5,0,0,0" ></Image>-->
+                                <StackLayout Grid.Row="0" Grid.Column="1" Margin="5">
+                                    <Label Text="{Binding FitnessDate, StringFormat='{0:D}'}" Style="{StaticResource FitnessHistoryLabelHeaderStyle}"></Label>
+                                </StackLayout>
+
+                                <StackLayout Grid.Row="1" Grid.Column="1" Margin="15,5,5,5" Orientation="Horizontal">
+                                    <StackLayout Orientation="Horizontal" Margin="5,0,5,0">
+                                        <Image Source="steps.png" WidthRequest="16" HeightRequest="16"></Image>
+                                        <Label Text="{Binding Resources[Steps]}" Style="{StaticResource FitnessHistoryLabelStyle}"></Label>
+                                        <Label Text="{Binding TotalStepCount}" Style="{StaticResource FitnessHistoryLabelDataStyle}"></Label>
+                                       
+                                    </StackLayout>
+                                    <StackLayout Orientation="Horizontal"  Margin="5,0,5,0">
+                                        <Image Source="distance.png" WidthRequest="16" HeightRequest="16"></Image>
+                                        <Label Text="{Binding Resources[Distance]}" Style="{StaticResource FitnessHistoryLabelStyle}"></Label>
+                                        <Label Text="{Binding TotalDistanceOnTrailDisplay}" Style="{StaticResource FitnessHistoryLabelDataStyle}"></Label>
+                                    </StackLayout>
+                                </StackLayout>
+
+                                <StackLayout Grid.Row="2" Grid.Column="1" Margin="15,5,5,15" Orientation="Horizontal">
+                                    <StackLayout Orientation="Horizontal" Margin="5,0,5,0">
+                                        <Image Source="activetime.png" WidthRequest="16" HeightRequest="16"></Image>
+                                        <Label Text="{Binding Resources[Time]}" Style="{StaticResource FitnessHistoryLabelStyle}"></Label>
+                                        <Label Text="{Binding TotalTimeOnTrailDisplay}" Style="{StaticResource FitnessHistoryLabelDataStyle}"></Label>
+
+                                    </StackLayout>
+                                    <StackLayout Orientation="Horizontal"  Margin="5,0,5,0">
+                                        <Image Source="caloriesburned.png" WidthRequest="16" HeightRequest="16"></Image>
+                                        <Label Text="{Binding Resources[Calories]}" Style="{StaticResource FitnessHistoryLabelStyle}"></Label>
+                                        <Label Text="{Binding TotalCaloriesDisplay}" Style="{StaticResource FitnessHistoryLabelDataStyle}"></Label>
+                                    </StackLayout>
+                                </StackLayout>
+
+                            </Grid>
+                        </ViewCell.View>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ScrollView>
 </ContentPage>

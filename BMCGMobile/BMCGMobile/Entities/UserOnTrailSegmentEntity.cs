@@ -32,7 +32,7 @@ namespace BMCGMobile.Entities
         /// Gets the segment start time stamp.
         /// </summary>
         /// <value>The segment start time stamp.</value>
-        public DateTime SegmentStartTimeStamp { get { return _SegmentStartTimeStamp; } }
+        public DateTime SegmentStartTimeStamp { set { _SegmentStartTimeStamp = value; } get { return _SegmentStartTimeStamp; } }
 
         /// <summary>
         /// The segment end time stamp
@@ -42,7 +42,7 @@ namespace BMCGMobile.Entities
         /// Gets the segment end time stamp.
         /// </summary>
         /// <value>The segment end time stamp.</value>
-        public DateTime SegmentEndTimeStamp { get { return _SegmentEndTimeStamp; } }
+        public DateTime SegmentEndTimeStamp { set { _SegmentEndTimeStamp = value; } get { return _SegmentEndTimeStamp; } }
 
         /// <summary>
         /// The user positions on trail
@@ -60,7 +60,7 @@ namespace BMCGMobile.Entities
         /// Gets the total segment time span.
         /// </summary>
         /// <value>The total segment time span.</value>
-        public TimeSpan TotalSegmentTimeSpan { get { return _TotalSegmentTimeSpan; } }
+        public TimeSpan TotalSegmentTimeSpan { set { _TotalSegmentTimeSpan = value; } get { return _TotalSegmentTimeSpan; } }
 
         //private double _TotalSegmentSpeed;
         //public double AverageSegmentSpeed { get { return (UserPositionsOnTrail.Count > 0) ? _TotalSegmentSpeed / UserPositionsOnTrail.Count : 0; } }
@@ -86,7 +86,16 @@ namespace BMCGMobile.Entities
         /// </summary>
         public UserOnTrailSegmentEntity()
         {
-            _SegmentStartTimeStamp = DateTime.Now;
+          
+        }
+
+        public UserOnTrailSegmentEntity(bool SetSegmentStartTimeStamp)
+        {
+            if (SetSegmentStartTimeStamp)
+            {
+                _SegmentStartTimeStamp = DateTime.Now;
+            }
+          
         }
 
         /// <summary>

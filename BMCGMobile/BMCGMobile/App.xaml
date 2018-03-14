@@ -22,6 +22,7 @@
             <Color x:Key="GreenwayTrailColor">#A24437</Color>
             <Color x:Key="MorrisCanalColor">Green</Color>
             <Color x:Key="TrackerColor">Blue</Color>
+            <Color x:Key="UserOnTrailSegmentsColor">Blue</Color>
 
             <Style x:Key="StatusInfoFrameStyle" TargetType="Frame">
                 <Setter Property="Opacity" Value=".75" />
@@ -31,8 +32,13 @@
                 <Setter Property="Padding" Value="6" />
             </Style>
 
-            <Style x:Key="StatusInfoStackLayoutStyle" TargetType="StackLayout">
+            <Style x:Key="StatusInfoListStackLayoutStyle" TargetType="StackLayout">
                 <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="StatusInfoMapStackLayoutStyle" TargetType="StackLayout">
+                <Setter Property="HorizontalOptions" Value="StartAndExpand" />
                 <Setter Property="VerticalOptions" Value="Center" />
             </Style>
 
@@ -67,6 +73,24 @@
 
             <Style x:Key="FitnessTrackingLabelStyle" TargetType="Label">
                 <Setter Property="HorizontalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="FitnessHistoryLabelHeaderStyle" TargetType="Label">
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+            
+            <Style x:Key="FitnessHistoryLabelDataStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="Small" />
+            </Style>
+
+            <Style x:Key="FitnessHistoryLabelStyle" TargetType="Label">
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontSize" Value="Small" />
+            </Style>
+
+            <Style x:Key="RemoveButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="Red" />
+                <Setter Property="TextColor" Value="White" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

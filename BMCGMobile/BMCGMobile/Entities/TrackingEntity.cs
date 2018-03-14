@@ -12,11 +12,13 @@
 // <summary></summary>
 // ***********************************************************************
 using BMCGMobile.Resources;
+using Newtonsoft.Json;
 using Plugin.Geolocator.Abstractions;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Xamarin.Forms;
+using static BMCGMobile.Enums;
 
 namespace BMCGMobile.Entities
 {
@@ -26,30 +28,81 @@ namespace BMCGMobile.Entities
     /// <seealso cref="BMCGMobile.Entities.EntityBase" />
     public class TrackingEntity : EntityBase
     {
-
         /// <summary>
         /// The last known position
         /// </summary>
         public Plugin.Geolocator.Abstractions.Position LastKnownPosition;
+
         /// <summary>
         /// The is on trail
         /// </summary>
         private bool _IsOnTrail;
+
         /// <summary>
         /// Gets a value indicating whether this instance is on trail.
         /// </summary>
         /// <value><c>true</c> if this instance is on trail; otherwise, <c>false</c>.</value>
-        public bool IsOnTrail { get { return StaticHelpers.ConvertMilesToFeet(DistanceFromTrailCenter) < UserSettings.AutoTrackingMaximumDistanceFromTrailInFeet; } }
+        public bool IsOnTrail
+        {
+            get
+            {
+
+                return _IsOnTrail;
+            }
+
+            set
+            {
+                if (_IsOnTrail != value)
+                {
+                    _IsOnTrail = value;
+
+                    OnPropertyChanged("IsOnTrail");
+                    OnPropertyChanged("Status");
+                    OnPropertyChanged("StatusInfoBackgroundColor");
+
+                    if (_IsOnTrail)
+                    {
+                        _OnTrailStartDateTime = DateTime.Now;
+                    }
+                }
+            }
+        }
+
+        private DateTime UserExtendIsOntrailStartTime;
+
+        private bool _UserExtendIsOntrail;
+
+        public bool UserExtendIsOntrail
+        {
+            get { return _UserExtendIsOntrail; }
+            set
+            {
+                if (_UserExtendIsOntrail != value)
+                {
+                    _UserExtendIsOntrail = value;
+
+                    if (_UserExtendIsOntrail)
+                    {
+                        IsOnTrail = true;
+
+                        UserExtendIsOntrailStartTime = DateTime.Now;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Gets the status.
         /// </summary>
         /// <value>The status.</value>
         public string Status { get { return IsOnTrail ? DesciptionResource.OnTrail : DesciptionResource.OffTrail; } }
+
         /// <summary>
         /// Gets the color of the status information background.
         /// </summary>
         /// <value>The color of the status information background.</value>
         public Color StatusInfoBackgroundColor { get { return IsOnTrail ? (Color)Application.Current.Resources["StatusInfoOnTrailBackgroundColor"] : (Color)Application.Current.Resources["StatusInfoOffTrailBackgroundColor"]; } }
+
         /// <summary>
         /// Gets a value indicating whether this instance is status information visible.
         /// </summary>
@@ -57,18 +110,15 @@ namespace BMCGMobile.Entities
         public bool IsStatusInfoVisible { get { return DistanceFromTrailCenter <= Variables.DISPLAY_STATUS_INFO_MIN_DIST; } }
 
         /// <summary>
-        /// The user on trail segments
+        /// Gets the is user is actually on trail The IsOnTrail is used for fitness tracking, this property does not.
         /// </summary>
-        public List<UserOnTrailSegmentEntity> UserOnTrailSegments = new List<UserOnTrailSegmentEntity>();
+        /// <value>The is actually on trail.</value>
+        public bool IsActuallyOnTrail { get { return StaticHelpers.ConvertMilesToFeet(DistanceFromTrailCenter) < UserSettings.AutoTrackingMaximumDistanceFromTrailInFeet; } }
+
         /// <summary>
         /// The create new user on trail segment
         /// </summary>
         private bool _CreateNewUserOnTrailSegment = true;
-
-        /// <summary>
-        /// The user times on trail
-        /// </summary>
-        public Dictionary<DateTime, DateTime> UserTimesOnTrail = new Dictionary<DateTime, DateTime>();
 
         /// <summary>
         /// The distance from trail center
@@ -91,19 +141,26 @@ namespace BMCGMobile.Entities
                     OnPropertyChanged("DistanceFromTrailCenterDisplay");
                     OnPropertyChanged("IsStatusInfoVisible");
 
-                    if (IsOnTrail != _IsOnTrail)
+                    if (!UserSettings.IsDisplayOffTrailAlert || (UserExtendIsOntrail && (DateTime.Now - UserExtendIsOntrailStartTime).Minutes >= UserSettings.MinutesToExtendOnTrailStatus))
                     {
-                        OnPropertyChanged("IsOnTrail");
-                        OnPropertyChanged("Status");
-                        OnPropertyChanged("StatusInfoBackgroundColor");
+                        // Reset Extended On Trail Time
+                        UserExtendIsOntrail = false;
 
-                        if (IsOnTrail)
+                        if (UserSettings.IsAutoTracking)
                         {
-                            _OnTrailStartDateTime = DateTime.Now;
+                            IsOnTrail = IsActuallyOnTrail;
+                        }
+                        else
+                        {
+                            IsOnTrail = false;
                         }
                     }
 
-                    _IsOnTrail = IsOnTrail;
+                    if (!UserExtendIsOntrail && UserSettings.IsAutoTracking)
+                    {
+                        IsOnTrail = IsActuallyOnTrail;
+                    }
+
                 }
             }
         }
@@ -175,6 +232,54 @@ namespace BMCGMobile.Entities
         }
 
         /// <summary>
+        /// The heading
+        /// </summary>
+        private double _Heading;
+
+        /// <summary>
+        /// Gets or sets the heading.
+        /// </summary>
+        /// <value>The heading.</value>
+        public double Heading
+        {
+            get { return _Heading; }
+            set
+            {
+                if (_Heading != value)
+                {
+                    _Heading = value;
+
+                    OnPropertyChanged("Heading");
+                   
+                }
+            }
+        }
+
+        /// <summary>
+        /// The heading direction
+        /// </summary>
+        private Direction _HeadingDirection;
+
+        /// <summary>
+        /// Gets or sets the heading direction.
+        /// </summary>
+        /// <value>The Heading direction.</value>
+        public Direction HeadingDirection
+        {
+            get { return _HeadingDirection; }
+            set
+            {
+                if (_HeadingDirection != value)
+                {
+                    _HeadingDirection = value;
+
+                    OnPropertyChanged("HeadingDirection");
+
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets the distance to next pin display.
         /// </summary>
         /// <value>The distance to next pin display.</value>
@@ -195,7 +300,7 @@ namespace BMCGMobile.Entities
         /// Gets the time to next pin.
         /// </summary>
         /// <value>The time to next pin.</value>
-        public TimeSpan TimeToNextPin { get { return TimeSpan.FromHours(DistanceToNextPin / Variables.AVE_WALKING_SPEED); } }
+        public TimeSpan TimeToNextPin { get { return TimeSpan.FromHours(DistanceToNextPin / UserSettings.AverageWalkingSpeed); } }
 
         /// <summary>
         /// Gets the eta to next pin.
@@ -213,9 +318,7 @@ namespace BMCGMobile.Entities
         /// Gets or sets the user settings.
         /// </summary>
         /// <value>The user settings.</value>
-        public SettingsEntity UserSettings { set; get; }
-
-        // Today On Trail Properties
+        public UserSettingsEntity UserSettings { set; get; }
 
         /// <summary>
         /// The on trail start date time
@@ -234,95 +337,38 @@ namespace BMCGMobile.Entities
         /// <value><c>true</c> if this instance is just on trail; otherwise, <c>false</c>.</value>
         public bool IsJustOnTrail { get { return _OnTrailTime.TotalSeconds < 3; } }
 
-        /// <summary>
-        /// The total distance on trail today
-        /// </summary>
-        private double _TotalDistanceOnTrailToday;
+        public ObservableCollection<FitnessEntity> FitnessHistory = new ObservableCollection<FitnessEntity>();
 
-        /// <summary>
-        /// Gets the total distance on trail today.
-        /// </summary>
-        /// <value>The total distance on trail today.</value>
-        public double TotalDistanceOnTrailToday { get { return _TotalDistanceOnTrailToday; } }
-
-        /// <summary>
-        /// Gets the total distance on trail today display.
-        /// </summary>
-        /// <value>The total distance on trail today display.</value>
-        public string TotalDistanceOnTrailTodayDisplay
+        public FitnessEntity FitnessToday
         {
             get
             {
-                if (StaticHelpers.ConvertMilesToFeet(TotalDistanceOnTrailToday) < Variables.DISPLAY_AS_FEET_MIN)
+                if (FitnessHistory != null && FitnessHistory.Count > 0)
                 {
-                    return string.Format("{0} {1}", StaticHelpers.ConvertMilesToFeet(TotalDistanceOnTrailToday).ToString("N0"), DesciptionResource.Feet);
+                    var todayExistingFitness = FitnessHistory.Where(w => w.FitnessDate.Date == DateTime.Now.Date).FirstOrDefault();
+                    if (todayExistingFitness != null)
+                    {
+                        return todayExistingFitness;
+                    }
                 }
-
-                return string.Format("{0} {1}", TotalDistanceOnTrailToday.ToString("N2"), DesciptionResource.Miles);
+                var todayFitness = new FitnessEntity(DateTime.Now);
+                FitnessHistory.Add(todayFitness);
+                return todayFitness;
             }
         }
-
-        /// <summary>
-        /// The total time on trail today
-        /// </summary>
-        private TimeSpan _TotalTimeOnTrailToday;
-
-        /// <summary>
-        /// Gets the total time on trail today.
-        /// </summary>
-        /// <value>The total time on trail today.</value>
-        public TimeSpan TotalTimeOnTrailToday { get { return _TotalTimeOnTrailToday; } }
-
-        /// <summary>
-        /// Gets the total time on trail today display.
-        /// </summary>
-        /// <value>The total time on trail today display.</value>
-        public string TotalTimeOnTrailTodayDisplay
-        {
-            get
-            {
-                return string.Format(DesciptionResource.TimeSpanDisplay, TotalTimeOnTrailToday);
-            }
-        }
-
-        /// <summary>
-        /// The total step count today
-        /// </summary>
-        private int _TotalStepCountToday;
-
-        /// <summary>
-        /// Gets the total step count today.
-        /// </summary>
-        /// <value>The total step count today.</value>
-        public int TotalStepCountToday { get { return _TotalStepCountToday; } }
-
-        /// <summary>
-        /// The total calories today
-        /// </summary>
-        private double _TotalCaloriesToday;
-
-        /// <summary>
-        /// Gets the total calories today.
-        /// </summary>
-        /// <value>The total calories today.</value>
-        public double TotalCaloriesToday { get { return _TotalCaloriesToday; } }
-
-        /// <summary>
-        /// Gets the total calories today display.
-        /// </summary>
-        /// <value>The total calories today display.</value>
-        public string TotalCaloriesTodayDisplay { get { return TotalCaloriesToday.ToString("N0"); } }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TrackingEntity"/> class.
         /// </summary>
         public TrackingEntity()
         {
+            GetSavedProperties();
+
             MessagingCenter.Subscribe<IStepCounter, int>(this, "StepCount", (sender, args) =>
             {
-                if (UserOnTrailSegments != null && UserOnTrailSegments.Count > 0)
+                if (FitnessToday.UserOnTrailSegments != null && FitnessToday.UserOnTrailSegments.Count > 0)
                 {
-                    var curSeg = UserOnTrailSegments.Last();
+                    var curSeg = FitnessToday.UserOnTrailSegments.Last();
 
                     curSeg.TotalSegmentStepCount = args;
                 }
@@ -330,13 +376,22 @@ namespace BMCGMobile.Entities
 
             MessagingCenter.Subscribe<IStepCounter, double>(this, "Distance", (sender, args) =>
             {
-                if (UserOnTrailSegments != null && UserOnTrailSegments.Count > 0)
+                if (FitnessToday.UserOnTrailSegments != null && FitnessToday.UserOnTrailSegments.Count > 0)
                 {
-                    var curSeg = UserOnTrailSegments.Last();
+                    var curSeg = FitnessToday.UserOnTrailSegments.Last();
 
                     curSeg.TotalSegmentDistanceBySteps = args;
                 }
             });
+        }
+
+        private void UserSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            //Save Entity for User
+
+            _SetUserSettingsProperty();
+
+            App.Current.SavePropertiesAsync();
         }
 
         /// <summary>
@@ -347,53 +402,112 @@ namespace BMCGMobile.Entities
         {
             if (IsOnTrail)
             {
-                if (_CreateNewUserOnTrailSegment)
+                if (_CreateNewUserOnTrailSegment || FitnessToday.UserOnTrailSegments.Count == 0)
                 {
-                    UserOnTrailSegments.Add(new UserOnTrailSegmentEntity());
+                    FitnessToday.UserOnTrailSegments.Add(new UserOnTrailSegmentEntity(true));
 
                     MessagingCenter.Send<TrackingEntity>(this, "StartStepUpdates");
                     _CreateNewUserOnTrailSegment = false;
                 }
 
-                var currentSegment = UserOnTrailSegments.Last();
-                currentSegment.AddUserPosition(position);
+                var currentSegment = FitnessToday.UserOnTrailSegments.Last();
 
-                // Add up Total Distance And Time from each Segment
-                int totalStepCount = 0;
-                double totalDistance = 0;
-                TimeSpan totalTime = new TimeSpan();
-                double totalCalories = 0;
-                foreach (var seg in UserOnTrailSegments)
+                if (currentSegment.TotalSegmentStepCount > 0)
                 {
-                    totalStepCount = totalStepCount + seg.TotalSegmentStepCount;
-                    totalDistance = totalDistance + seg.TotalSegmentDistanceBySteps;
-                    totalTime = totalTime + seg.TotalSegmentTimeSpan;
-                    totalCalories = totalCalories + seg.TotalSegmentCaloriesByDistance;
+                    // Wait for active steps before adding User Positions
+                    currentSegment.AddUserPosition(position);
+
+                    FitnessToday.CalculateFitness();
                 }
-
-                _TotalStepCountToday = totalStepCount;
-                _TotalDistanceOnTrailToday = totalDistance;
-                _TotalTimeOnTrailToday = totalTime;
-                _TotalCaloriesToday = totalCalories;
-
-                OnPropertyChanged("TotalStepCountToday");
-                OnPropertyChanged("TotalDistanceOnTrailToday");
-                OnPropertyChanged("TotalDistanceOnTrailTodayDisplay");
-                OnPropertyChanged("TotalTimeOnTrailToday");
-                OnPropertyChanged("TotalTimeOnTrailTodayDisplay");
-                OnPropertyChanged("TotalCaloriesToday");
-                OnPropertyChanged("TotalCaloriesTodayDisplay");
+                
             }
             else
             {
                 _CreateNewUserOnTrailSegment = true;
 
-                if (UserOnTrailSegments != null && UserOnTrailSegments.Count > 0)
-                {
-                    var curSeg = UserOnTrailSegments.Last();
-                }
-
                 MessagingCenter.Send<TrackingEntity>(this, "StopStepUpdates");
+            }
+        }
+
+        public void GetSavedProperties()
+        {
+            // Get User Settings
+            var userSettings = new UserSettingsEntity();
+
+            if (App.Current.Properties.Where(s => s.Key == Enums.SavedDataTypes.UserSettings.ToString()).Count() > 0)
+            {
+                var savedUserSettings = JsonConvert.DeserializeObject<UserSettingsEntity>(App.Current.Properties[Enums.SavedDataTypes.UserSettings.ToString()] as string);
+                if (savedUserSettings != null)
+                {
+                    userSettings = savedUserSettings;
+                }
+            }
+
+            UserSettings = userSettings;
+
+            // Save straight away of property changes by user
+            UserSettings.PropertyChanged += UserSettings_PropertyChanged;
+
+            // Get Fitness History
+            var fitnessHistoryList = new ObservableCollection<FitnessEntity>();
+
+            if (App.Current.Properties.Where(s => s.Key == Enums.SavedDataTypes.FitnessHistory.ToString()).Count() > 0)
+            {
+                var savedFitnessHistoryList = JsonConvert.DeserializeObject<ObservableCollection<FitnessEntity>>(App.Current.Properties[Enums.SavedDataTypes.FitnessHistory.ToString()] as string);
+                if (savedFitnessHistoryList != null)
+                {
+                    fitnessHistoryList = savedFitnessHistoryList;
+
+                    foreach (var item in fitnessHistoryList)
+                    {
+                        item.CalculateFitness();
+                    }
+                }
+            }
+
+            FitnessHistory = fitnessHistoryList;
+        }
+
+        public void SaveProperties()
+        {
+            _SetUserSettingsProperty();
+
+            _SetFitnessHistoryProperty();
+
+            App.Current.SavePropertiesAsync();
+        }
+
+        private void _SetUserSettingsProperty()
+        {
+            var userSettingsJson = JsonConvert.SerializeObject(UserSettings);
+
+            if (App.Current.Properties.Where(s => s.Key == Enums.SavedDataTypes.UserSettings.ToString()).Count() > 0)
+            {
+                App.Current.Properties[Enums.SavedDataTypes.UserSettings.ToString()] = userSettingsJson;
+            }
+            else
+            {
+                App.Current.Properties.Add(Enums.SavedDataTypes.UserSettings.ToString(), userSettingsJson);
+            }
+        }
+
+        private void _SetFitnessHistoryProperty()
+        {
+            if (FitnessToday.UserOnTrailSegments.Count != 0)
+            {
+                // Only Save if Active Time on trail - Only Save UserSettings.NumFitnessHistoryDaysToKeep.
+                var FitnessHistoryToSave = FitnessHistory.OrderByDescending(o => o.FitnessDate).Take(UserSettings.NumFitnessHistoryDaysToKeep);
+
+                var fitnessHistoryJson = JsonConvert.SerializeObject(FitnessHistoryToSave);
+
+                if (App.Current.Properties.Where(s => s.Key == Enums.SavedDataTypes.FitnessHistory.ToString()).Count() > 0)
+                {
+                    App.Current.Properties[Enums.SavedDataTypes.FitnessHistory.ToString()] = fitnessHistoryJson;
+                }
+                else
+                {
+                    App.Current.Properties.Add(Enums.SavedDataTypes.FitnessHistory.ToString(), fitnessHistoryJson);
+                }
             }
         }
     }

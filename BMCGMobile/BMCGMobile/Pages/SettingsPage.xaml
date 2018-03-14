@@ -1,27 +1,94 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BMCGMobile.SettingsPage" Icon="settings.png" Title="User Settings">
+             x:Class="BMCGMobile.SettingsPage" Icon="settings.png" Title="{Binding Resources[UserSettings]}">
     <ContentPage.Content>
         <ScrollView>
             <StackLayout>
+              
+                <!--<StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="Cadence" FontAttributes="Bold"></Label>
+                    <StackLayout Orientation="Horizontal">
+                        <Entry Keyboard="Numeric" Text="{Binding Cadence}" WidthRequest="50" />
+                        <Stepper Minimum="0" Maximum="6" Increment="1" Value="{Binding Cadence}" Margin="5,0,10,0"  />
+                    </StackLayout>
+                </StackLayout>-->
                 <StackLayout Margin="20, 20, 20, 0">
-                    <Label Text="Height" FontAttributes="Bold"></Label>
-                    <Entry Keyboard="Numeric" Text="3" />
+                    <Label Text="{Binding Resources[AutoTrack]}" FontAttributes="Bold"></Label>
+                    <Switch IsToggled="{Binding IsAutoTracking}" Margin="5,0,2,0"></Switch>
+                </StackLayout>
+
+                <StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="{Binding Resources[AutoTrackingMaximumDistanceFromTrail]}" FontAttributes="Bold"></Label>
+                    <StackLayout Orientation="Horizontal">
+                        <Entry Keyboard="Numeric" Text="{Binding AutoTrackingMaximumDistanceFromTrailInFeet}" Margin="5,0,2,0" WidthRequest="50" />
+                        <Label Text="{Binding Resources[FeetAbrev]}" WidthRequest="50" VerticalTextAlignment="Center"></Label>
+                        <Stepper Minimum="0" Increment="5" Value="{Binding AutoTrackingMaximumDistanceFromTrailInFeet}" />
+                    </StackLayout>
+                </StackLayout>
+
+                <StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="{Binding Resources[DisplayOffTrailAlert]}" FontAttributes="Bold"></Label>
+                    <Switch IsToggled="{Binding IsDisplayOffTrailAlert}" Margin="5,0,2,0"></Switch>
+                </StackLayout>
+
+                <StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="{Binding Resources[MinutesToExtendOnTrailStatus]}" FontAttributes="Bold"></Label>
+                    <StackLayout Orientation="Horizontal">
+                        <Entry Keyboard="Numeric" Text="{Binding MinutesToExtendOnTrailStatus}" Margin="5,0,2,0" WidthRequest="50" />
+                        <Label Text="{Binding Resources[MinutesAbrev]}" WidthRequest="50" VerticalTextAlignment="Center"></Label>
+                        <Stepper Minimum="0" Increment="1" Value="{Binding MinutesToExtendOnTrailStatus}" />
+                    </StackLayout>
+                </StackLayout>
+
+                <StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="{Binding Resources[NumFitnessHistoryDaysToKeep]}" FontAttributes="Bold"></Label>
+                    <StackLayout Orientation="Horizontal">
+                        <Entry Keyboard="Numeric" Text="{Binding NumFitnessHistoryDaysToKeep}" Margin="5,0,2,0" WidthRequest="50" />
+                        <Label Text="{Binding Resources[DaysAbrev]}" WidthRequest="50" VerticalTextAlignment="Center"></Label>
+                        <Stepper Minimum="0" Increment="1" Value="{Binding NumFitnessHistoryDaysToKeep}" />
+                    </StackLayout>
+                </StackLayout>
+
+                <StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="{Binding Resources[AverageWalkingSpeed]}" FontAttributes="Bold"></Label>
+                    <StackLayout Orientation="Horizontal">
+                        <Entry Keyboard="Numeric" Text="{Binding AverageWalkingSpeed}" Margin="5,0,2,0" WidthRequest="50" />
+                        <Label Text="{Binding Resources[MphAbrev]}" WidthRequest="50" VerticalTextAlignment="Center"></Label>
+                        <Stepper Minimum="0" Maximum="8" Increment=".1" Value="{Binding AverageWalkingSpeed}" />
+                    </StackLayout>
+                </StackLayout>
+
+                <StackLayout Margin="20, 20, 20, 0">
+                    <Label Text="{Binding Resources[Height]}" FontAttributes="Bold"></Label>
+                    <StackLayout Orientation="Horizontal">
+                        <Entry Keyboard="Numeric" Text="{Binding HeightFeet}" Margin="5,0,2,0" WidthRequest="50" />
+                        <Label Text="{Binding Resources[FeetAbrev]}" WidthRequest="50" VerticalTextAlignment="Center"></Label>
+                        <Stepper Minimum="0" Maximum="10" Increment="1" Value="{Binding HeightFeet}" />
+
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Entry Keyboard="Numeric" Text="{Binding HeightInches}" Margin="5,0,2,0" WidthRequest="50" />
+                        <Label Text="{Binding Resources[InchesAbrev]}" WidthRequest="50" VerticalTextAlignment="Center" ></Label>
+                        <Stepper Minimum="0" Maximum="11" Increment="1" Value="{Binding HeightInches}" />
+                    </StackLayout>
+
                 </StackLayout>
                 <StackLayout Margin="20, 20, 20, 0">
                     <Label Text="Weight" FontAttributes="Bold"></Label>
-                    <Entry Keyboard="Numeric" Text="180" />
+                    <StackLayout Orientation="Horizontal">
+                        <Entry Keyboard="Numeric" Text="{Binding WeightInlbs}" Margin="5,0,2,0" WidthRequest="50" />
+                        <Label Text="{Binding Resources[LbsAbrev]}" WidthRequest="50" VerticalTextAlignment="Center"></Label>
+                        <Slider Minimum="0" Maximum="300" Value="{Binding WeightInlbs}"  />
+
+                    </StackLayout>
                 </StackLayout>
-                <StackLayout Margin="20, 20, 20, 0">
-                    <Label Text="Cadence" FontAttributes="Bold"></Label>
-                    <Entry Keyboard="Numeric" Text="3" />
+                
+                <StackLayout Margin="0,25,0,25" VerticalOptions="End">
+                    <Button HorizontalOptions="CenterAndExpand" BorderWidth="1" WidthRequest="200" Text="{Binding Resources[RestoreDefaults]}" Clicked="RestoreDefaultsButton_Clicked" ></Button>
                 </StackLayout>
-                <StackLayout Margin="20, 20, 20, 0">
-                    <Label Text="Auto track steps while on trail" FontAttributes="Bold"></Label>
-                    <Switch IsToggled="True"></Switch>
-                </StackLayout>
-                <StackLayout Margin="20, 20, 20, 0">
+
+                <!--<StackLayout Margin="20, 20, 20, 0">
                     <Label Text="Unit of Measure" FontAttributes="Bold"></Label>
                     <Picker SelectedIndex="0">
                         <Picker.Items>
@@ -29,7 +96,7 @@
                             <x:String>Kilometers</x:String>
                         </Picker.Items>
                     </Picker>
-                </StackLayout>
+                </StackLayout>-->
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

@@ -268,5 +268,46 @@ namespace BMCGMobile
         {
             return ConvertFeetToMiles((StaticData.TrackingData.UserSettings.HeightInInches * Variables.AVE_STRIDE_MULTIPLE) / 12) * steps;
         }
+
+        public static bool NumberDifferenceOverRange(double number1, double number2, double range = 22.5)
+        {
+            var num1 = Math.Truncate(number1);
+            var num2 = Math.Truncate(number2);
+            var diff = Math.Abs(num1 - num2);
+            return diff > range;
+        }
+
+        public static double RoundNumber(double number)
+        {
+            return ((int)Math.Round(Math.Truncate(number) / 10.0)) * 10;
+            
+        }
+        public static Direction GetDirectionHeading(int heading)
+        {
+            var adjusted = (heading + 22) % 360;
+            var sector = adjusted / 45;
+            return (Direction)sector;
+        }
+        
+        public static bool IsSectorDifferent(double number1, double number2)
+        {
+            var num1 = (int)Math.Truncate(number1);
+            var num2 = (int)Math.Truncate(number2);
+
+            //if (Math.Abs(num1 - num2) < 10)
+            //{
+            //    return false;
+            //}
+          
+            return GetDirectionSector(num1) != GetDirectionSector(num2);
+        }
+
+        public static int GetDirectionSector(int heading)
+        {
+            var adjusted = (heading + 22) % 360;
+            var sector = adjusted / 30;
+            return sector;
+        }
+
     }
 }
