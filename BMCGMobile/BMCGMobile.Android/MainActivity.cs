@@ -8,7 +8,7 @@ using System;
 
 namespace BMCGMobile.Droid
 {
-    [Activity(Label = "Bloomfield Greenway", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Bloomfield Greenway", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         private StepCounterServiceBinder _Binder;
@@ -40,7 +40,7 @@ namespace BMCGMobile.Droid
             Xamarin.FormsGoogleMaps.Init(this, bundle); // initialize for Xamarin.Forms.GoogleMaps
             LoadApplication(new App());
 
-            _StartStepCounterService();
+        _StartStepCounterService();
         }
 
         protected override void OnResume()
@@ -51,6 +51,7 @@ namespace BMCGMobile.Droid
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
+            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 

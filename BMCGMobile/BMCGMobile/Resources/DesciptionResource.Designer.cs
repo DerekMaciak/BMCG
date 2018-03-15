@@ -368,7 +368,7 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Head:.
+        ///   Looks up a localized string similar to Dir:.
         /// </summary>
         internal static string OnTrailDirection {
             get {

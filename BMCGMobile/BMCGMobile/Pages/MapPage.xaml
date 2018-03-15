@@ -8,9 +8,9 @@
 
             <AbsoluteLayout BackgroundColor="Transparent">
 
-                <local:CustomMap x:Name="customMap" MapType="None"  IsShowingUser="True" MyLocationEnabled="True" VerticalOptions="FillAndExpand" Margin="0,0,0,0" AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All" />
+                <local:CustomMap x:Name="customMap" MapType="None" IsVisible="False" IsShowingUser="True" MyLocationEnabled="True" VerticalOptions="FillAndExpand" Margin="0,0,0,0" AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All" />
 
-                <Frame x:Name="statusInfo" Style="{StaticResource StatusInfoFrameStyle}" BackgroundColor="{Binding StatusInfoBackgroundColor}" AbsoluteLayout.LayoutBounds="0,0,295,85" AbsoluteLayout.LayoutFlags="PositionProportional" IsVisible="{Binding IsStatusInfoVisible}">
+                <Frame x:Name="statusInfo" Style="{StaticResource StatusInfoFrameStyle}" BackgroundColor="{Binding StatusInfoBackgroundColor}" AbsoluteLayout.LayoutBounds="0,0,280,85" AbsoluteLayout.LayoutFlags="PositionProportional" IsVisible="{Binding IsStatusInfoVisible}">
                     <StackLayout Orientation="Vertical" Style="{StaticResource StatusInfoMapStackLayoutStyle}">
                         <StackLayout Style="{StaticResource StatusInfoLabelStackLayoutStyle}">
                             <Label Text="{Binding Resources[OnTrailNextPin]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
@@ -21,7 +21,7 @@
                             <Label Text="{Binding ETAToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
                             <Label Text="{Binding Resources[OnTrailDistance]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
                             <Label Text="{Binding DistanceToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
-                            <Label Text="{Binding Resources[OnTrailDirection]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
+                            <!--<Label Text="{Binding Resources[OnTrailDirection]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>-->
                             <Label Text="{Binding HeadingDirection}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
                         </StackLayout>
                         <StackLayout Style="{StaticResource StatusInfoLabelStackLayoutStyle}">

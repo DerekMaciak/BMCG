@@ -34,73 +34,78 @@ namespace BMCGMobile
         /// </summary>
         public CustomMap()
         {
+            // Set initial Map state
+            //this.CenterMap(new Plugin.Geolocator.Abstractions.Position(40.810657, -74.186378));
         }
 
         /// <summary>
         /// Loads the map coordinates.
         /// </summary>
-        public void LoadMapCoordinates()
+        public async Task LoadMapCoordinates()
         {
             try
             {
                 if (StaticData.GreenwayTrailRouteCoordinates == null)
                 {
-                    StaticData.GreenwayTrailRouteCoordinates = new List<Position>();
-                    StaticData.MorrisCanalRouteCoordinates = new Dictionary<string, List<Position>>();
-                    StaticData.CustomPins = new ObservableCollection<CustomPinEntity>();
-                    StaticData.LineSegments = new List<LineSegmentEntity>();
-
-                    var gpxLoader = new GPXLoader();
-
-                    // load track coordinates
-                    var trackCoordinates = gpxLoader.LoadGPXTracks(Variables.GPX_URL);
-                    if (trackCoordinates != null)
+                    await Task.Run(() =>
                     {
-                        // Bloomfield Greenway Trail
-                        foreach (var item in trackCoordinates.Where(s => s.TrackName == TrackTypes.BloomfieldGreenwayTrail.ToString()))
+                        StaticData.GreenwayTrailRouteCoordinates = new List<Position>();
+                        StaticData.MorrisCanalRouteCoordinates = new Dictionary<string, List<Position>>();
+                        StaticData.CustomPins = new ObservableCollection<CustomPinEntity>();
+                        StaticData.LineSegments = new List<LineSegmentEntity>();
+
+                        var gpxLoader = new GPXLoader();
+
+                        // load track coordinates
+                        var trackCoordinates = gpxLoader.LoadGPXTracks(Variables.GPX_URL);
+                        if (trackCoordinates != null)
                         {
-                            // Just Combine Track Seqments
-                            StaticData.GreenwayTrailRouteCoordinates.Add(new Position(item.Latitude, item.Longitude));
+                            // Bloomfield Greenway Trail
+                            foreach (var item in trackCoordinates.Where(s => s.TrackName == TrackTypes.BloomfieldGreenwayTrail.ToString()))
+                            {
+                                // Just Combine Track Seqments
+                                StaticData.GreenwayTrailRouteCoordinates.Add(new Position(item.Latitude, item.Longitude));
+                            }
+
+                            // Morris Canal
+                            foreach (var item in trackCoordinates.Where(s => s.TrackName.StartsWith("Morris Canal")))
+                            {
+                                var curTrackSeq = string.Format("Name{0}Track{1}Segment{2}", item.TrackName, item.Track, item.Segment);
+
+                                if (StaticData.MorrisCanalRouteCoordinates.ContainsKey(curTrackSeq))
+                                {
+                                    StaticData.MorrisCanalRouteCoordinates[curTrackSeq].Add(new Position(item.Latitude, item.Longitude));
+                                }
+                                else
+                                {
+                                    StaticData.MorrisCanalRouteCoordinates.Add(curTrackSeq, new List<Position>() { new Position(item.Latitude, item.Longitude) });
+                                }
+                            }
                         }
 
-                        // Morris Canal
-                        foreach (var item in trackCoordinates.Where(s => s.TrackName.StartsWith("Morris Canal")))
+                        // Load line Segments Greenway Trail RouteCoordinates
+                        Position lastPosition = new Position();
+                        var segmentSequence = 0;
+                        foreach (var position in StaticData.GreenwayTrailRouteCoordinates)
                         {
-                            var curTrackSeq = string.Format("Name{0}Track{1}Segment{2}", item.TrackName, item.Track, item.Segment);
-
-                            if (StaticData.MorrisCanalRouteCoordinates.ContainsKey(curTrackSeq))
+                            if (segmentSequence == 0)
                             {
-                                StaticData.MorrisCanalRouteCoordinates[curTrackSeq].Add(new Position(item.Latitude, item.Longitude));
+                                lastPosition = position;
+                                segmentSequence += 1;
+                                continue;
                             }
-                            else
-                            {
-                                StaticData.MorrisCanalRouteCoordinates.Add(curTrackSeq, new List<Position>() { new Position(item.Latitude, item.Longitude) });
-                            }
-                        }
-                    }
 
-                    // Load line Segments Greenway Trail RouteCoordinates
-                    Position lastPosition = new Position();
-                    var segmentSequence = 0;
-                    foreach (var position in StaticData.GreenwayTrailRouteCoordinates)
-                    {
-                        if (segmentSequence == 0)
-                        {
+                            var lineSegment = new LineSegmentEntity(segmentSequence, lastPosition, position, StaticHelpers.CalculateDistance(lastPosition.Latitude, lastPosition.Longitude, position.Latitude, position.Longitude, Units.Miles));
+
+                            if (!StaticData.LineSegments.Contains(lineSegment))
+                            {
+                                StaticData.LineSegments.Add(lineSegment);
+                            }
+
                             lastPosition = position;
                             segmentSequence += 1;
-                            continue;
                         }
-
-                        var lineSegment = new LineSegmentEntity(segmentSequence, lastPosition, position, StaticHelpers.CalculateDistance(lastPosition.Latitude, lastPosition.Longitude, position.Latitude, position.Longitude, Units.Miles));
-
-                        if (!StaticData.LineSegments.Contains(lineSegment))
-                        {
-                            StaticData.LineSegments.Add(lineSegment);
-                        }
-
-                        lastPosition = position;
-                        segmentSequence += 1;
-                    }
+                   
 
                     // Load Wayfinding Pins
                     StaticData.WayfindingCoordinates = gpxLoader.LoadGPXWayPoints(Variables.GPX_URL);
@@ -109,10 +114,13 @@ namespace BMCGMobile
                         LoadWayFindingCoordinatePins();
 
                         //_RetrieveAddressForPosition();
-                        
                     }
 
-                    PlotPolylineTrack();
+                        PlotPolylineTrack();
+
+                    });
+
+                  
                 }
             }
             catch (Exception ex)
@@ -238,9 +246,7 @@ namespace BMCGMobile
             var poyLinesToRemove = new List<Polyline>();
             foreach (var item in Polylines.Where(s => s.Tag.ToString() == "UserOnTrailSegments"))
             {
-
                 poyLinesToRemove.Add(item);
-                  
             }
             foreach (var item in poyLinesToRemove)
             {
@@ -250,7 +256,6 @@ namespace BMCGMobile
             var fitnessEntity = StaticData.TrackingData.FitnessHistory.Where(w => w.FitnessDate.Date == fitnessDate.Date).FirstOrDefault();
             if (fitnessEntity != null)
             {
-                
                 foreach (var trackSegments in fitnessEntity.UserOnTrailSegments)
                 {
                     var polyline = new Polyline();
@@ -263,12 +268,10 @@ namespace BMCGMobile
                     polyline.StrokeWidth = 5f;
                     polyline.Tag = "UserOnTrailSegments";
 
-
                     if (polyline.Positions.Count() > 2)
                     {
                         Polylines.Add(polyline);
                     }
-
                 }
             }
         }
@@ -349,7 +352,7 @@ namespace BMCGMobile
         {
             var stream = await this.TakeSnapshot();
 
-           // StaticData.TrackingData.FitnessToday.MapSnapShot = ImageSource.FromStream(() => stream);
+            // StaticData.TrackingData.FitnessToday.MapSnapShot = ImageSource.FromStream(() => stream);
         }
 
         /// <summary>
@@ -457,7 +460,6 @@ namespace BMCGMobile
             }
             else
             {
-
                 CenterMapToPins();
             }
         }

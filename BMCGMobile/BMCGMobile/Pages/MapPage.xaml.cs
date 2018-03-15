@@ -72,7 +72,7 @@ namespace BMCGMobile
             if (Device.RuntimePlatform == Device.Android)
             {
                 // Move StatusInfo to Right for Android
-                AbsoluteLayout.SetLayoutBounds(statusInfo, new Rectangle(1, 0, 295, 85));
+                AbsoluteLayout.SetLayoutBounds(statusInfo, new Rectangle(1, 0, 280, 85));
             }
 
             // Set DistanceFromTrailCenter so that IsOnTrail is false while loading
@@ -147,7 +147,8 @@ namespace BMCGMobile
             {
                 if (StaticData.GreenwayTrailRouteCoordinates == null)
                 {
-                    customMap.LoadMapCoordinates();
+                   
+                    await customMap.LoadMapCoordinates();
 
                     customMap.UiSettings.MyLocationButtonEnabled = false;
                     customMap.UiSettings.CompassEnabled = true;
@@ -162,6 +163,8 @@ namespace BMCGMobile
 
                     customMap.MapType = MapType.Street;
                     _SetMapViewToggleButton(customMap.MapType);
+
+                    customMap.IsVisible = true;
 
                     customMap.InfoWindowClicked += CustomMap_InfoWindowClicked;
 

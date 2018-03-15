@@ -220,7 +220,7 @@
     <value>On Trail</value>
   </data>
   <data name="OnTrailDirection" xml:space="preserve">
-    <value>Head:</value>
+    <value>Dir:</value>
   </data>
   <data name="OnTrailDistance" xml:space="preserve">
     <value>Dist:</value>

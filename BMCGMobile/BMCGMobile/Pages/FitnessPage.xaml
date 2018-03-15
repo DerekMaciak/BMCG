@@ -17,7 +17,7 @@
                 <Label Text="Today's Fitness Details" />
             </StackLayout>-->
 
-            <local:CustomMap Grid.Row="0" x:Name="customMap" MapType="Terrain" IsVisible="False"  IsShowingUser="False" MyLocationEnabled="False" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="5,5,5,0" />
+            <local:CustomMap Grid.Row="0" x:Name="customMap" MapType="Terrain" IsVisible="False" IsShowingUser="False" MyLocationEnabled="False" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="5,5,5,0" />
 
 
             <StackLayout x:Name="statistics" Grid.Row="1" Margin="0,0,0,10">
@@ -71,8 +71,8 @@
                 <Button x:Name="btnFitnessHistory" Image="fitnesshistory.png" BorderWidth="1" WidthRequest="150"  Text="{Binding Resources[FitnessHistory]}" Clicked="OnFitnessHistoryButtonClicked" HorizontalOptions="Center" />
 
                 <StackLayout Margin="10, 0, 0, 0" Orientation="Horizontal">
-                    <Label Text="{Binding Resources[OnTrail]}" FontAttributes="Bold" VerticalTextAlignment="Center"></Label>
-                    <Switch x:Name="isOnTrailSwitch" IsToggled="{Binding IsOnTrail}" Margin="5,6,0,0"></Switch>
+                    <Label Text="{Binding Resources[OnTrail]}" FontAttributes="Bold" HeightRequest="25" VerticalTextAlignment="Center"></Label>
+                    <Switch x:Name="isOnTrailSwitch" IsToggled="{Binding IsOnTrail}" Margin="5,2,0,0"></Switch>
                 </StackLayout>
 
             </StackLayout>

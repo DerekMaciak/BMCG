@@ -46,7 +46,6 @@ namespace BMCGMobile.Entities
         {
             get
             {
-
                 return _IsOnTrail;
             }
 
@@ -160,7 +159,6 @@ namespace BMCGMobile.Entities
                     {
                         IsOnTrail = IsActuallyOnTrail;
                     }
-
                 }
             }
         }
@@ -250,7 +248,6 @@ namespace BMCGMobile.Entities
                     _Heading = value;
 
                     OnPropertyChanged("Heading");
-                   
                 }
             }
         }
@@ -274,7 +271,6 @@ namespace BMCGMobile.Entities
                     _HeadingDirection = value;
 
                     OnPropertyChanged("HeadingDirection");
-
                 }
             }
         }
@@ -419,7 +415,6 @@ namespace BMCGMobile.Entities
 
                     FitnessToday.CalculateFitness();
                 }
-                
             }
             else
             {

@@ -13,6 +13,7 @@
 // ***********************************************************************
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -52,6 +53,12 @@ namespace BMCGMobile
             btnRemoveFitnessHistory.IsVisible = true;
 
             Title = _Fitnessdate.ToString("D");
+
+            if (Device.RuntimePlatform == Device.Android)
+            {
+                // Adnroid does not seem to run appearing each time the page is shown like iOS does
+                this.OnAppearing();
+            }
         }
 
         /// <summary>
@@ -96,18 +103,21 @@ namespace BMCGMobile
                     this.BindingContext = StaticData.TrackingData.FitnessHistory.Where(w => w.FitnessDate.Date == _Fitnessdate.Date).FirstOrDefault();
                 }
 
-                if (_FirstTime)
+                await Task.Run(() =>
                 {
-                    _FirstTime = false;
-                    customMap.LoadWayFindingCoordinatePins();
-                    customMap.PlotPolylineTrack();
-                }
+                    if (_FirstTime)
+                    {
+                        _FirstTime = false;
+                        customMap.LoadWayFindingCoordinatePins();
+                        customMap.PlotPolylineTrack();
+                    }
 
-                customMap.PlotUserOnTrailSegmentsPolylineTrack(_Fitnessdate);
+                    customMap.PlotUserOnTrailSegmentsPolylineTrack(_Fitnessdate);
 
-                customMap.CenterMapToUserPositions(_Fitnessdate);
+                    customMap.CenterMapToUserPositions(_Fitnessdate);
 
-                customMap.IsVisible = true;
+                    customMap.IsVisible = true;
+                });
             }
             catch (Exception ex)
             {

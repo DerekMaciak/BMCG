@@ -13,10 +13,24 @@
                         <Stepper Minimum="0" Maximum="6" Increment="1" Value="{Binding Cadence}" Margin="5,0,10,0"  />
                     </StackLayout>
                 </StackLayout>-->
-                <StackLayout Margin="20, 20, 20, 0">
-                    <Label Text="{Binding Resources[AutoTrack]}" FontAttributes="Bold"></Label>
-                    <Switch IsToggled="{Binding IsAutoTracking}" Margin="5,0,2,0"></Switch>
-                </StackLayout>
+
+                <Grid  Margin="20, 20, 20, 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Text="{Binding Resources[AutoTrack]}" Grid.Column="0" FontAttributes="Bold"></Label>
+                    <Switch IsToggled="{Binding IsAutoTracking}" Grid.Column="1" Margin="5,0,0,0"></Switch>
+                </Grid>
+
+                <Grid  Margin="20, 20, 20, 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Text="{Binding Resources[DisplayOffTrailAlert]}" Grid.Column="0" FontAttributes="Bold"></Label>
+                    <Switch IsToggled="{Binding IsDisplayOffTrailAlert}" Grid.Column="1" Margin="5,0,0,0"></Switch>
+                </Grid>
 
                 <StackLayout Margin="20, 20, 20, 0">
                     <Label Text="{Binding Resources[AutoTrackingMaximumDistanceFromTrail]}" FontAttributes="Bold"></Label>
@@ -25,11 +39,6 @@
                         <Label Text="{Binding Resources[FeetAbrev]}" WidthRequest="50" VerticalTextAlignment="Center"></Label>
                         <Stepper Minimum="0" Increment="5" Value="{Binding AutoTrackingMaximumDistanceFromTrailInFeet}" />
                     </StackLayout>
-                </StackLayout>
-
-                <StackLayout Margin="20, 20, 20, 0">
-                    <Label Text="{Binding Resources[DisplayOffTrailAlert]}" FontAttributes="Bold"></Label>
-                    <Switch IsToggled="{Binding IsDisplayOffTrailAlert}" Margin="5,0,2,0"></Switch>
                 </StackLayout>
 
                 <StackLayout Margin="20, 20, 20, 0">
@@ -78,8 +87,8 @@
                     <Label Text="Weight" FontAttributes="Bold"></Label>
                     <StackLayout Orientation="Horizontal">
                         <Entry Keyboard="Numeric" Text="{Binding WeightInlbs}" Margin="5,0,2,0" WidthRequest="50" />
-                        <Label Text="{Binding Resources[LbsAbrev]}" WidthRequest="50" VerticalTextAlignment="Center"></Label>
-                        <Slider Minimum="0" Maximum="300" Value="{Binding WeightInlbs}"  />
+                        <Label Text="{Binding Resources[LbsAbrev]}" WidthRequest="40" VerticalTextAlignment="Center"></Label>
+                        <Slider Minimum="0" Maximum="300" Value="{Binding WeightInlbs}" WidthRequest="175"  />
 
                     </StackLayout>
                 </StackLayout>

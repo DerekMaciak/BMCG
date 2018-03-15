@@ -36,7 +36,7 @@
                                                 <Label Text="{Binding ETAToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
                                                 <Label Text="{Binding Resources[OnTrailDistance]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
                                                 <Label Text="{Binding DistanceToNextPinDisplay}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
-                                                <Label Text="{Binding Resources[OnTrailDirection]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>
+                                                <!--<Label Text="{Binding Resources[OnTrailDirection]}" Style="{StaticResource StatusInfoLabelStyle}"></Label>-->
                                                 <Label Text="{Binding HeadingDirection}" Style="{StaticResource StatusInfoLabelDataStyle}"></Label>
                                             </StackLayout>
 
