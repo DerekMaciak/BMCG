@@ -15,6 +15,7 @@ using BMCGMobile.Resources;
 using System;
 using System.Linq;
 using Xamarin.Forms;
+using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.Xaml;
 
 namespace BMCGMobile
@@ -36,6 +37,7 @@ namespace BMCGMobile
         public FitnessPage()
         {
             InitializeComponent();
+            StaticData.TrackingData.PropertyChanged += TrackingData_PropertyChanged;
 
             _Fitnessdate = DateTime.Now;
             _IsToday = true;
@@ -98,18 +100,22 @@ namespace BMCGMobile
 
                 if (_FirstTime)
                 {
-                    _FirstTime = false;
-
                     if (StaticData.TrackingData.IsGPXDataLoaded)
                     {
+                        _FirstTime = false;
                         // If GPS Data is Loaded - then Plot; otherwise subscribe to loaded event
                         customMap.LoadWayFindingCoordinatePins();
                         customMap.PlotPolylineTrack();
+
+                        StaticData.TrackingData.PropertyChanged -= TrackingData_PropertyChanged;
                     }
                     else
                     {
-                        StaticData.TrackingData.PropertyChanged += TrackingData_PropertyChanged;
+                        // Set initial Map state
+                        customMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(40.810657, -74.186378), Distance.FromMiles(1)));
+
                     }
+
                 }
 
                 customMap.PlotUserOnTrailSegmentsPolylineTrack(_Fitnessdate);
@@ -130,10 +136,12 @@ namespace BMCGMobile
             {
                 if (StaticData.TrackingData.IsGPXDataLoaded)
                 {
+                    _FirstTime = false;
                     customMap.LoadWayFindingCoordinatePins();
                     customMap.PlotPolylineTrack();
 
                     StaticData.TrackingData.PropertyChanged -= TrackingData_PropertyChanged;
+                    
                 }
             }
         }
