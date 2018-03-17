@@ -60,7 +60,14 @@ namespace BMCGMobile
         /// </summary>
         private DateTime _LastPositionChangeUpdate = DateTime.Now;
 
+        /// <summary>
+        /// The last Compass change update
+        /// </summary>
+        private DateTime _LastCompassChangeUpdate = DateTime.Now;
+
         private bool _FirstTimeOnTrail = true;
+
+        private bool _FirstTime = true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MapPage"/> class.
@@ -145,10 +152,13 @@ namespace BMCGMobile
 
             try
             {
-                if (StaticData.GreenwayTrailRouteCoordinates == null)
+                if (_FirstTime)
                 {
-                   
-                    await customMap.LoadMapCoordinates();
+                    _FirstTime = false;
+                    
+                    await StaticData.LoadMapCoordinatesAsync();
+                    customMap.LoadWayFindingCoordinatePins();
+                    customMap.PlotPolylineTrack();
 
                     customMap.UiSettings.MyLocationButtonEnabled = false;
                     customMap.UiSettings.CompassEnabled = true;
@@ -167,7 +177,7 @@ namespace BMCGMobile
                     customMap.IsVisible = true;
 
                     customMap.InfoWindowClicked += CustomMap_InfoWindowClicked;
-
+                    
                     //customMap.MyLocationButtonClicked += (sender, args) =>
                     //{
                     //    args.Handled = false;
@@ -191,6 +201,7 @@ namespace BMCGMobile
             }
             catch (Exception ex)
             {
+                await DisplayAlert(DesciptionResource.Error, string.Format(DesciptionResource.ErrorMessage, ex), "Ok");
             }
         }
 
@@ -205,12 +216,18 @@ namespace BMCGMobile
             Device.OpenUri(new Uri(selectedCustomPin.Url));
         }
 
+        private int goodReadingCount = 0;
+
         /// <summary>
         /// Retrieves the current location.
         /// </summary>
         /// <returns>Task.</returns>
         private async Task _RetrieveCurrentLocation()
         {
+            try
+            {
+
+           
             var geolocator = CrossGeolocator.Current;
             geolocator.DesiredAccuracy = 1;
 
@@ -218,23 +235,65 @@ namespace BMCGMobile
             {
                 CrossCompass.Current.CompassChanged += async (s, e) =>
                 {
-                    StaticData.TrackingData.Heading = Math.Truncate(e.Heading);
-                    StaticData.TrackingData.HeadingDirection = StaticHelpers.GetDirectionHeading((int)Math.Truncate(e.Heading));
+                    var trueHeading = e.Heading;
+
+                    //if (Device.RuntimePlatform == Device.Android)
+                    //{
+                    //    // Android gives the magnetic heading and not the true heading - for now caluclate true heading for this area by subtracting 13
+                    //    var magneticFactor = -13;
+
+                    //    trueHeading = magneticFactor + trueHeading;
+
+                    //    if (trueHeading < 0)
+                    //    {
+                    //        trueHeading = trueHeading + 360;
+                    //    }
+
+                    //    if (trueHeading > 359)
+                    //    {
+                    //        trueHeading = trueHeading - 360;
+                    //    }
+
+                    //}
+
+                    StaticData.TrackingData.Heading = Math.Truncate(trueHeading);
+                    StaticData.TrackingData.HeadingDirection = StaticHelpers.GetDirectionHeading((int)Math.Truncate(trueHeading));
 
                     var headingChanged = true;
 
                     if (StaticData.TrackingData.LastKnownPosition != null)
                     {
-                        headingChanged = StaticHelpers.IsSectorDifferent(e.Heading, _LastCompassHeading);
+                        headingChanged = StaticHelpers.IsSectorDifferent(trueHeading, _LastCompassHeading);
 
-                        _LastCompassHeading = e.Heading;
-
-                        if (headingChanged)
+                        if (Device.RuntimePlatform == Device.Android)
                         {
-                            var newPosition = new Plugin.Geolocator.Abstractions.Position(StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude) { Heading = e.Heading };
+                            if (headingChanged)
+                            {
+                                goodReadingCount = 0;
+
+                                headingChanged = false;
+                            }
+
+                            if (Math.Abs(trueHeading - _LastCompassHeading) <= 5)
+                            {
+                                goodReadingCount += 1;
+                            }
+
+                            if (goodReadingCount == 4)
+                            {
+                                headingChanged = true;
+                            }
+                        }
+
+                        _LastCompassHeading = trueHeading;
+
+                        if (headingChanged || (DateTime.Now - _LastCompassChangeUpdate).Seconds >= 10)
+                        {
+                            var newPosition = new Plugin.Geolocator.Abstractions.Position(StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude) { Heading = trueHeading };
 
                             await _StreetViewAsync(newPosition);
-                          
+
+                            _LastCompassChangeUpdate = DateTime.Now;
                         }
 
                         _SetNextPinBasedOnBearing();
@@ -260,21 +319,20 @@ namespace BMCGMobile
 
                     if (positionChanged)
                     {
-
-                        if ((DateTime.Now -_LastPositionChangeUpdate).Seconds > 3)
+                        if ((DateTime.Now - _LastPositionChangeUpdate).Seconds > 3)
                         {
                             // Set Position for User on trail
                             StaticData.TrackingData.AddUserPosition(e.Position);
 
                             _LastPositionChangeUpdate = DateTime.Now;
                         }
-                        
+
                         _FindDistanceToNearestCoordinate();
 
                         if (StaticData.TrackingData.IsJustOnTrail)
                         {
-                                // Set zoom to street view if just go on trail
-                                _SetZoomViewToggleButton(MapZooms.Street);
+                            // Set zoom to street view if just go on trail
+                            _SetZoomViewToggleButton(MapZooms.Street);
                             _SetStreetViewInitialCameraPosition();
                         }
                     }
@@ -286,6 +344,14 @@ namespace BMCGMobile
             StaticData.TrackingData.LastKnownPosition = await geolocator.GetPositionAsync();
 
             customMap.CenterMap(StaticData.TrackingData.LastKnownPosition);
+
+            }
+            catch (Exception ex)
+            {
+
+               await DisplayAlert(DesciptionResource.Error, string.Format(DesciptionResource.ErrorMessage, ex), "Ok");
+
+            }
         }
 
         /// <summary>
@@ -325,7 +391,8 @@ namespace BMCGMobile
             if (closestLineSegmentToPosition != null && closestLineSegmentToPosition.CustomPinOnSegment != null)
             {
                 // if heading towards current segment pin, then us that
-                if (_IsHeadingTowardsPosition(closestLineSegmentToPosition.CustomPinOnSegment.Pin.Position))
+                //if (_IsHeadingTowardsPosition(closestLineSegmentToPosition.CustomPinOnSegment.Pin.Position))
+                if (StaticHelpers.IsHeadingTowardsPosition(StaticData.TrackingData.Heading, curPosition, closestLineSegmentToPosition.CustomPinOnSegment.Pin.Position))
                 {
                     segmentWithNextPin = closestLineSegmentToPosition;
 
@@ -370,11 +437,13 @@ namespace BMCGMobile
 
                 if (segmentWithNextPin == null && (downSeqLineSegment != null && upSeqLineSegment != null))
                 {
-                    if (_IsHeadingTowardsPosition(upSeqLineSegment.CustomPinOnSegment.Pin.Position))
+                    //if (_IsHeadingTowardsPosition(upSeqLineSegment.CustomPinOnSegment.Pin.Position))
+                    if (StaticHelpers.IsHeadingTowardsPosition(StaticData.TrackingData.Heading, curPosition, upSeqLineSegment.CustomPinOnSegment.Pin.Position))
                     {
                         segmentWithNextPin = upSeqLineSegment;
                     }
-                    else if (_IsHeadingTowardsPosition(downSeqLineSegment.CustomPinOnSegment.Pin.Position))
+                    //else if (_IsHeadingTowardsPosition(downSeqLineSegment.CustomPinOnSegment.Pin.Position))
+                    else if (StaticHelpers.IsHeadingTowardsPosition(StaticData.TrackingData.Heading, curPosition, downSeqLineSegment.CustomPinOnSegment.Pin.Position))
                     {
                         segmentWithNextPin = downSeqLineSegment;
                     }
@@ -422,7 +491,8 @@ namespace BMCGMobile
             double distance = 0;
 
             // Get Distance to end of current segment from current position
-            if (_IsHeadingTowardsPosition(closestLineSegmentToCurPosition.Position1))
+            //if (_IsHeadingTowardsPosition(closestLineSegmentToCurPosition.Position1))
+            if (StaticHelpers.IsHeadingTowardsPosition(StaticData.TrackingData.Heading, curPosition, closestLineSegmentToCurPosition.Position1))
             {
                 distance = StaticHelpers.CalculateDistance(curPosition.Latitude, curPosition.Longitude, closestLineSegmentToCurPosition.Position1.Latitude, closestLineSegmentToCurPosition.Position1.Longitude, Units.Miles);
             }
@@ -475,43 +545,43 @@ namespace BMCGMobile
         /// </summary>
         /// <param name="position">The position.</param>
         /// <returns><c>true</c> if [is heading towards position] [the specified position]; otherwise, <c>false</c>.</returns>
-        private bool _IsHeadingTowardsPosition(Position position)
-        {
-            if (StaticData.TrackingData.LastKnownPosition.Heading > 0 && StaticData.TrackingData.LastKnownPosition.Heading < 90)
-            {
-                // Use Coordinate that is > Lat and > Long
-                if (position.Latitude > StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude > StaticData.TrackingData.LastKnownPosition.Longitude)
-                {
-                    return true;
-                }
-            }
-            else if (StaticData.TrackingData.LastKnownPosition.Heading > 90 && StaticData.TrackingData.LastKnownPosition.Heading < 180)
-            {
-                // Use Coordinate that is < lat and > Long
-                if (position.Latitude < StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude > StaticData.TrackingData.LastKnownPosition.Longitude)
-                {
-                    return true;
-                }
-            }
-            else if (StaticData.TrackingData.LastKnownPosition.Heading > 180 && StaticData.TrackingData.LastKnownPosition.Heading < 270)
-            {
-                // Use Coordinate that is < lat and < long
-                if (position.Latitude < StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude < StaticData.TrackingData.LastKnownPosition.Longitude)
-                {
-                    return true;
-                }
-            }
-            else if (StaticData.TrackingData.LastKnownPosition.Heading > 270 && StaticData.TrackingData.LastKnownPosition.Heading < 360)
-            {
-                // Use Coordinate that is > lat and < long
-                if (position.Latitude > StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude < StaticData.TrackingData.LastKnownPosition.Longitude)
-                {
-                    return true;
-                }
-            }
+        //private bool _IsHeadingTowardsPosition(Position position)
+        //{
+        //    if (StaticData.TrackingData.Heading > 0 && StaticData.TrackingData.Heading < 90)
+        //    {
+        //        // Use Coordinate that is > Lat and > Long
+        //        if (position.Latitude > StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude > StaticData.TrackingData.LastKnownPosition.Longitude)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    else if (StaticData.TrackingData.Heading > 90 && StaticData.TrackingData.Heading < 180)
+        //    {
+        //        // Use Coordinate that is < lat and > Long
+        //        if (position.Latitude < StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude > StaticData.TrackingData.LastKnownPosition.Longitude)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    else if (StaticData.TrackingData.Heading > 180 && StaticData.TrackingData.Heading < 270)
+        //    {
+        //        // Use Coordinate that is < lat and < long
+        //        if (position.Latitude < StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude < StaticData.TrackingData.LastKnownPosition.Longitude)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    else if (StaticData.TrackingData.Heading > 270 && StaticData.TrackingData.Heading < 360)
+        //    {
+        //        // Use Coordinate that is > lat and < long
+        //        if (position.Latitude > StaticData.TrackingData.LastKnownPosition.Latitude && position.Longitude < StaticData.TrackingData.LastKnownPosition.Longitude)
+        //        {
+        //            return true;
+        //        }
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         /// <summary>
         /// Finds the distance to nearest coordinate.

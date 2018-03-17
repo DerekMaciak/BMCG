@@ -42,11 +42,9 @@ namespace BMCGMobile
         {
             base.OnAppearing();
 
-            if (listViewPins.ItemsSource == null)
-            {
-                listViewPins.ItemsSource = StaticData.CustomPins;
-            }
+            listViewPins.ItemsSource = StaticData.CustomPins;
 
+            StaticData.TrackingData.PropertyChanged -= TrackingData_PropertyChanged;
             StaticData.TrackingData.PropertyChanged += TrackingData_PropertyChanged;
         }
 

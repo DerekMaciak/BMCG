@@ -50,6 +50,7 @@ namespace BMCGMobile
             }
             catch (Exception ex)
             {
+               
                 return null;
             }
         }

@@ -71,7 +71,7 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Version 1.0.0.5 Copyright 2018.
+        ///   Looks up a localized string similar to Version 1.0.0.6 Copyright 2018.
         /// </summary>
         internal static string AboutVersion {
             get {
@@ -166,6 +166,24 @@ namespace BMCGMobile.Resources {
         internal static string DistanceFromTrailCenter {
             get {
                 return ResourceManager.GetString("DistanceFromTrailCenter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception Message: {0}.
+        /// </summary>
+        internal static string ErrorMessage {
+            get {
+                return ResourceManager.GetString("ErrorMessage", resourceCulture);
             }
         }
         
@@ -283,6 +301,15 @@ namespace BMCGMobile.Resources {
         internal static string Miles {
             get {
                 return ResourceManager.GetString("Miles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to mi.
+        /// </summary>
+        internal static string MilesAbrev {
+            get {
+                return ResourceManager.GetString("MilesAbrev", resourceCulture);
             }
         }
         

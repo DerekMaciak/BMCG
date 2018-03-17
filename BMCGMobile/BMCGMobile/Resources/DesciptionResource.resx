@@ -121,7 +121,7 @@
     <value>About</value>
   </data>
   <data name="AboutVersion" xml:space="preserve">
-    <value>Version 1.0.0.5 Copyright 2018</value>
+    <value>Version 1.0.0.6 Copyright 2018</value>
   </data>
   <data name="ActiveTime" xml:space="preserve">
     <value>Active Time</value>
@@ -152,6 +152,12 @@
   </data>
   <data name="DistanceFromTrailCenter" xml:space="preserve">
     <value>Trail Center:</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ErrorMessage" xml:space="preserve">
+    <value>Exception Message: {0}</value>
   </data>
   <data name="FarFromTrailQuestion" xml:space="preserve">
     <value>We have detected you are {0} from the trail center and the setting "{1}" is turned off. The "On Trail" setting needs to be manually turned on/off on the "{2}" page in order to track fitness. Do you want to turn it off now?</value>
@@ -191,6 +197,9 @@
   </data>
   <data name="Miles" xml:space="preserve">
     <value>Miles</value>
+  </data>
+  <data name="MilesAbrev" xml:space="preserve">
+    <value>mi</value>
   </data>
   <data name="MilesPerHour" xml:space="preserve">
     <value>mph</value>

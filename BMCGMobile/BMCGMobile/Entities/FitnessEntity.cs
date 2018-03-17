@@ -43,10 +43,10 @@ namespace BMCGMobile.Entities
             {
                 if (StaticHelpers.ConvertMilesToFeet(TotalDistanceOnTrail) < Variables.DISPLAY_AS_FEET_MIN)
                 {
-                    return string.Format("{0} {1}", StaticHelpers.ConvertMilesToFeet(TotalDistanceOnTrail).ToString("N0"), DesciptionResource.Feet);
+                    return string.Format("{0} {1}", StaticHelpers.ConvertMilesToFeet(TotalDistanceOnTrail).ToString("N0"), DesciptionResource.FeetAbrev);
                 }
 
-                return string.Format("{0} {1}", TotalDistanceOnTrail.ToString("N2"), DesciptionResource.Miles);
+                return string.Format("{0} {1}", TotalDistanceOnTrail.ToString("N2"), DesciptionResource.MilesAbrev);
             }
         }
 

@@ -35,134 +35,53 @@ namespace BMCGMobile
         public CustomMap()
         {
             // Set initial Map state
-            //this.CenterMap(new Plugin.Geolocator.Abstractions.Position(40.810657, -74.186378));
+            //this.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(40.810657, -74.186378), Distance.FromMiles(1)));
+           
         }
 
-        /// <summary>
-        /// Loads the map coordinates.
-        /// </summary>
-        public async Task LoadMapCoordinates()
-        {
-            try
-            {
-                if (StaticData.GreenwayTrailRouteCoordinates == null)
-                {
-                    await Task.Run(() =>
-                    {
-                        StaticData.GreenwayTrailRouteCoordinates = new List<Position>();
-                        StaticData.MorrisCanalRouteCoordinates = new Dictionary<string, List<Position>>();
-                        StaticData.CustomPins = new ObservableCollection<CustomPinEntity>();
-                        StaticData.LineSegments = new List<LineSegmentEntity>();
-
-                        var gpxLoader = new GPXLoader();
-
-                        // load track coordinates
-                        var trackCoordinates = gpxLoader.LoadGPXTracks(Variables.GPX_URL);
-                        if (trackCoordinates != null)
-                        {
-                            // Bloomfield Greenway Trail
-                            foreach (var item in trackCoordinates.Where(s => s.TrackName == TrackTypes.BloomfieldGreenwayTrail.ToString()))
-                            {
-                                // Just Combine Track Seqments
-                                StaticData.GreenwayTrailRouteCoordinates.Add(new Position(item.Latitude, item.Longitude));
-                            }
-
-                            // Morris Canal
-                            foreach (var item in trackCoordinates.Where(s => s.TrackName.StartsWith("Morris Canal")))
-                            {
-                                var curTrackSeq = string.Format("Name{0}Track{1}Segment{2}", item.TrackName, item.Track, item.Segment);
-
-                                if (StaticData.MorrisCanalRouteCoordinates.ContainsKey(curTrackSeq))
-                                {
-                                    StaticData.MorrisCanalRouteCoordinates[curTrackSeq].Add(new Position(item.Latitude, item.Longitude));
-                                }
-                                else
-                                {
-                                    StaticData.MorrisCanalRouteCoordinates.Add(curTrackSeq, new List<Position>() { new Position(item.Latitude, item.Longitude) });
-                                }
-                            }
-                        }
-
-                        // Load line Segments Greenway Trail RouteCoordinates
-                        Position lastPosition = new Position();
-                        var segmentSequence = 0;
-                        foreach (var position in StaticData.GreenwayTrailRouteCoordinates)
-                        {
-                            if (segmentSequence == 0)
-                            {
-                                lastPosition = position;
-                                segmentSequence += 1;
-                                continue;
-                            }
-
-                            var lineSegment = new LineSegmentEntity(segmentSequence, lastPosition, position, StaticHelpers.CalculateDistance(lastPosition.Latitude, lastPosition.Longitude, position.Latitude, position.Longitude, Units.Miles));
-
-                            if (!StaticData.LineSegments.Contains(lineSegment))
-                            {
-                                StaticData.LineSegments.Add(lineSegment);
-                            }
-
-                            lastPosition = position;
-                            segmentSequence += 1;
-                        }
-                   
-
-                    // Load Wayfinding Pins
-                    StaticData.WayfindingCoordinates = gpxLoader.LoadGPXWayPoints(Variables.GPX_URL);
-                    if (StaticData.WayfindingCoordinates != null)
-                    {
-                        LoadWayFindingCoordinatePins();
-
-                        //_RetrieveAddressForPosition();
-                    }
-
-                        PlotPolylineTrack();
-
-                    });
-
-                  
-                }
-            }
-            catch (Exception ex)
-            {
-                return;
-            }
-        }
-
+      
         public void LoadWayFindingCoordinatePins()
         {
-            foreach (var item in StaticData.WayfindingCoordinates.OrderBy(p => p.Sequence))
+            if (StaticData.WayfindingCoordinates != null)
             {
-                // var address = string.IsNullOrWhiteSpace(item.Description) ? string.Format(DesciptionResource.LatitudeLongitude, item.Latitude, item.Longitude) : item.Description;
-                var address = item.Description;
-
-                var pin = new CustomPinEntity
+                foreach (var item in StaticData.WayfindingCoordinates.OrderBy(p => p.Sequence))
                 {
-                    Id = item.Name,
-                    Url = new Uri(new Uri(Variables.CMS_WEBSITE_URL), item.URL).ToString(),
-                    PinType = item.PinType,
-                    Pin = new Pin
+                    // var address = string.IsNullOrWhiteSpace(item.Description) ? string.Format(DesciptionResource.LatitudeLongitude, item.Latitude, item.Longitude) : item.Description;
+                    var address = item.Description;
+
+                    var pin = new CustomPinEntity
                     {
-                        Tag = item.Name,
-                        Type = PinType.Place,
-                        Position = new Position(item.Latitude, item.Longitude),
-                        Label = item.Name,
-                        Address = address,
-                        Icon = BitmapDescriptorFactory.DefaultMarker(CustomPinEntity.GetPinImageColor(item.PinType)),
+                        Id = item.Name,
+                        Url = new Uri(new Uri(Variables.CMS_WEBSITE_URL), item.URL).ToString(),
+                        PinType = item.PinType,
+                        Pin = new Pin
+                        {
+                            Tag = item.Name,
+                            Type = PinType.Place,
+                            Position = new Position(item.Latitude, item.Longitude),
+                            Label = item.Name,
+                            Address = address,
+                            Icon = BitmapDescriptorFactory.DefaultMarker(CustomPinEntity.GetPinImageColor(item.PinType)),
 
-                        //Icon = BitmapDescriptorFactory.FromBundle(CustomPinEntity.GetPinImageName(item.PinType))
-                    },
-                };
+                            //Icon = BitmapDescriptorFactory.FromBundle(CustomPinEntity.GetPinImageName(item.PinType))
+                        },
+                    };
 
-                StaticData.CustomPins.Add(pin);
-                Pins.Add(pin.Pin);
+                    if (StaticData.CustomPins.Where(p => p.Id == pin.Id).Count() == 0)
+                    {
+                        // Add Pin
+                        StaticData.CustomPins.Add(pin);
+                    }
+                   
+                    Pins.Add(pin.Pin);
 
-                // Add Pin to Closest Line Segment
-                if (item.PinType == CustomPinEntity.PinTypes.Kiosk || item.PinType == CustomPinEntity.PinTypes.Marker)
-                {
-                    var lineSegment = FindClosestLineSegment(new Position(item.Latitude, item.Longitude));
-                    // Only 1 pin should be on segment - make sure GPX file complies
-                    lineSegment.CustomPinOnSegment = pin;
+                    // Add Pin to Closest Line Segment
+                    if (item.PinType == CustomPinEntity.PinTypes.Kiosk || item.PinType == CustomPinEntity.PinTypes.Marker)
+                    {
+                        var lineSegment = FindClosestLineSegment(new Position(item.Latitude, item.Longitude));
+                        // Only 1 pin should be on segment - make sure GPX file complies
+                        lineSegment.CustomPinOnSegment = pin;
+                    }
                 }
             }
         }
@@ -174,37 +93,41 @@ namespace BMCGMobile
         {
             // Plot Morris Canal Route Coordinates
             //===============================================
-
-            foreach (var trackSegments in StaticData.MorrisCanalRouteCoordinates)
+            if (StaticData.MorrisCanalRouteCoordinates != null)
             {
-                var polylineMorrisCanal = new Polyline();
-                foreach (var tracks in trackSegments.Value)
+                foreach (var trackSegments in StaticData.MorrisCanalRouteCoordinates)
                 {
-                    polylineMorrisCanal.Positions.Add(new Position(tracks.Latitude, tracks.Longitude));
+                    var polylineMorrisCanal = new Polyline();
+                    foreach (var tracks in trackSegments.Value)
+                    {
+                        polylineMorrisCanal.Positions.Add(new Position(tracks.Latitude, tracks.Longitude));
+                    }
+                    polylineMorrisCanal.IsClickable = false;
+                    polylineMorrisCanal.StrokeColor = (Color)Application.Current.Resources["MorrisCanalColor"];
+                    polylineMorrisCanal.StrokeWidth = 2.5f;
+                    polylineMorrisCanal.Tag = trackSegments.Key;
+
+                    Polylines.Add(polylineMorrisCanal);
                 }
-                polylineMorrisCanal.IsClickable = false;
-                polylineMorrisCanal.StrokeColor = (Color)Application.Current.Resources["MorrisCanalColor"];
-                polylineMorrisCanal.StrokeWidth = 2.5f;
-                polylineMorrisCanal.Tag = trackSegments.Key;
-
-                Polylines.Add(polylineMorrisCanal);
             }
-
             // Plot Greenway Trail Route Coordinates
             //===============================================
-            var polylineGreenwayTrail = new Polyline();
-
-            foreach (var item in StaticData.GreenwayTrailRouteCoordinates)
+            if (StaticData.GreenwayTrailRouteCoordinates != null)
             {
-                polylineGreenwayTrail.Positions.Add(new Position(item.Latitude, item.Longitude));
+                var polylineGreenwayTrail = new Polyline();
+
+                foreach (var item in StaticData.GreenwayTrailRouteCoordinates)
+                {
+                    polylineGreenwayTrail.Positions.Add(new Position(item.Latitude, item.Longitude));
+                }
+
+                polylineGreenwayTrail.IsClickable = false;
+                polylineGreenwayTrail.StrokeColor = (Color)Application.Current.Resources["GreenwayTrailColor"];
+                polylineGreenwayTrail.StrokeWidth = 5f;
+                polylineGreenwayTrail.Tag = TrackTypes.BloomfieldGreenwayTrail.ToString();
+
+                Polylines.Add(polylineGreenwayTrail);
             }
-
-            polylineGreenwayTrail.IsClickable = false;
-            polylineGreenwayTrail.StrokeColor = (Color)Application.Current.Resources["GreenwayTrailColor"];
-            polylineGreenwayTrail.StrokeWidth = 5f;
-            polylineGreenwayTrail.Tag = TrackTypes.BloomfieldGreenwayTrail.ToString();
-
-            Polylines.Add(polylineGreenwayTrail);
         }
 
         /// <summary>

@@ -11,9 +11,9 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+using BMCGMobile.Resources;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -28,6 +28,7 @@ namespace BMCGMobile
     {
         private DateTime _Fitnessdate;
         private bool _IsToday;
+        private bool _FirstTime = true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FitnessPage"/> class.
@@ -53,12 +54,6 @@ namespace BMCGMobile
             btnRemoveFitnessHistory.IsVisible = true;
 
             Title = _Fitnessdate.ToString("D");
-
-            if (Device.RuntimePlatform == Device.Android)
-            {
-                // Adnroid does not seem to run appearing each time the page is shown like iOS does
-                this.OnAppearing();
-            }
         }
 
         /// <summary>
@@ -83,8 +78,6 @@ namespace BMCGMobile
             await Navigation.PopAsync();
         }
 
-        private bool _FirstTime = true;
-
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -103,24 +96,45 @@ namespace BMCGMobile
                     this.BindingContext = StaticData.TrackingData.FitnessHistory.Where(w => w.FitnessDate.Date == _Fitnessdate.Date).FirstOrDefault();
                 }
 
-                await Task.Run(() =>
+                if (_FirstTime)
                 {
-                    if (_FirstTime)
+                    _FirstTime = false;
+
+                    if (StaticData.TrackingData.IsGPXDataLoaded)
                     {
-                        _FirstTime = false;
+                        // If GPS Data is Loaded - then Plot; otherwise subscribe to loaded event
                         customMap.LoadWayFindingCoordinatePins();
                         customMap.PlotPolylineTrack();
                     }
+                    else
+                    {
+                        StaticData.TrackingData.PropertyChanged += TrackingData_PropertyChanged;
+                    }
+                }
 
-                    customMap.PlotUserOnTrailSegmentsPolylineTrack(_Fitnessdate);
+                customMap.PlotUserOnTrailSegmentsPolylineTrack(_Fitnessdate);
 
-                    customMap.CenterMapToUserPositions(_Fitnessdate);
+                customMap.CenterMapToUserPositions(_Fitnessdate);
 
-                    customMap.IsVisible = true;
-                });
+                customMap.IsVisible = true;
             }
             catch (Exception ex)
             {
+                await DisplayAlert(DesciptionResource.Error, string.Format(DesciptionResource.ErrorMessage, ex), "Ok");
+            }
+        }
+
+        private void TrackingData_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsGPXDataLoaded")
+            {
+                if (StaticData.TrackingData.IsGPXDataLoaded)
+                {
+                    customMap.LoadWayFindingCoordinatePins();
+                    customMap.PlotPolylineTrack();
+
+                    StaticData.TrackingData.PropertyChanged -= TrackingData_PropertyChanged;
+                }
             }
         }
 

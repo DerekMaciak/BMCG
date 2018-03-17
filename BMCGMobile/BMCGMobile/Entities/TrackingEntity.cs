@@ -28,6 +28,21 @@ namespace BMCGMobile.Entities
     /// <seealso cref="BMCGMobile.Entities.EntityBase" />
     public class TrackingEntity : EntityBase
     {
+        private bool _IsGPXDataLoaded;
+
+        public bool IsGPXDataLoaded
+        {
+            get { return _IsGPXDataLoaded; }
+            set
+            {
+                if (_IsGPXDataLoaded != value)
+                {
+                    _IsGPXDataLoaded = value;
+                    OnPropertyChanged("IsGPXDataLoaded");
+                }
+            }
+        }
+        
         /// <summary>
         /// The last known position
         /// </summary>
@@ -173,10 +188,10 @@ namespace BMCGMobile.Entities
             {
                 if (StaticHelpers.ConvertMilesToFeet(DistanceFromTrailCenter) < Variables.DISPLAY_AS_FEET_MIN)
                 {
-                    return string.Format("{0} {1}", StaticHelpers.ConvertMilesToFeet(DistanceFromTrailCenter).ToString("N0"), DesciptionResource.Feet);
+                    return string.Format("{0} {1}", StaticHelpers.ConvertMilesToFeet(DistanceFromTrailCenter).ToString("N0"), DesciptionResource.FeetAbrev);
                 }
 
-                return string.Format("{0} {1}", DistanceFromTrailCenter.ToString("N2"), DesciptionResource.Miles);
+                return string.Format("{0} {1}", DistanceFromTrailCenter.ToString("N2"), DesciptionResource.MilesAbrev);
             }
         }
 
@@ -285,10 +300,10 @@ namespace BMCGMobile.Entities
             {
                 if (StaticHelpers.ConvertMilesToFeet(DistanceToNextPin) < Variables.DISPLAY_AS_FEET_MIN)
                 {
-                    return string.Format("{0} {1}", StaticHelpers.ConvertMilesToFeet(DistanceToNextPin).ToString("N0"), DesciptionResource.Feet);
+                    return string.Format("{0} {1}", StaticHelpers.ConvertMilesToFeet(DistanceToNextPin).ToString("N0"), DesciptionResource.FeetAbrev);
                 }
 
-                return string.Format("{0} {1}", DistanceToNextPin.ToString("N2"), DesciptionResource.Miles);
+                return string.Format("{0} {1}", DistanceToNextPin.ToString("N2"), DesciptionResource.MilesAbrev);
             }
         }
 

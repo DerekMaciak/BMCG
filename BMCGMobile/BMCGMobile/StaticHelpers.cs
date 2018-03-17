@@ -13,6 +13,7 @@
 // ***********************************************************************
 using System;
 using System.Collections.Generic;
+using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 using static BMCGMobile.Enums;
 
@@ -305,9 +306,46 @@ namespace BMCGMobile
         public static int GetDirectionSector(int heading)
         {
             var adjusted = (heading + 22) % 360;
+
             var sector = adjusted / 30;
+
             return sector;
         }
+
+        public static bool IsHeadingTowardsPosition (double userHeading, Position userPosition, Position testPosition)
+        {
+            var bearing = DegreeBearing(userPosition.Latitude, userPosition.Longitude, testPosition.Latitude, testPosition.Longitude);
+            
+            return Math.Abs(userHeading - bearing) < 90;
+         
+        }
+
+        static double DegreeBearing(double lat1, double lon1, double lat2, double lon2)
+        {
+            var dLon = ToRad(lon2 - lon1);
+            var dPhi = Math.Log(
+                Math.Tan(ToRad(lat2) / 2 + Math.PI / 4) / Math.Tan(ToRad(lat1) / 2 + Math.PI / 4));
+            if (Math.Abs(dLon) > Math.PI)
+                dLon = dLon > 0 ? -(2 * Math.PI - dLon) : (2 * Math.PI + dLon);
+            return ToBearing(Math.Atan2(dLon, dPhi));
+        }
+
+        public static double ToRad(double degrees)
+        {
+            return degrees * (Math.PI / 180);
+        }
+
+        public static double ToDegrees(double radians)
+        {
+            return radians * 180 / Math.PI;
+        }
+
+        public static double ToBearing(double radians)
+        {
+            // convert radians to degrees (as bearing: 0...360)
+            return (ToDegrees(radians) + 360) % 360;
+        }
+
 
     }
 }
