@@ -209,7 +209,7 @@ namespace BMCGMobile
         /// Calories burnt with weight entered
         /// view-source:http://walking.about.com/library/cal/uccalc1.htm
 
-        public static double CaloriesBurnt(double miles, float lbs, string cadence)
+        public static double CaloriesBurnt(double miles, int lbs, string cadence = "3")
         {
             if (lbs <= 0)
                 return CaloriesBurnt(miles);
@@ -307,7 +307,7 @@ namespace BMCGMobile
         {
             var adjusted = (heading + 22) % 360;
 
-            var sector = adjusted / 30;
+            var sector = adjusted / 20;
 
             return sector;
         }

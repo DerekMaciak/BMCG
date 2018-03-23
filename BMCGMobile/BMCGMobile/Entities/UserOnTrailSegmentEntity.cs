@@ -75,12 +75,7 @@ namespace BMCGMobile.Entities
         /// </summary>
         /// <value>The total segment distance by steps.</value>
         public double TotalSegmentDistanceBySteps { set; get; }
-        /// <summary>
-        /// Gets the total segment calories by distance.
-        /// </summary>
-        /// <value>The total segment calories by distance.</value>
-        public double TotalSegmentCaloriesByDistance { get { return StaticHelpers.CaloriesBurnt(TotalSegmentDistanceBySteps); } }
-
+       
         /// <summary>
         /// Initializes a new instance of the <see cref="UserOnTrailSegmentEntity"/> class.
         /// </summary>

@@ -34,13 +34,14 @@ namespace BMCGMobile.Entities
         {
             AutoTrackingMaximumDistanceFromTrailInFeet = 50; // 50 Feet
             IsAutoTracking = true;
-            IsDisplayOffTrailAlert = true;
+            IsDisplayOffTrailAlert = false;
             HeightFeet = 5;
             HeightInches = 8;
             WeightInlbs = 180;
             AverageWalkingSpeed = 3.1; // 3.1 Miles per hour
             NumFitnessHistoryDaysToKeep = 14;
             MinutesToExtendOnTrailStatus = 5;
+            IsShowMarkersOnFitnessMap = false;
 
         }
 
@@ -316,5 +317,29 @@ namespace BMCGMobile.Entities
         }
 
 
+        /// <summary>
+        /// The is show markers on fitness map
+        /// </summary>
+        private bool _IsShowMarkersOnFitnessMap;
+
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is show markers on fitness map.
+        /// </summary>
+        /// <value><c>true</c> if this instance is show markers on fitness map; otherwise, <c>false</c>.</value>
+        public bool IsShowMarkersOnFitnessMap
+        {
+            get { return _IsShowMarkersOnFitnessMap; }
+            set
+            {
+                if (_IsShowMarkersOnFitnessMap != value)
+                {
+                    _IsShowMarkersOnFitnessMap = value;
+
+                    OnPropertyChanged("IsShowMarkersOnFitnessMap");
+
+                }
+            }
+        }
     }
 }

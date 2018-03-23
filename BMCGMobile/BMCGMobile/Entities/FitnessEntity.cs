@@ -101,7 +101,7 @@ namespace BMCGMobile.Entities
         /// <value>The total calories display.</value>
         public string TotalCaloriesDisplay { get { return TotalCalories.ToString("N0"); } }
 
-        public void CalculateFitness()
+        public void CalculateFitness(int weightInlbs)
         {
             // Add up Total Distance And Time from each Segment
             int totalStepCount = 0;
@@ -113,7 +113,7 @@ namespace BMCGMobile.Entities
                 totalStepCount = totalStepCount + seg.TotalSegmentStepCount;
                 totalDistance = totalDistance + seg.TotalSegmentDistanceBySteps;
                 totalTime = totalTime + seg.TotalSegmentTimeSpan;
-                totalCalories = totalCalories + seg.TotalSegmentCaloriesByDistance;
+                totalCalories = totalCalories + StaticHelpers.CaloriesBurnt(seg.TotalSegmentDistanceBySteps, weightInlbs);
             }
 
             _TotalStepCount = totalStepCount;

@@ -25,6 +25,8 @@ using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.Xaml;
 using static BMCGMobile.Enums;
+using static Xamarin.Forms.Button;
+using static Xamarin.Forms.Button.ButtonContentLayout;
 
 namespace BMCGMobile
 {
@@ -79,7 +81,7 @@ namespace BMCGMobile
             if (Device.RuntimePlatform == Device.Android)
             {
                 // Move StatusInfo to Right for Android
-                AbsoluteLayout.SetLayoutBounds(statusInfo, new Rectangle(1, 0, 280, 85));
+                AbsoluteLayout.SetLayoutBounds(statusInfo, new Rectangle(1, 0, 280, 110));
             }
 
             // Set DistanceFromTrailCenter so that IsOnTrail is false while loading
@@ -237,24 +239,18 @@ namespace BMCGMobile
                 {
                     var trueHeading = e.Heading;
 
-                    //if (Device.RuntimePlatform == Device.Android)
-                    //{
-                    //    // Android gives the magnetic heading and not the true heading - for now caluclate true heading for this area by subtracting 13
-                    //    var magneticFactor = -13;
+                    if (Device.RuntimePlatform == Device.Android && StaticData.TrackingData.LastKnownPosition != null)
+                    {
+                        // Get declination from Android class
+                        var declination = DependencyService.Get<IGeomagneticField>().GetGeomagneticField(
+                            (float)StaticData.TrackingData.LastKnownPosition.Latitude,
+                             (float)StaticData.TrackingData.LastKnownPosition.Longitude,
+                             (float)StaticData.TrackingData.LastKnownPosition.Altitude,
+                            DateTime.Now.Millisecond);
 
-                    //    trueHeading = magneticFactor + trueHeading;
+                        trueHeading += declination;
 
-                    //    if (trueHeading < 0)
-                    //    {
-                    //        trueHeading = trueHeading + 360;
-                    //    }
-
-                    //    if (trueHeading > 359)
-                    //    {
-                    //        trueHeading = trueHeading - 360;
-                    //    }
-
-                    //}
+                    }
 
                     StaticData.TrackingData.Heading = Math.Truncate(trueHeading);
                     StaticData.TrackingData.HeadingDirection = StaticHelpers.GetDirectionHeading((int)Math.Truncate(trueHeading));
@@ -274,12 +270,12 @@ namespace BMCGMobile
                                 headingChanged = false;
                             }
 
-                            if (Math.Abs(trueHeading - _LastCompassHeading) <= 5)
+                            if (Math.Abs(trueHeading - _LastCompassHeading) <= 4)
                             {
                                 goodReadingCount += 1;
                             }
 
-                            if (goodReadingCount == 4)
+                            if (goodReadingCount == 2)
                             {
                                 headingChanged = true;
                             }
@@ -473,7 +469,8 @@ namespace BMCGMobile
 
                 if (_CurrentMapZoom == MapZooms.Street)
                 {
-                    // Auto Select Pin on Street View Only
+                    // Auto Select Pin on Street View Only 
+                    segmentWithNextPin.CustomPinOnSegment.Pin.IsVisible = true;
                     customMap.SelectedPin = segmentWithNextPin.CustomPinOnSegment.Pin;
                 }
             }
@@ -722,7 +719,7 @@ namespace BMCGMobile
             btnZoomUser.BackgroundColor = offButtonBackgroundColor;
             btnZoomPins.BackgroundColor = offButtonBackgroundColor;
             btnZoomStreet.BackgroundColor = offButtonBackgroundColor;
-
+            
             switch (mapZoom)
             {
                 case MapZooms.All:

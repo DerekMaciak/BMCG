@@ -71,7 +71,7 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Version 1.0.0.6 Copyright 2018.
+        ///   Looks up a localized string similar to Version 1.0.0.7 Copyright 2018.
         /// </summary>
         internal static string AboutVersion {
             get {
@@ -395,7 +395,7 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dir:.
+        ///   Looks up a localized string similar to DIR:.
         /// </summary>
         internal static string OnTrailDirection {
             get {
@@ -404,7 +404,7 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dist:.
+        ///   Looks up a localized string similar to DIST:.
         /// </summary>
         internal static string OnTrailDistance {
             get {
@@ -472,6 +472,15 @@ namespace BMCGMobile.Resources {
         internal static string Satellite {
             get {
                 return ResourceManager.GetString("Satellite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show markers on fitness map.
+        /// </summary>
+        internal static string ShowMarkersOnFitnessMap {
+            get {
+                return ResourceManager.GetString("ShowMarkersOnFitnessMap", resourceCulture);
             }
         }
         

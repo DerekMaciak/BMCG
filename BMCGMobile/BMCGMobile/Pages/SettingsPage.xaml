@@ -59,6 +59,15 @@
                     </StackLayout>
                 </StackLayout>
 
+                <Grid  Margin="20, 20, 20, 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Text="{Binding Resources[ShowMarkersOnFitnessMap]}" Grid.Column="0" FontAttributes="Bold"></Label>
+                    <Switch IsToggled="{Binding IsShowMarkersOnFitnessMap}" Grid.Column="1" Margin="5,0,0,0"></Switch>
+                </Grid>
+
                 <StackLayout Margin="20, 20, 20, 0">
                     <Label Text="{Binding Resources[AverageWalkingSpeed]}" FontAttributes="Bold"></Label>
                     <StackLayout Orientation="Horizontal">

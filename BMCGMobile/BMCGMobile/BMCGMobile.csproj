@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="Entities\FitnessEntity.cs" />
     <Compile Include="Entities\UserOnTrailSegmentEntity.cs" />
+    <Compile Include="IGeomagneticField.cs" />
     <Compile Include="IStepCounter.cs" />
     <Compile Include="StaticData.cs" />
     <Compile Include="StaticHelpers.cs" />

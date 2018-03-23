@@ -92,11 +92,17 @@ namespace BMCGMobile
 
                     StaticData.TrackingData.FitnessToday.PropertyChanged -= FitnessToday_PropertyChanged;
                     StaticData.TrackingData.FitnessToday.PropertyChanged += FitnessToday_PropertyChanged;
+                    
                 }
                 else
                 {
                     this.BindingContext = StaticData.TrackingData.FitnessHistory.Where(w => w.FitnessDate.Date == _Fitnessdate.Date).FirstOrDefault();
                 }
+
+
+                StaticData.TrackingData.UserSettings.PropertyChanged -= UserSettings_PropertyChanged;
+                StaticData.TrackingData.UserSettings.PropertyChanged += UserSettings_PropertyChanged;
+
 
                 if (_FirstTime)
                 {
@@ -104,7 +110,12 @@ namespace BMCGMobile
                     {
                         _FirstTime = false;
                         // If GPS Data is Loaded - then Plot; otherwise subscribe to loaded event
-                        customMap.LoadWayFindingCoordinatePins();
+
+                        if (StaticData.TrackingData.UserSettings.IsShowMarkersOnFitnessMap)
+                        {
+                            customMap.LoadWayFindingCoordinatePins();
+                        }
+                       
                         customMap.PlotPolylineTrack();
 
                         StaticData.TrackingData.PropertyChanged -= TrackingData_PropertyChanged;
@@ -123,10 +134,23 @@ namespace BMCGMobile
                 customMap.CenterMapToUserPositions(_Fitnessdate);
 
                 customMap.IsVisible = true;
+
             }
             catch (Exception ex)
             {
                 await DisplayAlert(DesciptionResource.Error, string.Format(DesciptionResource.ErrorMessage, ex), "Ok");
+            }
+        }
+
+        private void UserSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (StaticData.TrackingData.UserSettings.IsShowMarkersOnFitnessMap)
+            {
+                customMap.LoadWayFindingCoordinatePins();
+            }
+            else
+            {
+                customMap.Pins.Clear();
             }
         }
 
@@ -137,7 +161,10 @@ namespace BMCGMobile
                 if (StaticData.TrackingData.IsGPXDataLoaded)
                 {
                     _FirstTime = false;
-                    customMap.LoadWayFindingCoordinatePins();
+                    if (StaticData.TrackingData.UserSettings.IsShowMarkersOnFitnessMap)
+                    {
+                        customMap.LoadWayFindingCoordinatePins();
+                    }
                     customMap.PlotPolylineTrack();
 
                     StaticData.TrackingData.PropertyChanged -= TrackingData_PropertyChanged;

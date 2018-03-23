@@ -65,7 +65,7 @@ namespace BMCGMobile
                 var selectedPin = StaticData.CustomPins.Where(s => s.IsStatusInfoVisible).FirstOrDefault();
                 if (selectedPin != null)
                 {
-                    listViewPins.ScrollTo(selectedPin, ScrollToPosition.MakeVisible, true);
+                    listViewPins.ScrollTo(selectedPin, ScrollToPosition.Center, true);
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace BMCGMobile
         {
             var customerPin = (sender as Button).CommandParameter as CustomPinEntity;
 
-            var destAddr = customerPin.Pin.Address.Replace(" ", "+").Replace("\n", "+");
+            //var destAddr = customerPin.Pin.Address.Replace(" ", "+").Replace("\n", "+");
 
             if (Device.RuntimePlatform == Device.iOS)
             {

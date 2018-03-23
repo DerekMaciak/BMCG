@@ -198,7 +198,7 @@ namespace BMCGMobile.Entities
         /// <summary>
         /// The next pin
         /// </summary>
-        private string _NextPin;
+        private string _NextPin = "Point Device at Trail to Find Next Marker";
 
         /// <summary>
         /// Gets or sets the next pin.
@@ -428,7 +428,7 @@ namespace BMCGMobile.Entities
                     // Wait for active steps before adding User Positions
                     currentSegment.AddUserPosition(position);
 
-                    FitnessToday.CalculateFitness();
+                    FitnessToday.CalculateFitness(UserSettings.WeightInlbs);
                 }
             }
             else
@@ -470,7 +470,7 @@ namespace BMCGMobile.Entities
 
                     foreach (var item in fitnessHistoryList)
                     {
-                        item.CalculateFitness();
+                        item.CalculateFitness(UserSettings.WeightInlbs);
                     }
                 }
             }
