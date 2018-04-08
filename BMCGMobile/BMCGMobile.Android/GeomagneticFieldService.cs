@@ -10,7 +10,7 @@ namespace BMCGMobile.Droid
 
         public float GetGeomagneticField(float latitude, float longitude, float altitude, long timeMillis)
         {
-            var geoField = new GeomagneticField(latitude, longitude, altitude, timeMillis);
+            var geoField = new GeomagneticField(latitude, longitude, altitude, Java.Lang.JavaSystem.CurrentTimeMillis());
 
             return geoField.Declination;
         }
