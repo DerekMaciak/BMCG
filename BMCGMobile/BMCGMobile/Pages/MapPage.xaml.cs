@@ -600,6 +600,8 @@ namespace BMCGMobile
             var lineSegment = customMap.FindClosestLineSegment(curPosition);
             StaticData.TrackingData.DistanceFromTrailCenter = lineSegment.ClosestPositionToLocationDistance;
 
+            customMap.RemovePolylineTrack("TRACKER");
+
             if (StaticData.TrackingData.IsStatusInfoVisible && !StaticData.TrackingData.IsActuallyOnTrail)
             {
                 //Plot From Current Position to Line Segment if status info is visible

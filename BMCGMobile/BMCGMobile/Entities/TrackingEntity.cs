@@ -346,7 +346,7 @@ namespace BMCGMobile.Entities
         /// Gets a value indicating whether this instance is just on trail.
         /// </summary>
         /// <value><c>true</c> if this instance is just on trail; otherwise, <c>false</c>.</value>
-        public bool IsJustOnTrail { get { return _OnTrailTime.TotalSeconds < 3; } }
+        public bool IsJustOnTrail { get { return _OnTrailTime.TotalSeconds < 10; } }
 
         public ObservableCollection<FitnessEntity> FitnessHistory = new ObservableCollection<FitnessEntity>();
 

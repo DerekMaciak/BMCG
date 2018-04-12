@@ -23,6 +23,22 @@ namespace BMCGMobile.iOS
 {
     public class CustomMapRenderer : MapRenderer
     {
+        private bool _FirstTime = true;
+        protected override void OnMarkerCreated(Pin outerItem, Marker innerItem)
+        {
+            base.OnMarkerCreated(outerItem, innerItem);
+
+            if (_FirstTime)
+            {
+                _FirstTime = false;
+
+                if (NativeMap != null && innerItem != null)
+                {
+                    // This ensures the info window is replaced by doing it on the first marker creation
+                    TapperMarkerFunct(NativeMap, innerItem);
+                }
+            }
+        }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -30,12 +46,13 @@ namespace BMCGMobile.iOS
 
             if (e.PropertyName.Equals("VisibleRegion"))
             {
-                //  NativeMap.InfoTapped += InfoTappedFunct;
+               
                 NativeMap.TappedMarker = TapperMarkerFunct;
+                
             }
         }
 
-
+       
         bool TapperMarkerFunct(MapView map, Marker marker)
         {
 

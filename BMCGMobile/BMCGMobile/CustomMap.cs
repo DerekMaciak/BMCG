@@ -149,17 +149,27 @@ namespace BMCGMobile
             polyline.StrokeWidth = 2.5f;
             polyline.Tag = "TRACKER"; // Can set any object
 
+            RemovePolylineTrack("TRACKER");
+
+            Polylines.Add(polyline);
+        }
+
+        /// <summary>
+        /// Removes the polyline track.
+        /// </summary>
+        /// <param name="polyLineTagToRemove">The poly line tag to remove.</param>
+        public void RemovePolylineTrack(string polyLineTagToRemove)
+        {
             foreach (var item in Polylines)
             {
-                if (item.Tag == polyline.Tag)
+                if (item.Tag.ToString() == polyLineTagToRemove)
                 {
                     Polylines.Remove(item);
                     break;
                 }
             }
-
-            Polylines.Add(polyline);
         }
+
 
         public void PlotUserOnTrailSegmentsPolylineTrack(DateTime fitnessDate)
         {

@@ -71,7 +71,7 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Version 1.0.0.8 Copyright 2018.
+        ///   Looks up a localized string similar to Version 1.0.0.9 Copyright 2018.
         /// </summary>
         internal static string AboutVersion {
             get {
