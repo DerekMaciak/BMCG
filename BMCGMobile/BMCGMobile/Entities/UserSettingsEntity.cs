@@ -39,7 +39,7 @@ namespace BMCGMobile.Entities
             HeightInches = 8;
             WeightInlbs = 180;
             AverageWalkingSpeed = 3.1; // 3.1 Miles per hour
-            NumFitnessHistoryDaysToKeep = 14;
+            NumFitnessHistorySessionsToKeep = 14;
             MinutesToExtendOnTrailStatus = 5;
             IsShowMarkersOnFitnessMap = false;
 
@@ -294,23 +294,23 @@ namespace BMCGMobile.Entities
         /// <summary>
         /// The number fitness history days to keep
         /// </summary>
-        private int _NumFitnessHistoryDaysToKeep;
+        private int _NumFitnessHistorySessionsToKeep;
 
         /// <summary>
         /// Gets or sets the number fitness history days to keep.
         /// </summary>
         /// <value>The number fitness history days to keep.</value>
-        public int NumFitnessHistoryDaysToKeep
+        public int NumFitnessHistorySessionsToKeep
         {
-            get { return _NumFitnessHistoryDaysToKeep; }
+            get { return _NumFitnessHistorySessionsToKeep; }
             set
             {
 
-                if (_NumFitnessHistoryDaysToKeep != value)
+                if (_NumFitnessHistorySessionsToKeep != value)
                 {
-                    _NumFitnessHistoryDaysToKeep = value;
+                    _NumFitnessHistorySessionsToKeep = value;
 
-                    OnPropertyChanged("NumFitnessHistoryDaysToKeep");
+                    OnPropertyChanged("NumFitnessHistorySessionsToKeep");
 
                 }
             }

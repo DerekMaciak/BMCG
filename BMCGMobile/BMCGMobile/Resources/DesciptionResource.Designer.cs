@@ -71,7 +71,7 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Version 1.0.0.7 Copyright 2018.
+        ///   Looks up a localized string similar to Version 1.0.0.8 Copyright 2018.
         /// </summary>
         internal static string AboutVersion {
             get {
@@ -359,11 +359,11 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Number of fitness history days to keep.
+        ///   Looks up a localized string similar to Number of fitness history sessions to keep.
         /// </summary>
-        internal static string NumFitnessHistoryDaysToKeep {
+        internal static string NumFitnessHistorySessionsToKeep {
             get {
-                return ResourceManager.GetString("NumFitnessHistoryDaysToKeep", resourceCulture);
+                return ResourceManager.GetString("NumFitnessHistorySessionsToKeep", resourceCulture);
             }
         }
         
@@ -377,7 +377,7 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You status is changing to &quot;Off Trail&quot;. Do you want to extend the &quot;On Trail&quot; status by {0} mins in order to keep tracking your fitness?.
+        ///   Looks up a localized string similar to Your status is changing to &quot;Off Trail&quot;. Do you want to extend the &quot;On Trail&quot; status by {0} mins in order to keep tracking your fitness?.
         /// </summary>
         internal static string OffTrailQuestion {
             get {
@@ -472,6 +472,24 @@ namespace BMCGMobile.Resources {
         internal static string Satellite {
             get {
                 return ResourceManager.GetString("Satellite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sessions.
+        /// </summary>
+        internal static string Sessions {
+            get {
+                return ResourceManager.GetString("Sessions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to sessn.
+        /// </summary>
+        internal static string SessionsAbrev {
+            get {
+                return ResourceManager.GetString("SessionsAbrev", resourceCulture);
             }
         }
         

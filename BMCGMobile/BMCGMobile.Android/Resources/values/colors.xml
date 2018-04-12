@@ -6,4 +6,5 @@
   <color name="accent">#FFC107</color>
   <color name="window_background">#F5F5F5</color>
   <color name="splash_background">#032743</color>
+  <color name="info_window_background">#FFFFFF</color>
 </resources>

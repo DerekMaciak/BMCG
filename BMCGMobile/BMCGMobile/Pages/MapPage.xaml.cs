@@ -25,8 +25,6 @@ using Xamarin.Forms;
 using Xamarin.Forms.GoogleMaps;
 using Xamarin.Forms.Xaml;
 using static BMCGMobile.Enums;
-using static Xamarin.Forms.Button;
-using static Xamarin.Forms.Button.ButtonContentLayout;
 
 namespace BMCGMobile
 {
@@ -151,12 +149,14 @@ namespace BMCGMobile
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-
+            
             try
             {
                 if (_FirstTime)
                 {
                     _FirstTime = false;
+
+                    await Navigation.PushModalAsync(new TermsPage());
                     
                     await StaticData.LoadMapCoordinatesAsync();
                     customMap.LoadWayFindingCoordinatePins();
@@ -179,7 +179,7 @@ namespace BMCGMobile
                     customMap.IsVisible = true;
 
                     customMap.InfoWindowClicked += CustomMap_InfoWindowClicked;
-                    
+
                     //customMap.MyLocationButtonClicked += (sender, args) =>
                     //{
                     //    args.Handled = false;
@@ -228,125 +228,135 @@ namespace BMCGMobile
         {
             try
             {
+                var geolocator = CrossGeolocator.Current;
+                geolocator.DesiredAccuracy = 1;
 
-           
-            var geolocator = CrossGeolocator.Current;
-            geolocator.DesiredAccuracy = 1;
-
-            if (!geolocator.IsListening)
-            {
-                CrossCompass.Current.CompassChanged += async (s, e) =>
+                if (!geolocator.IsListening)
                 {
-                    var trueHeading = e.Heading;
-
-                    if (Device.RuntimePlatform == Device.Android && StaticData.TrackingData.LastKnownPosition != null)
+                    CrossCompass.Current.CompassChanged += async (s, e) =>
                     {
+                        var trueHeading = e.Heading;
+
+                        if (Device.RuntimePlatform == Device.Android && StaticData.TrackingData.LastKnownPosition != null)
+                        {
                         // Get declination from Android class
                         var declination = DependencyService.Get<IGeomagneticField>().GetGeomagneticField(
-                            (float)StaticData.TrackingData.LastKnownPosition.Latitude,
-                             (float)StaticData.TrackingData.LastKnownPosition.Longitude,
-                             (float)StaticData.TrackingData.LastKnownPosition.Altitude,
-                            DateTime.Now.Millisecond);
+                                (float)StaticData.TrackingData.LastKnownPosition.Latitude,
+                                 (float)StaticData.TrackingData.LastKnownPosition.Longitude,
+                                 (float)StaticData.TrackingData.LastKnownPosition.Altitude,
+                                DateTime.Now.Millisecond);
 
-                        trueHeading += declination;
+                            trueHeading += declination;
+                        }
 
-                    }
+                        StaticData.TrackingData.Heading = Math.Truncate(trueHeading);
+                        StaticData.TrackingData.HeadingDirection = StaticHelpers.GetDirectionHeading((int)Math.Truncate(trueHeading));
 
-                    StaticData.TrackingData.Heading = Math.Truncate(trueHeading);
-                    StaticData.TrackingData.HeadingDirection = StaticHelpers.GetDirectionHeading((int)Math.Truncate(trueHeading));
+                        var headingChanged = true;
 
-                    var headingChanged = true;
-
-                    if (StaticData.TrackingData.LastKnownPosition != null)
-                    {
-                        headingChanged = StaticHelpers.IsSectorDifferent(trueHeading, _LastCompassHeading);
-
-                        if (Device.RuntimePlatform == Device.Android)
+                        if (StaticData.TrackingData.LastKnownPosition != null)
                         {
-                            if (headingChanged)
-                            {
-                                goodReadingCount = 0;
+                            headingChanged = StaticHelpers.IsSectorDifferent(trueHeading, _LastCompassHeading);
 
-                                headingChanged = false;
+                            if (Device.RuntimePlatform == Device.Android)
+                            {
+                                if (headingChanged)
+                                {
+                                    goodReadingCount = 0;
+
+                                    headingChanged = false;
+                                }
+
+                                if (Math.Abs(trueHeading - _LastCompassHeading) <= 4)
+                                {
+                                    goodReadingCount += 1;
+                                }
+
+                                if (goodReadingCount == 2)
+                                {
+                                    headingChanged = true;
+                                }
                             }
 
-                            if (Math.Abs(trueHeading - _LastCompassHeading) <= 4)
+                            _LastCompassHeading = trueHeading;
+
+                            if (headingChanged || (DateTime.Now - _LastCompassChangeUpdate).Seconds >= 10)
                             {
-                                goodReadingCount += 1;
+                                var newPosition = new Plugin.Geolocator.Abstractions.Position(StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude) { Heading = trueHeading };
+
+                                await _StreetViewAsync(newPosition);
+
+                                _LastCompassChangeUpdate = DateTime.Now;
                             }
 
-                            if (goodReadingCount == 2)
+                            _SetNextPinBasedOnBearing();
+                        }
+                    };
+
+                    CrossCompass.Current.Start();
+
+                    // MoveToCamera with Position and Zoom
+                    geolocator.PositionChanged += (sender, e) =>
+                    {
+                        var positionChanged = true;
+
+                        if (StaticData.TrackingData.LastKnownPosition != null)
+                        {
+                            if ((e.Position.Latitude == StaticData.TrackingData.LastKnownPosition.Latitude) && (e.Position.Longitude == StaticData.TrackingData.LastKnownPosition.Longitude))
                             {
-                                headingChanged = true;
+                                positionChanged = false;
+                            }
+
+                        //Check if position is valid
+                        var timeInSeconds = (e.Position.Timestamp - StaticData.TrackingData.LastKnownPosition.Timestamp).TotalSeconds;
+                            if (timeInSeconds > 0)
+                            {
+                                var distInFeet = StaticHelpers.CalculateDistance(e.Position.Latitude, e.Position.Longitude, StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude, Units.Feet);
+
+                                var feetPerSecond = distInFeet / timeInSeconds;
+
+                                if (feetPerSecond > 11.733333)
+                                {
+                                // 8 Mile Per Hour = 11.733333 Feet Per Second
+                                // Bad position - Diregard it - A person will not be going faster than 8mph on trail
+                                return;
+                                }
                             }
                         }
 
-                        _LastCompassHeading = trueHeading;
+                        StaticData.TrackingData.LastKnownPosition = e.Position;
 
-                        if (headingChanged || (DateTime.Now - _LastCompassChangeUpdate).Seconds >= 10)
+                        if (positionChanged)
                         {
-                            var newPosition = new Plugin.Geolocator.Abstractions.Position(StaticData.TrackingData.LastKnownPosition.Latitude, StaticData.TrackingData.LastKnownPosition.Longitude) { Heading = trueHeading };
-
-                            await _StreetViewAsync(newPosition);
-
-                            _LastCompassChangeUpdate = DateTime.Now;
-                        }
-
-                        _SetNextPinBasedOnBearing();
-                    }
-                };
-
-                CrossCompass.Current.Start();
-
-                // MoveToCamera with Position and Zoom
-                geolocator.PositionChanged += (sender, e) =>
-                {
-                    var positionChanged = true;
-
-                    if (StaticData.TrackingData.LastKnownPosition != null)
-                    {
-                        if ((e.Position.Latitude == StaticData.TrackingData.LastKnownPosition.Latitude) && (e.Position.Longitude == StaticData.TrackingData.LastKnownPosition.Longitude))
-                        {
-                            positionChanged = false;
-                        }
-                    }
-
-                    StaticData.TrackingData.LastKnownPosition = e.Position;
-
-                    if (positionChanged)
-                    {
-                        if ((DateTime.Now - _LastPositionChangeUpdate).Seconds > 3)
-                        {
+                            if ((DateTime.Now - _LastPositionChangeUpdate).Seconds > 3)
+                            {
                             // Set Position for User on trail
                             StaticData.TrackingData.AddUserPosition(e.Position);
 
-                            _LastPositionChangeUpdate = DateTime.Now;
-                        }
+                                _LastPositionChangeUpdate = DateTime.Now;
+                            }
 
-                        _FindDistanceToNearestCoordinate();
+                            _FindDistanceToNearestCoordinate();
 
-                        if (StaticData.TrackingData.IsJustOnTrail)
-                        {
+                            if (StaticData.TrackingData.IsJustOnTrail)
+                            {
                             // Set zoom to street view if just go on trail
                             _SetZoomViewToggleButton(MapZooms.Street);
-                            _SetStreetViewInitialCameraPosition();
+                                _SetStreetViewInitialCameraPosition();
+                            }
                         }
-                    }
-                };
+                    };
 
-                await geolocator.StartListeningAsync(new TimeSpan(1000), 1, true);
-            }
+                    await geolocator.StartListeningAsync(new TimeSpan(1000), 1, true);
+                }
 
-            StaticData.TrackingData.LastKnownPosition = await geolocator.GetPositionAsync();
+                StaticData.TrackingData.LastKnownPosition = await geolocator.GetPositionAsync();
 
-            customMap.CenterMap(StaticData.TrackingData.LastKnownPosition);
-
+                customMap.CenterMap(StaticData.TrackingData.LastKnownPosition);
             }
             catch (Exception ex)
             {
-
-               await DisplayAlert(DesciptionResource.Error, string.Format(DesciptionResource.ErrorMessage, ex), "Ok");
-
+                await DisplayAlert(DesciptionResource.Error, string.Format(DesciptionResource.ErrorMessage, ex), "Ok");
             }
         }
 
@@ -469,7 +479,7 @@ namespace BMCGMobile
 
                 if (_CurrentMapZoom == MapZooms.Street)
                 {
-                    // Auto Select Pin on Street View Only 
+                    // Auto Select Pin on Street View Only
                     segmentWithNextPin.CustomPinOnSegment.Pin.IsVisible = true;
                     customMap.SelectedPin = segmentWithNextPin.CustomPinOnSegment.Pin;
                 }
@@ -590,7 +600,7 @@ namespace BMCGMobile
             var lineSegment = customMap.FindClosestLineSegment(curPosition);
             StaticData.TrackingData.DistanceFromTrailCenter = lineSegment.ClosestPositionToLocationDistance;
 
-            if (StaticData.TrackingData.IsStatusInfoVisible)
+            if (StaticData.TrackingData.IsStatusInfoVisible && !StaticData.TrackingData.IsActuallyOnTrail)
             {
                 //Plot From Current Position to Line Segment if status info is visible
                 var list = new List<Position>();
@@ -719,7 +729,7 @@ namespace BMCGMobile
             btnZoomUser.BackgroundColor = offButtonBackgroundColor;
             btnZoomPins.BackgroundColor = offButtonBackgroundColor;
             btnZoomStreet.BackgroundColor = offButtonBackgroundColor;
-            
+
             switch (mapZoom)
             {
                 case MapZooms.All:

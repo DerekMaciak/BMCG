@@ -505,8 +505,8 @@ namespace BMCGMobile.Entities
         {
             if (FitnessToday.UserOnTrailSegments.Count != 0)
             {
-                // Only Save if Active Time on trail - Only Save UserSettings.NumFitnessHistoryDaysToKeep.
-                var FitnessHistoryToSave = FitnessHistory.OrderByDescending(o => o.FitnessDate).Take(UserSettings.NumFitnessHistoryDaysToKeep);
+                // Only Save if Active Time on trail - Only Save UserSettings.NumFitnessHistorySessionsToKeep.
+                var FitnessHistoryToSave = FitnessHistory.OrderByDescending(o => o.FitnessDate).Take(UserSettings.NumFitnessHistorySessionsToKeep);
 
                 var fitnessHistoryJson = JsonConvert.SerializeObject(FitnessHistoryToSave);
 

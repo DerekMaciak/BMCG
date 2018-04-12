@@ -108,6 +108,7 @@
     <AppExtensionDebugBundleId />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CustomMapRenderer.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
@@ -197,6 +198,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <BundleResource Include="Resources\arrowdown.png" />
+    <BundleResource Include="Resources\arrowup.png" />
     <BundleResource Include="Resources\fitness%402x.png" />
     <BundleResource Include="Resources\fitness.png" />
     <BundleResource Include="Resources\map%402x.png" />
@@ -331,6 +334,12 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\marker26yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\icon96.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\information.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

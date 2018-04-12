@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/info_window_background">
+
+  <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="5dp" android:layout_marginLeft="5dp" android:layout_marginBottom="5dp" >
+    <ImageView android:id="@+id/MarkerIcon" android:layout_width="24dp" android:layout_height="26dp" android:layout_gravity="center" android:scaleType="centerCrop" android:src="@drawable/marker26black"/>
+    <ImageView android:id="@+id/InformationIcon" android:layout_width="20dp" android:layout_height="20dp" android:layout_marginTop="20dp" android:layout_gravity="center" android:scaleType="centerCrop" android:src="@drawable/information" />
+  </LinearLayout>
+ 
+  <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_margin="5dp" >
+    <TextView android:id="@+id/InfoWindowTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="InfoWindowTitle" android:textColor="@android:color/black" android:textStyle="bold" />
+    <TextView android:id="@+id/InfoWindowSubtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="InfoWindowSubtitle" android:textColor="@android:color/black" />
+    <TextView android:id="@+id/InfoWindowInfo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="Tap to view photos and information" android:textColor="@android:color/black" />
+  </LinearLayout>
+  
+  
+</LinearLayout>

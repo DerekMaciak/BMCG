@@ -40,7 +40,7 @@ namespace BMCGMobile
         public App()
         {
             InitializeComponent();
-
+            
             MainPage = new BMCGMobile.MainPage();
         }
 
@@ -50,7 +50,6 @@ namespace BMCGMobile
         /// <remarks>To be added.</remarks>
         protected override void OnStart()
         {
-            // Handle when your app starts
            
         }
 

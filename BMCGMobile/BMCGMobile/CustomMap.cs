@@ -29,6 +29,7 @@ namespace BMCGMobile
     /// <seealso cref="Xamarin.Forms.GoogleMaps.Map" />
     public class CustomMap : Map
     {
+       
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomMap"/> class.
         /// </summary>

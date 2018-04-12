@@ -1,53 +1,69 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using Android.App;
+using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
+using Android.Views;
+using Android.Widget;
 using BMCGMobile;
 using BMCGMobile.Droid;
-using Xamarin.Forms;
-using Xamarin.Forms.Maps;
-using Xamarin.Forms.Maps.Android;
 
-[assembly: ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer))]
+using Xamarin.Forms.GoogleMaps;
+using Xamarin.Forms.GoogleMaps.Android;
+using Xamarin.Forms.Platform.Android;
+using static Android.Gms.Maps.GoogleMap;
+
+[assembly: Xamarin.Forms.ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer))]
 namespace BMCGMobile.Droid
 {
-    public class CustomMapRenderer : MapRenderer
+    public class CustomMapRenderer : MapRenderer, IInfoWindowAdapter
     {
-        List<Position> routeCoordinates;
-        bool isDrawn;
 
-        protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Map> e)
-        {
-            base.OnElementChanged(e);
-
-            if (e.OldElement != null)
-            {
-                // Unsubscribe
-            }
-
-            if (e.NewElement != null)
-            {
-                var formsMap = (CustomMap)e.NewElement;
-                routeCoordinates = formsMap.RouteCoordinates;
-                Control.GetMapAsync(this);
-            }
-        }
-
-        protected override void OnElementPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName.Equals("VisibleRegion") && !isDrawn)
+
+            if (e.PropertyName.Equals("VisibleRegion"))
             {
-                var polylineOptions = new PolylineOptions();
-                polylineOptions.InvokeColor(0x66FF0000);
 
-                foreach (var position in routeCoordinates)
-                {
-                    polylineOptions.Add(new LatLng(position.Latitude, position.Longitude));
-                }
-
-                NativeMap.AddPolyline(polylineOptions);
-                isDrawn = true;
+                NativeMap.SetInfoWindowAdapter(this);
             }
         }
+
+
+        public Android.Views.View GetInfoContents(Marker marker)
+        {
+
+            return null;
+        }
+
+        public Android.Views.View GetInfoWindow(Marker marker)
+        {
+            var inflater = Application.Context.GetSystemService(Android.Content.Context.LayoutInflaterService) as LayoutInflater;
+            if (inflater != null)
+            {
+
+                View view = inflater.Inflate(Resource.Layout.InfoWindow, null);
+
+                var infoTitle = view.FindViewById<TextView>(Resource.Id.InfoWindowTitle);
+                var infoSubtitle = view.FindViewById<TextView>(Resource.Id.InfoWindowSubtitle);
+                
+                if (infoTitle != null)
+                {
+                    infoTitle.Text = marker.Title;
+                }
+                if (infoSubtitle != null)
+                {
+                    infoSubtitle.Text = marker.Snippet;
+                }
+            
+
+                return view;
+            }
+            return null;
+        }
     }
+    
 }

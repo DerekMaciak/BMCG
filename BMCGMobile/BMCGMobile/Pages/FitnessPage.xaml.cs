@@ -92,17 +92,14 @@ namespace BMCGMobile
 
                     StaticData.TrackingData.FitnessToday.PropertyChanged -= FitnessToday_PropertyChanged;
                     StaticData.TrackingData.FitnessToday.PropertyChanged += FitnessToday_PropertyChanged;
-                    
                 }
                 else
                 {
                     this.BindingContext = StaticData.TrackingData.FitnessHistory.Where(w => w.FitnessDate.Date == _Fitnessdate.Date).FirstOrDefault();
                 }
 
-
                 StaticData.TrackingData.UserSettings.PropertyChanged -= UserSettings_PropertyChanged;
                 StaticData.TrackingData.UserSettings.PropertyChanged += UserSettings_PropertyChanged;
-
 
                 if (_FirstTime)
                 {
@@ -115,7 +112,7 @@ namespace BMCGMobile
                         {
                             customMap.LoadWayFindingCoordinatePins();
                         }
-                       
+
                         customMap.PlotPolylineTrack();
 
                         StaticData.TrackingData.PropertyChanged -= TrackingData_PropertyChanged;
@@ -124,9 +121,7 @@ namespace BMCGMobile
                     {
                         // Set initial Map state
                         customMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(40.810657, -74.186378), Distance.FromMiles(1)));
-
                     }
-
                 }
 
                 customMap.PlotUserOnTrailSegmentsPolylineTrack(_Fitnessdate);
@@ -134,7 +129,6 @@ namespace BMCGMobile
                 customMap.CenterMapToUserPositions(_Fitnessdate);
 
                 customMap.IsVisible = true;
-
             }
             catch (Exception ex)
             {
@@ -168,7 +162,6 @@ namespace BMCGMobile
                     customMap.PlotPolylineTrack();
 
                     StaticData.TrackingData.PropertyChanged -= TrackingData_PropertyChanged;
-                    
                 }
             }
         }
@@ -193,20 +186,54 @@ namespace BMCGMobile
                 statistics.IsVisible = false;
                 fitnessToday.IsVisible = false;
                 btnRemoveFitnessHistory.IsVisible = false;
+                expanderButtons.IsVisible = false;
             }
             else
             {
-                // Assume Portrait
-                statistics.IsVisible = true;
-                if (_IsToday)
+                if (expanderButtons.IsVisible == false)
                 {
-                    fitnessToday.IsVisible = true;
-                }
-                else
-                {
-                    btnRemoveFitnessHistory.IsVisible = true;
+                    // Assume Portrait
+                    statistics.IsVisible = true;
+                    if (_IsToday)
+                    {
+                        fitnessToday.IsVisible = true;
+                    }
+                    else
+                    {
+                        btnRemoveFitnessHistory.IsVisible = true;
+                    }
+
+                    expanderButtons.IsVisible = true;
+                    btnExpandDown.IsVisible = true;
+                    btnExpandUp.IsVisible = false;
                 }
             }
+        }
+
+        private void btnExpandUp_Clicked(object sender, EventArgs e)
+        {
+            statistics.IsVisible = true;
+            if (_IsToday)
+            {
+                fitnessToday.IsVisible = true;
+            }
+            else
+            {
+                btnRemoveFitnessHistory.IsVisible = true;
+            }
+
+            btnExpandDown.IsVisible = true;
+            btnExpandUp.IsVisible = false;
+        }
+
+        private void btnExpandDown_Clicked(object sender, EventArgs e)
+        {
+            statistics.IsVisible = false;
+            fitnessToday.IsVisible = false;
+            btnRemoveFitnessHistory.IsVisible = false;
+            btnExpandDown.IsVisible = false;
+
+            btnExpandUp.IsVisible = true;
         }
     }
 }

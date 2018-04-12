@@ -51,11 +51,11 @@
                 </StackLayout>
 
                 <StackLayout Margin="20, 20, 20, 0">
-                    <Label Text="{Binding Resources[NumFitnessHistoryDaysToKeep]}" FontAttributes="Bold"></Label>
+                    <Label Text="{Binding Resources[NumFitnessHistorySessionsToKeep]}" FontAttributes="Bold"></Label>
                     <StackLayout Orientation="Horizontal">
-                        <Entry Keyboard="Numeric" Text="{Binding NumFitnessHistoryDaysToKeep}" Margin="5,0,2,0" WidthRequest="50" />
-                        <Label Text="{Binding Resources[DaysAbrev]}" WidthRequest="50" VerticalTextAlignment="Center"></Label>
-                        <Stepper Minimum="0" Increment="1" Value="{Binding NumFitnessHistoryDaysToKeep}" />
+                        <Entry Keyboard="Numeric" Text="{Binding NumFitnessHistorySessionsToKeep}" Margin="5,0,2,0" WidthRequest="50" />
+                        <Label Text="{Binding Resources[SessionsAbrev]}" WidthRequest="50" VerticalTextAlignment="Center"></Label>
+                        <Stepper Minimum="0" Increment="1" Value="{Binding NumFitnessHistorySessionsToKeep}" />
                     </StackLayout>
                 </StackLayout>
 
