@@ -5,7 +5,6 @@
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
-		<integer>2</integer>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
@@ -27,15 +26,19 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.bloomfield.MorrisCanalGreenway</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.0.9</string>
+	<string>1.0.0.12</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We are using your location</string>
+	<string>Your current location will be displayed on the map and used for estimating travel time, distance and route taken to next marker.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Can we use your location</string>
+	<string>Your current location will be displayed on the map and used for estimating travel time, distance and route taken to next marker.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Can we access your motion usage</string>
+	<string>Your steps taken while on greenway trail will be displayed on the fitness page and used for estimating distance and calories.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>This app does not access your calendar</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app does not access your photo library</string>
 	<key>CFBundleName</key>
 	<string>Bloomfield Greenway</string>
 	<key>XSAppIconAssets</key>
