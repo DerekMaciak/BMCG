@@ -8,7 +8,10 @@
 
             <Image Grid.Row="0" Source="BMCGsplash.png" Margin="0" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Aspect="AspectFit" AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All"></Image>
 
-            <Label Text="{Binding Resources[AboutVersion]}" Style="{StaticResource AboutLabelStyle}" HorizontalOptions="CenterAndExpand" AbsoluteLayout.LayoutBounds=".5,.80,235,50" AbsoluteLayout.LayoutFlags="PositionProportional" ></Label>
+            <StackLayout Orientation="Vertical" HorizontalOptions="CenterAndExpand" AbsoluteLayout.LayoutBounds=".5,.80,235,75" AbsoluteLayout.LayoutFlags="PositionProportional" >
+            <Label Text="{Binding Resources[AboutVersion]}" Style="{StaticResource AboutLabelStyle}" ></Label>
+                <Button Text="{Binding Resources[MobileAppHyperlinks]}" Style="{StaticResource ButtonHyperlinksStyle}" Clicked="Button_Clicked"></Button>
+            </StackLayout>
         </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

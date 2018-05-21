@@ -71,7 +71,7 @@ namespace BMCGMobile.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Version 1.0.0.12 Copyright 2018.
+        ///   Looks up a localized string similar to Version 1.1.0.0 Copyright 2018.
         /// </summary>
         internal static string AboutVersion {
             get {
@@ -337,6 +337,24 @@ namespace BMCGMobile.Resources {
         internal static string MinutesToExtendOnTrailStatus {
             get {
                 return ResourceManager.GetString("MinutesToExtendOnTrailStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Funding for this project was provided by a “Meet Me at the Park” grant from the National Recreation and Park Association and Disney. Grants from this program are providing families with access to play spaces and inspiring kids and families to get active in local communities across the country..
+        /// </summary>
+        internal static string MMATPFunding {
+            get {
+                return ResourceManager.GetString("MMATPFunding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Important Hyperlinks.
+        /// </summary>
+        internal static string MobileAppHyperlinks {
+            get {
+                return ResourceManager.GetString("MobileAppHyperlinks", resourceCulture);
             }
         }
         

@@ -39,14 +39,20 @@ namespace BMCGMobile
         /// <summary>
         /// The GPX URL
         /// </summary>
-        public const string GPX_URL = @"http://morriscanalbloomfield.org/MorrisCanalBloomfield.gpx.txt";
-        //public const string GPX_URL = @"http://morriscanalbloomfield.org/DerekHomeTest.gpx.txt";
+        public const string GPX_URL = @"https://morriscanalbloomfield.org/MorrisCanalBloomfield.gpx.txt";
+        //public const string GPX_URL = @"https://morriscanalbloomfield.org/DerekHomeTest.gpx.txt";
 
         /// <summary>
         /// The CMS website URL
         /// </summary>
-        public const string CMS_WEBSITE_URL = @"http://morriscanalbloomfield.org/";
+        public const string CMS_WEBSITE_URL = @"https://morriscanalbloomfield.org/";
 
+        /// <summary>
+        /// Mobile App Hyperlinks
+        /// </summary>
+        public const string CMS_WEBSITE_HYPERLINKS_URL = @"https://morriscanalbloomfield.org/important-hyperlinks/";
+
+        
         /// <summary>
         /// The debug mode
         /// </summary>

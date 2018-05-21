@@ -11,7 +11,9 @@
             <!--Colors-->
             <Color x:Key="StandardDarkColor">#032743</Color>
             <Color x:Key="StandardLightColor">White</Color>
-
+            <Color x:Key="TimerSplashBackgroundColor">White</Color>
+            <Color x:Key="TimerSplashLabelColor">Black</Color>
+            
             <Color x:Key="StatusInfoBorderColor">White</Color>
             <Color x:Key="StatusInfoLabelColor">White</Color>
             <Color x:Key="StatusInfoDataColor">GhostWhite</Color>
@@ -23,6 +25,18 @@
             <Color x:Key="MorrisCanalColor">Green</Color>
             <Color x:Key="TrackerColor">Blue</Color>
             <Color x:Key="UserOnTrailSegmentsColor">Blue</Color>
+
+            <Style x:Key="TimerSplashFrameStyle" TargetType="Frame">
+                <Setter Property="Margin" Value="3" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="6" />
+            </Style>
+
+            <Style x:Key="TimerSplashLabelDataStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="Small" />
+                <Setter Property="TextColor" Value="{StaticResource TimerSplashLabelColor}" />
+                <Setter Property="Margin" Value="0" />
+            </Style>
 
             <Style x:Key="StatusInfoFrameStyle" TargetType="Frame">
                 <Setter Property="Opacity" Value=".75" />
@@ -73,6 +87,12 @@
                 <Setter Property="Margin" Value="0" />
             </Style>
 
+            <Style x:Key="ButtonHyperlinksStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="FontSize" Value="Small" />
+                <Setter Property="Margin" Value="0" />
+            </Style>
+            
             <Style x:Key="FitnessTrackingLabelDataStyle" TargetType="Label">
                 <Setter Property="FontSize" Value="Large" />
                 <Setter Property="FontAttributes" Value="Bold" />

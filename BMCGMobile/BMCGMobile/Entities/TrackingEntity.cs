@@ -166,7 +166,7 @@ namespace BMCGMobile.Entities
                         }
                         else
                         {
-                            IsOnTrail = false;
+                           // IsOnTrail = false;
                         }
                     }
 

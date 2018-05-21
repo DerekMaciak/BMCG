@@ -12,7 +12,7 @@
 // <summary></summary>
 // ***********************************************************************
 using BMCGMobile.Entities;
-
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -33,6 +33,11 @@ namespace BMCGMobile
             InitializeComponent();
 
             this.BindingContext = new AboutEntity();
+        }
+
+        private void Button_Clicked(object sender, System.EventArgs e)
+        {
+            Device.OpenUri(new Uri(Variables.CMS_WEBSITE_HYPERLINKS_URL));
         }
     }
 }

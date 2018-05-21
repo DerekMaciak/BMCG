@@ -57,6 +57,24 @@
                     <Button x:Name="btnMapTypeHybrid" Text="{Binding Resources[Hybrid]}" Clicked="MapViewButton_Clicked" FontSize="Micro" BorderRadius="5" TextColor="Black" BorderWidth="2" WidthRequest="75" />
                     <Button x:Name="btnMapTypeSatellite" Text="{Binding Resources[Satellite]}" Clicked="MapViewButton_Clicked" FontSize="Micro" BorderRadius="5" TextColor="Black" BorderWidth="2" WidthRequest="75" />
                 </StackLayout>
+
+
+                <Frame x:Name="timerSplash" Style="{StaticResource TimerSplashFrameStyle}" BackgroundColor="{Binding TimerSplashBackgroundColor}"  VerticalOptions="Center" Margin="20" AbsoluteLayout.LayoutBounds="1,1,1,1" AbsoluteLayout.LayoutFlags="All" IsVisible="False">
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Image Grid.Row="0" Source="MMATPNRPAlogoSmall.png" Margin="0,10,0,0" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Aspect="AspectFit"></Image>
+
+                        <Label Grid.Row="1" Text="{Binding Resources[MMATPFunding]}" Margin="10" Style="{StaticResource TimerSplashLabelDataStyle}" ></Label>
+                        
+                    </Grid>
+                </Frame>
+
+
             </AbsoluteLayout>
         </Grid>
     </ContentPage.Content>

@@ -343,6 +343,9 @@
   <ItemGroup>
     <BundleResource Include="Resources\information.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\MMATPNRPAlogoSmall.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

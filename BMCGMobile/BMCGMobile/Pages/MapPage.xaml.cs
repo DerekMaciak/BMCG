@@ -156,7 +156,19 @@ namespace BMCGMobile
                 {
                     _FirstTime = false;
 
-                    await Navigation.PushModalAsync(new TermsPage());
+                    var termsPage = new TermsPage();
+                    termsPage.Disappearing += (sender, e) =>
+                    {
+                        timerSplash.IsVisible = true;
+
+                        Task.Run(async () =>
+                        {
+                            await Task.Delay(5000);
+                            timerSplash.IsVisible = false;
+                        });
+
+                    };
+                    await Navigation.PushModalAsync(termsPage);
                     
                     await StaticData.LoadMapCoordinatesAsync();
                     customMap.LoadWayFindingCoordinatePins();
@@ -199,6 +211,7 @@ namespace BMCGMobile
 
                     //    customMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(_LastKnownPosition.Latitude, _LastKnownPosition.Longitude), Distance.FromMiles(15)));
                     //};
+                    
                 }
             }
             catch (Exception ex)
@@ -315,10 +328,10 @@ namespace BMCGMobile
 
                                 var feetPerSecond = distInFeet / timeInSeconds;
 
-                                if (feetPerSecond > 11.733333)
+                                if (feetPerSecond > 7.33333)
                                 {
-                                // 8 Mile Per Hour = 11.733333 Feet Per Second
-                                // Bad position - Diregard it - A person will not be going faster than 8mph on trail
+                                // 5 Mile Per Hour = 7.33333 Feet Per Second
+                                // Bad position - Diregard it - A person will not be going faster than 5mph on trail
                                 return;
                                 }
                             }

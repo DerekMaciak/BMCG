@@ -121,7 +121,7 @@
     <value>About</value>
   </data>
   <data name="AboutVersion" xml:space="preserve">
-    <value>Version 1.0.0.12 Copyright 2018</value>
+    <value>Version 1.1.0.0 Copyright 2018</value>
   </data>
   <data name="ActiveTime" xml:space="preserve">
     <value>Active Time</value>
@@ -209,6 +209,12 @@
   </data>
   <data name="MinutesToExtendOnTrailStatus" xml:space="preserve">
     <value>Minutes to extend on trail status</value>
+  </data>
+  <data name="MMATPFunding" xml:space="preserve">
+    <value>Funding for this project was provided by a “Meet Me at the Park” grant from the National Recreation and Park Association and Disney. Grants from this program are providing families with access to play spaces and inspiring kids and families to get active in local communities across the country.</value>
+  </data>
+  <data name="MobileAppHyperlinks" xml:space="preserve">
+    <value>Important Hyperlinks</value>
   </data>
   <data name="MphAbrev" xml:space="preserve">
     <value>mph</value>
