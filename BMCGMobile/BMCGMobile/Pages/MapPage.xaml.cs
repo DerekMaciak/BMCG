@@ -161,13 +161,9 @@ namespace BMCGMobile
                     {
                         timerSplash.IsVisible = true;
 
-                        Task.Run(async () =>
-                        {
-                            await Task.Delay(5000);
-                            timerSplash.IsVisible = false;
-                        });
-
+                        Task.Delay(5000).ContinueWith(t => timerSplash.IsVisible = false, TaskScheduler.FromCurrentSynchronizationContext());
                     };
+
                     await Navigation.PushModalAsync(termsPage);
                     
                     await StaticData.LoadMapCoordinatesAsync();
